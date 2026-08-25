@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Year 1 Home Learning Studio</title>
+  <link rel="icon" href="data:," />
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, var(--cp-accent-soft), transparent 30rem),
+        linear-gradient(180deg, var(--cp-bg-elevated), var(--cp-bg));
+      color: var(--cp-text);
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 19rem 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 1.25rem;
+      border-right: 1px solid var(--cp-border);
+      background: var(--cp-panel-strong);
+    }
+
+    .brand {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 2.75rem;
+      height: 2.75rem;
+      place-items: center;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+
+    .brand p,
+    .section-kicker,
+    .muted,
+    .small {
+      color: var(--cp-text-muted);
+    }
+
+    .brand p {
+      margin: 0.15rem 0 0;
+      font-size: 0.82rem;
+    }
+
+    .nav {
+      display: grid;
+      gap: 0.35rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .nav button,
+    .pill-button,
+    .primary-button,
+    .ghost-button,
+    .chip {
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      cursor: pointer;
+      transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+    }
+
+    .nav button {
+      width: 100%;
+      padding: 0.72rem 0.8rem;
+      background: transparent;
+      color: var(--cp-text);
+      text-align: left;
+    }
+
+    .nav button:hover,
+    .pill-button:hover,
+    .ghost-button:hover,
+    .chip:hover {
+      border-color: var(--cp-border-strong);
+      background: var(--cp-surface-soft);
+    }
+
+    .nav button.active,
+    .pill-button.active,
+    .chip.active {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-weight: 700;
+    }
+
+    .sidebar-card,
+    .card,
+    .hero,
+    .activity,
+    .timeline-item,
+    .planner-row,
+    .subject-card {
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+      box-shadow: 0 0 2px var(--cp-border), 0 1px 2px var(--cp-border);
+    }
+
+    .sidebar-card {
+      padding: 1rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .sidebar-card h2,
+    .card h3,
+    .activity h3,
+    .subject-card h3,
+    .timeline-item h3 {
+      margin: 0 0 0.45rem;
+      font-size: 1rem;
+    }
+
+    .progress-ring {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .ring {
+      display: grid;
+      width: 4rem;
+      height: 4rem;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--cp-accent) var(--progress), var(--cp-surface-soft) 0);
+    }
+
+    .ring span {
+      display: grid;
+      width: 3rem;
+      height: 3rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    main {
+      min-width: 0;
+      padding: 1.5rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 1rem;
+      align-items: stretch;
+      padding: 1.3rem;
+      margin-bottom: 1rem;
+      background:
+        linear-gradient(135deg, var(--cp-surface), var(--cp-accent-soft)),
+        var(--cp-surface);
+    }
+
+    .section-kicker {
+      margin: 0 0 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero h2 {
+      margin: 0;
+      max-width: 58rem;
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+    }
+
+    .hero p {
+      max-width: 52rem;
+      color: var(--cp-text-muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+    }
+
+    .hero-panel {
+      display: grid;
+      align-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-panel);
+    }
+
+    .hero-stat {
+      display: grid;
+      gap: 0.25rem;
+      padding: 0.85rem;
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      border: 1px solid var(--cp-border);
+    }
+
+    .hero-stat strong {
+      font-size: 1.6rem;
+      letter-spacing: -0.04em;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+      justify-content: space-between;
+      margin: 1rem 0;
+    }
+
+    .controls,
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .pill-button,
+    .primary-button,
+    .ghost-button,
+    .chip {
+      padding: 0.6rem 0.8rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+    }
+
+    .primary-button {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      font-weight: 800;
+    }
+
+    .primary-button:hover {
+      background: var(--cp-accent-hover);
+    }
+
+    .ghost-button {
+      background: transparent;
+    }
+
+    select,
+    input[type="text"],
+    textarea {
+      min-height: 2.6rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      padding: 0.6rem 0.75rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 1rem;
+    }
+
+    .big-card {
+      padding: 1.2rem;
+    }
+
+    .card-header {
+      display: flex;
+      gap: 1rem;
+      align-items: start;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.32rem 0.55rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 999px;
+      background: var(--cp-surface-soft);
+      color: var(--cp-text-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.accent {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+    }
+
+    .subject-card {
+      padding: 1rem;
+      cursor: pointer;
+    }
+
+    .subject-card.active {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent-soft);
+    }
+
+    .subject-icon {
+      display: grid;
+      width: 2.4rem;
+      height: 2.4rem;
+      place-items: center;
+      margin-bottom: 0.75rem;
+      border-radius: 0.625rem;
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-weight: 900;
+    }
+
+    .activity {
+      display: grid;
+      gap: 0.8rem;
+      padding: 1rem;
+    }
+
+    .activity-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-start;
+      padding: 0.7rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-bg-elevated);
+    }
+
+    .check-row input {
+      width: 1rem;
+      height: 1rem;
+      margin-top: 0.2rem;
+      accent-color: var(--cp-accent);
+    }
+
+    .planner-row {
+      display: grid;
+      grid-template-columns: 7rem 1fr auto;
+      gap: 0.8rem;
+      align-items: center;
+      padding: 0.8rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .planner-time {
+      color: var(--cp-accent);
+      font-weight: 800;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 8rem 1fr;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .term-label {
+      color: var(--cp-accent);
+      font-weight: 900;
+    }
+
+    .list {
+      display: grid;
+      gap: 0.45rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      position: relative;
+      padding-left: 1.1rem;
+      color: var(--cp-text-muted);
+      line-height: 1.45;
+    }
+
+    .list li::before {
+      content: "";
+      position: absolute;
+      top: 0.62rem;
+      left: 0;
+      width: 0.38rem;
+      height: 0.38rem;
+      border-radius: 50%;
+      background: var(--cp-accent);
+    }
+
+    .note {
+      padding: 0.9rem;
+      border-left: 0.25rem solid var(--cp-accent);
+      border-radius: 0.625rem;
+      background: var(--cp-accent-soft);
+      color: var(--cp-text);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .small {
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .reflection {
+      width: 100%;
+      min-height: 6rem;
+      resize: vertical;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--cp-border);
+      }
+
+      .nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .hero,
+      .grid.cols-2,
+      .grid.cols-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      main,
+      .sidebar {
+        padding: 1rem;
+      }
+
+      .nav {
+        grid-template-columns: 1fr;
+      }
+
+      .planner-row,
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">Y1</div>
+        <div>
+          <h1>Home Learning Studio</h1>
+          <p>England Year 1 + global best practice</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <button class="active" data-view="today">Today</button>
+        <button data-view="curriculum">Curriculum Map</button>
+        <button data-view="activities">Activity Builder</button>
+        <button data-view="progress">Progress</button>
+        <button data-view="principles">Design Principles</button>
+      </nav>
+
+      <section class="sidebar-card">
+        <h2>Learning balance</h2>
+        <div class="progress-ring">
+          <div class="ring" id="progressRing" style="--progress: 0deg"><span id="progressText">0%</span></div>
+          <p class="small">Complete today's activities to build a gentle evidence trail without turning home into school.</p>
+        </div>
+      </section>
+
+      <section class="sidebar-card">
+        <h2>Expert default</h2>
+        <p class="small">Short explicit lessons, daily reading, concrete maths, outdoor observation, creative projects, and plenty of play.</p>
+      </section>
+    </aside>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="section-kicker">Prototype v1</p>
+          <h2>A calm, joyful Year 1 learning companion.</h2>
+          <p>Built around England's Year 1 expectations, enriched with Singapore-style maths, Finnish play and outdoor learning, IB inquiry, Montessori independence, and knowledge-rich projects.</p>
+          <div class="chips" aria-label="Curriculum blend">
+            <span class="badge accent">England core</span>
+            <span class="badge">Singapore maths</span>
+            <span class="badge">Finnish play</span>
+            <span class="badge">IB inquiry</span>
+            <span class="badge">Montessori habits</span>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="hero-stat">
+            <span class="small">Recommended rhythm</span>
+            <strong>2.5-3h</strong>
+            <span class="small">focused learning across the day</span>
+          </div>
+          <div class="hero-stat">
+            <span class="small">Age fit</span>
+            <strong>5-6</strong>
+            <span class="small">Year 1 in England</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="today" class="view active">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Daily plan</p>
+            <h2>Today's learning menu</h2>
+          </div>
+          <div class="controls">
+            <select id="dayType" aria-label="Choose day type">
+              <option value="balanced">Balanced day</option>
+              <option value="light">Light day</option>
+              <option value="outdoor">Outdoor-rich day</option>
+              <option value="project">Project day</option>
+            </select>
+            <button class="primary-button" id="refreshDay">Refresh plan</button>
+          </div>
+        </div>
+
+        <div id="dailyPlan"></div>
+
+        <div class="grid cols-2">
+          <section class="card big-card">
+            <div class="card-header">
+              <div>
+                <p class="section-kicker">Parent prompt</p>
+                <h3>Observe, don't over-test</h3>
+              </div>
+              <span class="badge accent">Today</span>
+            </div>
+            <p class="muted">Notice one thing he can do independently, one thing that needs modelling, and one thing that sparked curiosity. That is enough evidence for the day.</p>
+            <textarea class="reflection" id="reflection" placeholder="Quick note: what worked, what was hard, what should we repeat?"></textarea>
+          </section>
+
+          <section class="card big-card">
+            <div class="card-header">
+              <div>
+                <p class="section-kicker">Weekly focus</p>
+                <h3 id="weeklyFocusTitle">Autumn foundations</h3>
+              </div>
+              <span class="badge">Week 1</span>
+            </div>
+            <ul class="list" id="weeklyFocus"></ul>
+          </section>
+        </div>
+      </section>
+
+      <section id="curriculum" class="view">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Annual map</p>
+            <h2>Year 1 curriculum spine</h2>
+          </div>
+          <div class="controls">
+            <button class="pill-button active" data-term="autumn">Autumn</button>
+            <button class="pill-button" data-term="spring">Spring</button>
+            <button class="pill-button" data-term="summer">Summer</button>
+          </div>
+        </div>
+        <div class="timeline" id="termMap"></div>
+      </section>
+
+      <section id="activities" class="view">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Activity builder</p>
+            <h2>Pick a subject and generate a lesson</h2>
+          </div>
+          <div class="controls">
+            <select id="activityTerm" aria-label="Choose term">
+              <option value="autumn">Autumn</option>
+              <option value="spring">Spring</option>
+              <option value="summer">Summer</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid cols-3" id="subjectGrid"></div>
+        <div class="activity" id="activityCard"></div>
+      </section>
+
+      <section id="progress" class="view">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Progress without pressure</p>
+            <h2>Evidence dashboard</h2>
+          </div>
+          <button class="ghost-button" id="resetProgress">Reset saved progress</button>
+        </div>
+        <div class="grid cols-3" id="progressGrid"></div>
+        <section class="card big-card">
+          <p class="section-kicker">Portfolio notes</p>
+          <h3>Saved parent reflection</h3>
+          <p class="muted" id="savedReflection">No reflection saved yet.</p>
+        </section>
+      </section>
+
+      <section id="principles" class="view">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Learning philosophy</p>
+            <h2>Why this blend works for Year 1</h2>
+          </div>
+        </div>
+        <div class="grid cols-2" id="principleGrid"></div>
+        <div class="note">
+          <strong>Parenting guardrail:</strong> the app should help you plan and notice learning, not create pressure. For Year 1, consistency, conversation, sleep, movement, books, and confidence matter as much as formal output.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const subjects = [
+      {
+        id: "english",
+        name: "English",
+        icon: "Aa",
+        source: "England Year 1",
+        colour: "Literacy",
+        targets: ["phonics and decoding", "common exception words", "sentence writing", "handwriting", "daily story talk"],
+        activities: {
+          autumn: {
+            title: "Phonics treasure hunt",
+            steps: ["Choose one grapheme such as sh, ch, ai or ee.", "Hide 8 word cards around the room.", "Read each word, sort real and alien words, then use two in spoken sentences."],
+            stretch: "Write one sentence with a capital letter, finger spaces and a full stop."
+          },
+          spring: {
+            title: "Retell and innovate a story",
+            steps: ["Read a familiar picture book.", "Map beginning, middle and end with quick drawings.", "Change one character or setting and retell the new version aloud."],
+            stretch: "Write three linked sentences using and."
+          },
+          summer: {
+            title: "Young author's workshop",
+            steps: ["Plan a 5-page mini book.", "Say each sentence before writing.", "Read it back and edit one spelling, one punctuation mark and one interesting word."],
+            stretch: "Add a contents page or blurb."
+          }
+        }
+      },
+      {
+        id: "maths",
+        name: "Maths",
+        icon: "123",
+        source: "England + Singapore",
+        colour: "Number sense",
+        targets: ["place value to 100", "addition and subtraction", "equal groups", "halves and quarters", "measure and geometry"],
+        activities: {
+          autumn: {
+            title: "Concrete-pictorial-abstract number bonds",
+            steps: ["Build 10 with counters, cubes or pasta.", "Draw part-whole models for each pair.", "Write matching equations such as 7 + 3 = 10 and 10 - 7 = 3."],
+            stretch: "Find all number bonds to 20 using two ten-frames."
+          },
+          spring: {
+            title: "Shopkeeper subtraction",
+            steps: ["Set up a pretend shop with prices to 20p.", "Pay with counters or coins.", "Work out change by counting on."],
+            stretch: "Record three number sentences from the shop."
+          },
+          summer: {
+            title: "Measurement investigation",
+            steps: ["Choose five household objects.", "Estimate and measure with cubes, hands or a ruler.", "Order shortest to longest and explain how you know."],
+            stretch: "Make a bar chart of the results."
+          }
+        }
+      },
+      {
+        id: "science",
+        name: "Science",
+        icon: "Sci",
+        source: "England + Finland",
+        colour: "Observation",
+        targets: ["plants", "animals including humans", "everyday materials", "seasonal changes", "asking questions"],
+        activities: {
+          autumn: {
+            title: "Season detective walk",
+            steps: ["Go outside for 15 minutes.", "Collect or photograph three signs of the season.", "Describe what has changed using see, hear, feel and wonder."],
+            stretch: "Start a weekly weather and daylight log."
+          },
+          spring: {
+            title: "Plant growth lab",
+            steps: ["Plant two seeds in different conditions.", "Predict which will grow best.", "Observe twice a week with drawings and simple labels."],
+            stretch: "Measure growth and compare the results."
+          },
+          summer: {
+            title: "Material engineers",
+            steps: ["Test paper, foil, cloth and plastic.", "Sort by bendy, waterproof, transparent and strong.", "Choose the best material for a toy boat or shelter."],
+            stretch: "Explain why one material was unsuitable."
+          }
+        }
+      },
+      {
+        id: "humanities",
+        name: "Humanities",
+        icon: "Map",
+        source: "England + knowledge-rich",
+        colour: "World knowledge",
+        targets: ["local area", "maps", "changes within living memory", "significant people", "family history"],
+        activities: {
+          autumn: {
+            title: "My world map",
+            steps: ["Draw a simple map of home or the street.", "Add symbols and a key.", "Use left, right, near and far to describe a route."],
+            stretch: "Compare your map with an online or printed map."
+          },
+          spring: {
+            title: "Then and now interview",
+            steps: ["Ask an older relative about school, toys or transport.", "Record three similarities and three differences.", "Make a tiny museum label for one object."],
+            stretch: "Place the memory on a family timeline."
+          },
+          summer: {
+            title: "Great person spotlight",
+            steps: ["Choose a significant person from science, arts, exploration or service.", "Learn three facts.", "Explain how they changed something for others."],
+            stretch: "Create a poster with a quote bubble."
+          }
+        }
+      },
+      {
+        id: "creative",
+        name: "Creative Arts",
+        icon: "Art",
+        source: "Reggio + England",
+        colour: "Expression",
+        targets: ["drawing and painting", "making", "music and rhythm", "drama", "responding to artists"],
+        activities: {
+          autumn: {
+            title: "Nature colour studio",
+            steps: ["Collect natural colours outside.", "Mix paint or crayons to match them.", "Create a seasonal picture and describe your choices."],
+            stretch: "Name warm and cool colours."
+          },
+          spring: {
+            title: "Sound story",
+            steps: ["Pick a short story.", "Choose body percussion or objects for key moments.", "Perform the story with sounds in the right order."],
+            stretch: "Draw a simple sound score."
+          },
+          summer: {
+            title: "Design, make, improve",
+            steps: ["Build a model playground, vehicle or creature.", "Test it against one goal.", "Improve one part and explain the change."],
+            stretch: "Photograph before and after."
+          }
+        }
+      },
+      {
+        id: "life",
+        name: "Life Skills",
+        icon: "Do",
+        source: "Montessori + wellbeing",
+        colour: "Independence",
+        targets: ["self-care", "chores", "focus", "emotional language", "movement"],
+        activities: {
+          autumn: {
+            title: "Independence routine",
+            steps: ["Choose one practical task: pack bag, prepare snack or tidy desk.", "Model it slowly once.", "Let him do it independently and self-check."],
+            stretch: "Create a picture checklist."
+          },
+          spring: {
+            title: "Feelings weather report",
+            steps: ["Name today's feeling as weather.", "Draw it.", "Choose one regulation tool: breath, movement, cuddle, quiet corner or music."],
+            stretch: "Notice how the feeling changes later."
+          },
+          summer: {
+            title: "Community helper project",
+            steps: ["Choose one helpful job at home or nearby.", "Practise it safely.", "Reflect on who it helped and why it mattered."],
+            stretch: "Write or draw a thank-you note."
+          }
+        }
+      }
+    ];
+
+    const termMap = {
+      autumn: [
+        {
+          phase: "Weeks 1-4",
+          title: "Settle, assess and build routines",
+          points: ["Daily phonics and story time", "Number bonds, counting, comparison and subitising", "Seasonal change walks", "Home routines and independent learning habits"]
+        },
+        {
+          phase: "Weeks 5-8",
+          title: "Foundations of fluent practice",
+          points: ["Read decodable books matched to phonics", "Part-whole models and addition within 20", "Materials sorting and vocabulary", "Local area maps and family stories"]
+        },
+        {
+          phase: "Weeks 9-12",
+          title: "First project outcome",
+          points: ["Write short recounts and labels", "Apply maths through shops, measures and games", "Create a seasonal portfolio", "Perform a story, song or model explanation"]
+        }
+      ],
+      spring: [
+        {
+          phase: "Weeks 1-4",
+          title: "Grow confidence and explanation",
+          points: ["Retell, innovate and sequence stories", "Add and subtract with reasoning", "Plant investigations", "Then-and-now family history"]
+        },
+        {
+          phase: "Weeks 5-8",
+          title: "Deeper number and inquiry",
+          points: ["Common exception word fluency", "Equal groups and early multiplication language", "Animal and human body knowledge", "Map symbols and simple geography"]
+        },
+        {
+          phase: "Weeks 9-12",
+          title: "Make learning visible",
+          points: ["Write instructions and information pages", "Use bar models and number lines", "Compare seed growth results", "Create a mini exhibition"]
+        }
+      ],
+      summer: [
+        {
+          phase: "Weeks 1-4",
+          title: "Apply and connect",
+          points: ["Independent reading stamina", "Place value to 100 and measures", "Material testing", "Significant people and change"]
+        },
+        {
+          phase: "Weeks 5-8",
+          title: "Project-led mastery",
+          points: ["Plan, write and edit mini books", "Fractions as halves and quarters", "Outdoor science and data", "Design, make, improve cycles"]
+        },
+        {
+          phase: "Weeks 9-12",
+          title: "Celebrate readiness for Year 2",
+          points: ["Portfolio conference", "Maths games tournament", "Science explanation video or poster", "Reflection on strengths, interests and next steps"]
+        }
+      ]
+    };
+
+    const principles = [
+      {
+        title: "England as the spine",
+        body: "Keeps the app aligned to Year 1 expectations for phonics, reading, writing, maths, science, humanities, arts and PE-style movement."
+      },
+      {
+        title: "Singapore maths for depth",
+        body: "Uses concrete-pictorial-abstract learning, number bonds, bar-style thinking and reasoning before rushing into abstract worksheets."
+      },
+      {
+        title: "Finnish early years influence",
+        body: "Protects play, movement, outdoors, wellbeing and curiosity so formal learning stays age-appropriate."
+      },
+      {
+        title: "IB PYP inquiry habits",
+        body: "Frames projects around questions, concepts, reflection and learner agency rather than isolated facts only."
+      },
+      {
+        title: "Montessori independence",
+        body: "Builds practical life skills, self-correction, choice and calm concentration into the weekly rhythm."
+      },
+      {
+        title: "Knowledge-rich projects",
+        body: "Adds carefully chosen background knowledge so vocabulary, reading comprehension and curiosity grow together."
+      }
+    ];
+
+    const dayTemplates = {
+      balanced: [
+        ["09:15", "Phonics and reading", "20 minutes explicit phonics, 10 minutes decodable reading"],
+        ["10:00", "Maths", "Concrete activity first, then quick pictorial or written practice"],
+        ["11:15", "Outdoor science or movement", "Observe, move, collect vocabulary and talk"],
+        ["13:30", "Story, writing or project", "Retell, draw, write, make or present"],
+        ["15:15", "Life skill", "Practical independence task and calm reflection"]
+      ],
+      light: [
+        ["09:30", "Reading cuddle", "One decodable book and one rich read-aloud"],
+        ["10:15", "Maths game", "Number bonds, dice, cards or counting in context"],
+        ["14:00", "Creative choice", "Drawing, building, music, small-world play or outdoor nature task"]
+      ],
+      outdoor: [
+        ["09:15", "Phonics warm-up", "Short sound review before leaving the house"],
+        ["10:00", "Nature inquiry", "Season, plants, materials or map observation walk"],
+        ["13:30", "Maths outside", "Measure, count, compare, sort or create patterns outdoors"],
+        ["15:00", "Portfolio capture", "Draw, label or dictate what was discovered"]
+      ],
+      project: [
+        ["09:15", "Question launch", "Choose a big question and list what we know and wonder"],
+        ["10:00", "Skill mini-lessons", "Phonics, maths and vocabulary connected to the project"],
+        ["13:00", "Make and test", "Build, write, draw, perform or investigate"],
+        ["15:00", "Share", "Explain the project to a parent, toy audience or camera"]
+      ]
+    };
+
+    const weeklyFocus = [
+      "Read aloud every day: one decodable book, one joyful choice book.",
+      "Keep maths concrete before written: counters, ten-frames, blocks, coins and measuring objects.",
+      "Use talk as the bridge to writing: say it, clap it, count words, then write.",
+      "Capture evidence lightly: a photo, a quote, a drawing or one sentence is enough."
+    ];
+
+    const state = {
+      activeSubject: "english",
+      term: "autumn",
+      progress: JSON.parse(localStorage.getItem("year1-progress") || "{}"),
+      reflection: localStorage.getItem("year1-reflection") || ""
+    };
+
+    const navButtons = document.querySelectorAll(".nav button");
+    const views = document.querySelectorAll(".view");
+    const dailyPlan = document.getElementById("dailyPlan");
+    const progressRing = document.getElementById("progressRing");
+    const progressText = document.getElementById("progressText");
+    const termMapEl = document.getElementById("termMap");
+    const subjectGrid = document.getElementById("subjectGrid");
+    const activityCard = document.getElementById("activityCard");
+    const progressGrid = document.getElementById("progressGrid");
+    const reflection = document.getElementById("reflection");
+    const savedReflection = document.getElementById("savedReflection");
+
+    function saveProgress() {
+      localStorage.setItem("year1-progress", JSON.stringify(state.progress));
+      renderProgress();
+    }
+
+    function completion() {
+      const total = subjects.length + dayTemplates[document.getElementById("dayType").value].length;
+      const done = Object.values(state.progress).filter(Boolean).length;
+      return Math.min(100, Math.round((done / total) * 100));
+    }
+
+    function renderDailyPlan() {
+      const type = document.getElementById("dayType").value;
+      dailyPlan.innerHTML = dayTemplates[type].map(([time, title, detail], index) => {
+        const id = `day-${type}-${index}`;
+        return `
+          <label class="planner-row">
+            <span class="planner-time">${time}</span>
+            <span><strong>${title}</strong><br><span class="small">${detail}</span></span>
+            <input type="checkbox" data-progress="${id}" ${state.progress[id] ? "checked" : ""} aria-label="Mark ${title} complete" />
+          </label>
+        `;
+      }).join("");
+      bindChecks();
+      renderProgress();
+    }
+
+    function renderWeeklyFocus() {
+      document.getElementById("weeklyFocus").innerHTML = weeklyFocus.map(item => `<li>${item}</li>`).join("");
+    }
+
+    function renderTermMap(term = state.term) {
+      termMapEl.innerHTML = termMap[term].map(item => `
+        <article class="timeline-item">
+          <div class="term-label">${item.phase}</div>
+          <div>
+            <h3>${item.title}</h3>
+            <ul class="list">${item.points.map(point => `<li>${point}</li>`).join("")}</ul>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderSubjects() {
+      subjectGrid.innerHTML = subjects.map(subject => `
+        <article class="subject-card ${state.activeSubject === subject.id ? "active" : ""}" data-subject="${subject.id}">
+          <div class="subject-icon">${subject.icon}</div>
+          <h3>${subject.name}</h3>
+          <p class="small">${subject.source}</p>
+          <div class="activity-meta">
+            ${subject.targets.slice(0, 3).map(target => `<span class="badge">${target}</span>`).join("")}
+          </div>
+        </article>
+      `).join("");
+
+      document.querySelectorAll("[data-subject]").forEach(card => {
+        card.addEventListener("click", () => {
+          state.activeSubject = card.dataset.subject;
+          renderSubjects();
+          renderActivity();
+        });
+      });
+    }
+
+    function renderActivity() {
+      const term = document.getElementById("activityTerm").value;
+      const subject = subjects.find(item => item.id === state.activeSubject);
+      const activity = subject.activities[term];
+      const id = `subject-${subject.id}-${term}`;
+
+      activityCard.innerHTML = `
+        <div class="card-header">
+          <div>
+            <p class="section-kicker">${subject.name} · ${subject.source}</p>
+            <h3>${activity.title}</h3>
+          </div>
+          <label class="badge accent">
+            <input type="checkbox" data-progress="${id}" ${state.progress[id] ? "checked" : ""} aria-label="Mark activity complete" />
+            Done
+          </label>
+        </div>
+        <div class="activity-meta">
+          ${subject.targets.map(target => `<span class="badge">${target}</span>`).join("")}
+        </div>
+        <ul class="list">${activity.steps.map(step => `<li>${step}</li>`).join("")}</ul>
+        <div class="note"><strong>Stretch:</strong> ${activity.stretch}</div>
+      `;
+      bindChecks();
+    }
+
+    function renderProgress() {
+      const percent = completion();
+      progressRing.style.setProperty("--progress", `${percent * 3.6}deg`);
+      progressText.textContent = `${percent}%`;
+
+      progressGrid.innerHTML = subjects.map(subject => {
+        const done = ["autumn", "spring", "summer"].filter(term => state.progress[`subject-${subject.id}-${term}`]).length;
+        return `
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="section-kicker">${subject.colour}</p>
+                <h3>${subject.name}</h3>
+              </div>
+              <span class="badge ${done ? "accent" : ""}">${done}/3</span>
+            </div>
+            <p class="small">${subject.targets.join(", ")}</p>
+          </article>
+        `;
+      }).join("");
+
+      savedReflection.textContent = state.reflection || "No reflection saved yet.";
+    }
+
+    function renderPrinciples() {
+      document.getElementById("principleGrid").innerHTML = principles.map(principle => `
+        <article class="card big-card">
+          <h3>${principle.title}</h3>
+          <p class="muted">${principle.body}</p>
+        </article>
+      `).join("");
+    }
+
+    function bindChecks() {
+      document.querySelectorAll("[data-progress]").forEach(check => {
+        check.addEventListener("change", () => {
+          state.progress[check.dataset.progress] = check.checked;
+          saveProgress();
+        });
+      });
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        navButtons.forEach(item => item.classList.remove("active"));
+        views.forEach(view => view.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(button.dataset.view).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll("[data-term]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-term]").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        state.term = button.dataset.term;
+        renderTermMap();
+      });
+    });
+
+    document.getElementById("dayType").addEventListener("change", renderDailyPlan);
+    document.getElementById("refreshDay").addEventListener("click", renderDailyPlan);
+    document.getElementById("activityTerm").addEventListener("change", renderActivity);
+    document.getElementById("resetProgress").addEventListener("click", () => {
+      state.progress = {};
+      state.reflection = "";
+      reflection.value = "";
+      localStorage.removeItem("year1-progress");
+      localStorage.removeItem("year1-reflection");
+      renderDailyPlan();
+      renderActivity();
+      renderProgress();
+    });
+
+    reflection.value = state.reflection;
+    reflection.addEventListener("input", () => {
+      state.reflection = reflection.value.trim();
+      localStorage.setItem("year1-reflection", state.reflection);
+      renderProgress();
+    });
+
+    renderDailyPlan();
+    renderWeeklyFocus();
+    renderTermMap();
+    renderSubjects();
+    renderActivity();
+    renderProgress();
+    renderPrinciples();
+  </script>
+</body>
+</html>
