@@ -852,6 +852,26 @@
         </div>
         <div class="grid cols-3" id="progressGrid"></div>
         <section class="card big-card">
+          <div class="card-header">
+            <div>
+              <p class="section-kicker">Incremental reflections</p>
+              <h3>Learning journal</h3>
+            </div>
+            <span class="badge accent" id="journalSaved">Autosaved locally</span>
+          </div>
+          <p class="muted">Capture one short note per week and subject. These notes stay in this browser and build your evidence trail over time.</p>
+          <div class="controls">
+            <select id="journalWeek" aria-label="Choose reflection week"></select>
+            <select id="journalSubject" aria-label="Choose reflection subject"></select>
+          </div>
+          <textarea class="reflection" id="progressReflection" placeholder="Example: Confident with number bonds to 10 using counters; still needs pictorial recording practice."></textarea>
+        </section>
+        <section class="card big-card">
+          <p class="section-kicker">Recent evidence notes</p>
+          <h3>Saved reflections</h3>
+          <div id="journalEntries"></div>
+        </section>
+        <section class="card big-card">
           <p class="section-kicker">Portfolio notes</p>
           <h3>Saved parent reflection</h3>
           <p class="muted" id="savedReflection">No reflection saved yet.</p>
@@ -1521,7 +1541,8 @@
       activeSubject: "english",
       term: "autumn",
       progress: JSON.parse(localStorage.getItem("year1-progress") || "{}"),
-      reflection: localStorage.getItem("year1-reflection") || ""
+      reflection: localStorage.getItem("year1-reflection") || "",
+      journal: JSON.parse(localStorage.getItem("year1-journal") || "{}")
     };
 
     const navButtons = document.querySelectorAll(".nav button");
@@ -1538,10 +1559,37 @@
     const lessonWeek = document.getElementById("lessonWeek");
     const lessonSubject = document.getElementById("lessonSubject");
     const lessonDetail = document.getElementById("lessonDetail");
+    const journalWeek = document.getElementById("journalWeek");
+    const journalSubject = document.getElementById("journalSubject");
+    const progressReflection = document.getElementById("progressReflection");
+    const journalEntries = document.getElementById("journalEntries");
+    const journalSaved = document.getElementById("journalSaved");
 
     function saveProgress() {
       localStorage.setItem("year1-progress", JSON.stringify(state.progress));
       renderProgress();
+    }
+
+    function saveJournal() {
+      localStorage.setItem("year1-journal", JSON.stringify(state.journal));
+      journalSaved.textContent = "Saved";
+      window.setTimeout(() => {
+        journalSaved.textContent = "Autosaved locally";
+      }, 900);
+      renderJournalEntries();
+    }
+
+    function journalKey(week, subject) {
+      return `week-${week}-${subject}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function completion() {
@@ -1750,12 +1798,77 @@
       `).join("");
     }
 
+    function renderJournalControls() {
+      journalWeek.innerHTML = detailedScheme.map(week => `
+        <option value="${week.week}">Week ${week.week} · ${termForWeek(week.week)} · ${week.theme}</option>
+      `).join("");
+
+      journalSubject.innerHTML = Object.entries(lessonSubjectMeta).map(([key, meta]) => `
+        <option value="${key}">${meta.name}</option>
+      `).join("");
+    }
+
+    function renderJournalEditor() {
+      const key = journalKey(journalWeek.value || 1, journalSubject.value || "english");
+      progressReflection.value = state.journal[key]?.text || "";
+    }
+
+    function updateJournalEntry(week, subject, text) {
+      const key = journalKey(week, subject);
+      const weekPlan = detailedScheme.find(item => item.week === Number(week));
+      if (text.trim()) {
+        state.journal[key] = {
+          week: Number(week),
+          term: termForWeek(Number(week)),
+          subject,
+          subjectName: lessonSubjectMeta[subject].name,
+          theme: weekPlan?.theme || "",
+          text: text.trim(),
+          updatedAt: new Date().toISOString()
+        };
+      } else {
+        delete state.journal[key];
+      }
+      saveJournal();
+    }
+
+    function renderJournalEntries() {
+      const entries = Object.values(state.journal).sort((a, b) => {
+        if (a.week !== b.week) return b.week - a.week;
+        return a.subjectName.localeCompare(b.subjectName);
+      });
+
+      journalEntries.innerHTML = entries.length ? entries.slice(0, 10).map(entry => `
+        <article class="check-row">
+          <div>
+            <strong>Week ${entry.week} · ${entry.subjectName}</strong>
+            <p class="small">${entry.term} · ${entry.theme}</p>
+            <p>${escapeHtml(entry.text)}</p>
+          </div>
+        </article>
+      `).join("") : `<p class="muted">No saved reflections yet. Add notes from the Progress page or directly inside a Lesson Library lesson.</p>`;
+    }
+
+    function lessonMode(subjectKey) {
+      const modes = {
+        english: "Table lesson plus oral rehearsal and book talk",
+        maths: "Hands-on manipulatives first, then worksheet recording",
+        science: "Physical investigation, outdoor observation or real-object sorting",
+        humanities: "Map/photo/object discussion plus notebook task",
+        creative: "Making, drawing, music or performance with a short reflection",
+        life: "Real household practice, movement or wellbeing routine"
+      };
+      return modes[subjectKey];
+    }
+
     function renderLessonDetail() {
       const weekPlan = detailedScheme.find(item => item.week === Number(lessonWeek.value)) || detailedScheme[0];
       const subjectKey = lessonSubject.value || "english";
       const meta = lessonSubjectMeta[subjectKey];
       const plan = subjectLessonPlan(subjectKey, weekPlan);
       const progressId = `lesson-${weekPlan.week}-${subjectKey}`;
+      const noteKey = journalKey(weekPlan.week, subjectKey);
+      const savedNote = state.journal[noteKey]?.text || "";
 
       lessonDetail.innerHTML = `
         <div class="lesson-layout">
@@ -1773,6 +1886,7 @@
             <div class="activity-meta">
               <span class="badge">${meta.duration}</span>
               <span class="badge">${weekPlan.theme}</span>
+              <span class="badge accent">${lessonMode(subjectKey)}</span>
               <span class="badge">${meta.global}</span>
             </div>
             <div class="note"><strong>Learning objective:</strong> ${plan.objective}</div>
@@ -1816,6 +1930,11 @@
               <h3>Evidence to keep</h3>
               <p class="muted">Keep the worksheet, a photo of practical work, or one dictated quote. Add a short note in Progress if something important happened.</p>
             </div>
+            <div class="no-print">
+              <h3>Lesson reflection</h3>
+              <p class="small">Autosaves to Progress for Week ${weekPlan.week} · ${plan.subjectName}.</p>
+              <textarea class="reflection" id="lessonReflection" placeholder="What did he understand, enjoy, resist, or need to revisit?">${escapeHtml(savedNote)}</textarea>
+            </div>
           </section>
 
           <aside class="worksheet">
@@ -1850,6 +1969,12 @@
         </div>
       `;
       bindChecks();
+      document.getElementById("lessonReflection").addEventListener("input", event => {
+        updateJournalEntry(weekPlan.week, subjectKey, event.target.value);
+        if (journalWeek.value === String(weekPlan.week) && journalSubject.value === subjectKey) {
+          progressReflection.value = event.target.value;
+        }
+      });
     }
 
     function renderProgress() {
@@ -1858,7 +1983,8 @@
       progressText.textContent = `${percent}%`;
 
       progressGrid.innerHTML = subjects.map(subject => {
-        const done = ["autumn", "spring", "summer"].filter(term => state.progress[`subject-${subject.id}-${term}`]).length;
+        const lessonDone = detailedScheme.filter(week => state.progress[`lesson-${week.week}-${subject.id}`]).length;
+        const journalDone = Object.values(state.journal).filter(entry => entry.subject === subject.id).length;
         return `
           <article class="card">
             <div class="card-header">
@@ -1866,14 +1992,16 @@
                 <p class="section-kicker">${subject.colour}</p>
                 <h3>${subject.name}</h3>
               </div>
-              <span class="badge ${done ? "accent" : ""}">${done}/3</span>
+              <span class="badge ${lessonDone ? "accent" : ""}">${lessonDone}/36 lessons</span>
             </div>
             <p class="small">${subject.targets.join(", ")}</p>
+            <p class="small"><strong>${journalDone}</strong> reflection notes saved.</p>
           </article>
         `;
       }).join("");
 
       savedReflection.textContent = state.reflection || "No reflection saved yet.";
+      renderJournalEntries();
     }
 
     function renderPrinciples() {
@@ -1917,13 +2045,21 @@
     document.getElementById("activityTerm").addEventListener("change", renderActivity);
     lessonWeek.addEventListener("change", renderLessonDetail);
     lessonSubject.addEventListener("change", renderLessonDetail);
+    journalWeek.addEventListener("change", renderJournalEditor);
+    journalSubject.addEventListener("change", renderJournalEditor);
+    progressReflection.addEventListener("input", event => {
+      updateJournalEntry(journalWeek.value || 1, journalSubject.value || "english", event.target.value);
+    });
     document.getElementById("printWorksheet").addEventListener("click", () => window.print());
     document.getElementById("resetProgress").addEventListener("click", () => {
       state.progress = {};
       state.reflection = "";
+      state.journal = {};
       reflection.value = "";
+      progressReflection.value = "";
       localStorage.removeItem("year1-progress");
       localStorage.removeItem("year1-reflection");
+      localStorage.removeItem("year1-journal");
       renderDailyPlan();
       renderActivity();
       renderLessonDetail();
@@ -1943,6 +2079,8 @@
     renderSubjects();
     renderActivity();
     renderLessonControls();
+    renderJournalControls();
+    renderJournalEditor();
     renderLessonDetail();
     renderProgress();
     renderPrinciples();
