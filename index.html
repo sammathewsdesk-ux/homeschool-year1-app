@@ -1627,101 +1627,116 @@
     function subjectLessonPlan(subjectKey, weekPlan) {
       const subject = weekPlan[subjectKey];
       const subjectName = lessonSubjectMeta[subjectKey].name;
+      const vocab = subject.vocabulary.join(", ");
+      const why = {
+        english: `This is an English lesson because it develops the ability to ${subject.skill.toLowerCase()} through spoken rehearsal, reading, vocabulary and sentence-level recording.`,
+        maths: `This is a Maths lesson because it develops the ability to ${subject.skill.toLowerCase()} through concrete objects, visual models, symbols and reasoning.`,
+        science: `This is a Science lesson because it develops the ability to ${subject.skill.toLowerCase()} through observing, testing, sorting, recording and explaining evidence.`,
+        humanities: `This is a Humanities lesson because it develops the ability to ${subject.skill.toLowerCase()} using maps, timelines, places, people, evidence and vocabulary.`,
+        creative: `This is a Creative Arts lesson because it develops the ability to ${subject.skill.toLowerCase()} through designing, making, performing, improving and explaining choices.`,
+        life: `This is a Life Skills lesson because it develops the ability to ${subject.skill.toLowerCase()} through real routines, independence, wellbeing and practical responsibility.`
+      };
+
       const shared = {
         objective: `I can ${subject.skill.toLowerCase()}.`,
-        parentScript: `Today we are learning about ${subject.topic.toLowerCase()}. First we will do it together, then you will try it with help, then you will show what you can do on your worksheet.`,
-        success: [`I can use the words ${subject.vocabulary.slice(0, 2).join(" and ")} correctly.`, "I can explain my answer or choice.", "I can complete the main worksheet task with care."]
+        parentScript: `Today is Week ${weekPlan.week}: ${weekPlan.theme}. In ${subjectName}, we are focusing on "${subject.topic}". We will start with a real experience, practise the key vocabulary (${vocab}), then record what you can do on the worksheet.`,
+        success: [
+          `I can explain or show the focus: ${subject.topic.toLowerCase()}.`,
+          `I can use at least two key words: ${subject.vocabulary.slice(0, 2).join(" and ")}.`,
+          `I can complete the worksheet task so someone else can see what I learned.`
+        ],
+        why: why[subjectKey]
       };
 
       const plans = {
         english: {
           steps: [
-            ["5 min", `Sound and word warm-up: say the key words aloud, clap syllables, then spot known sounds in ${subject.content}.`],
-            ["10 min", "Teach/model: read or tell a short example, thinking aloud about sounds, words and sentence meaning."],
-            ["10 min", "Guided practice: build or orally rehearse three words/sentences together before writing."],
-            ["10-15 min", "Independent worksheet: complete the reading/writing tasks, saying each sentence before writing."],
-            ["5 min", "Review: read the work aloud and fix one thing: spelling, spacing, capital letter or full stop."]
+            ["5 min", `Phonics/oral warm-up: read, tap or clap the focus content: ${subject.content}. If it is a sentence or book task, say it aloud first and identify tricky words.`],
+            ["8 min", `Model: parent demonstrates the exact English skill - ${subject.skill.toLowerCase()} - using one example from ${subject.content}. Say your thinking out loud.`],
+            ["10 min", `Guided practice: child reads, builds, retells or orally rehearses 3 examples linked to "${subject.topic}". Correct gently and repeat successful attempts.`],
+            ["12-18 min", "Worksheet recording: child writes labels, words, captions or sentences. Say each sentence first, count the words, then write."],
+            ["5 min", "Review aloud: child reads back the work and chooses one edit: sound, spelling, finger space, capital letter, full stop or clearer word."]
           ],
           worksheet: [
-            `Read or build these focus items: ${subject.content}.`,
-            `Write three words or labels using today's focus.`,
-            "Write one full sentence. Check capital letter, finger spaces and full stop.",
-            "Draw a small picture to match your sentence."
+            { title: "Read and mark", body: `Read/build: ${subject.content}. Add sound buttons, underline the tricky part, or circle the key word pattern.` },
+            { title: "Vocabulary link", body: `Use these words in talk before writing: ${vocab}. Parent asks: "Which word best fits your idea, and why?"` },
+            { title: "Main writing task", body: `Write 1-3 words, labels, captions or sentences about "${subject.topic}". Use today's focus content: ${subject.content}.` },
+            { title: "Check and improve", body: "Tick when checked: capital letter, finger spaces, full stop, reread aloud, one improvement made." }
           ]
         },
         maths: {
           steps: [
-            ["5 min", "Fluency warm-up: count forwards and backwards, then show a number with fingers or objects."],
-            ["10 min", `Concrete teach: use real objects for ${subject.content}; parent models the maths language precisely.`],
-            ["10 min", "Pictorial practice: draw the objects, ten-frame, number line, shape or table."],
-            ["10-15 min", "Abstract/worksheet: record numbers, symbols or explanations after the practical work."],
-            ["5 min", "Reasoning: ask, 'How do you know?' and invite your child to prove one answer."]
+            ["5 min", `Fluency warm-up: count, subitise or recall facts connected to "${subject.topic}". Keep it brisk and oral.`],
+            ["10 min", `Concrete stage: build ${subject.content} with counters, toys, coins, cubes, paper shapes or real objects. Parent uses the exact words: ${vocab}.`],
+            ["10 min", `Pictorial stage: draw the model for ${subject.content} using a ten-frame, part-whole model, number line, table, shape diagram or bar-style sketch.`],
+            ["10-15 min", `Abstract stage: record numbers, symbols or short answers linked to "${subject.topic}". Do not record before the practical model is understood.`],
+            ["5 min", "Reasoning: ask 'How do you know?', 'Can you show it another way?' and 'What mistake might someone make here?'"]
           ],
           worksheet: [
-            `Make or draw ${subject.content}.`,
-            "Complete six carefully chosen examples using pictures first.",
-            "Solve one story problem and explain your strategy.",
-            "Create one similar problem for an adult to solve."
+            { title: "Build it", body: `Use objects to make: ${subject.content}. Draw what you built before writing numbers.` },
+            { title: "Record it", body: `Complete 4-6 examples for "${subject.topic}". Use pictures, number lines, ten-frames, equations or labels as appropriate.` },
+            { title: "Explain it", body: `Use at least two maths words (${vocab}) to explain one answer to an adult.` },
+            { title: "Challenge", body: `Make your own similar ${subjectName} problem about ${subject.content}; ask an adult to solve it and check their answer.` }
           ]
         },
         science: {
           steps: [
-            ["5 min", "Wonder question: ask what your child notices and wonders about the topic."],
-            ["10 min", `Explore: handle, observe, test or look closely at ${subject.content}.`],
-            ["10 min", "Vocabulary teach: practise the key words and connect them to real observations."],
-            ["10-20 min", "Worksheet/investigation record: draw, label, sort, measure or record evidence."],
-            ["5 min", "Conclusion: finish the sentence, 'I found out that...' using because if possible."]
+            ["5 min", `Question launch: "What do you already know about ${subject.topic.toLowerCase()}? What do you wonder?" Record one spoken wondering.`],
+            ["10-15 min", `Hands-on investigation: use ${subject.content}. Observe, sort, test, compare, measure or draw before any written answer.`],
+            ["8 min", `Vocabulary teach: connect ${vocab} to real evidence. Child points to an example and says the matching word.`],
+            ["10-15 min", `Worksheet record: draw, label, tally, table, sequence or conclusion for "${subject.topic}".`],
+            ["5 min", `Scientific conclusion: child completes orally or in writing: "I found out that... because..." linked to ${subject.content}.`]
           ],
           worksheet: [
-            `Draw or record what you observed in ${subject.content}.`,
-            `Use these words in labels or speech bubbles: ${subject.vocabulary.join(", ")}.`,
-            "Answer: What changed, matched, worked best, or surprised you?",
-            "Write or dictate one because sentence."
+            { title: "Observe/test", body: `Use the real investigation: ${subject.content}. Draw or record exactly what you saw, tested or sorted.` },
+            { title: "Label with science words", body: `Add labels using: ${vocab}. Each label must point to evidence in the drawing, object or result.` },
+            { title: "Sort or record", body: `Make a simple table, tally, sequence or comparison for "${subject.topic}".` },
+            { title: "Conclusion", body: "Finish: I found out that __________________ because __________________." }
           ]
         },
         humanities: {
           steps: [
-            ["5 min", "Big question: look at a map, photo, object or timeline and say what you already know."],
-            ["10 min", `Knowledge input: teach the key facts for ${subject.topic.toLowerCase()} using simple examples.`],
-            ["10 min", "Talk task: compare, sequence, locate or describe using the vocabulary."],
-            ["10-15 min", "Worksheet: map, timeline, fact card, comparison grid or labelled drawing."],
-            ["5 min", "Explain: your child answers one 'how' or 'why' question aloud."]
+            ["5 min", `Big-question starter: show the map, object, photo or timeline for ${subject.content}. Ask: "What clues can we see?"`],
+            ["10 min", `Knowledge input: teach 2-3 precise facts about "${subject.topic}" and rehearse the key words: ${vocab}.`],
+            ["10 min", `Active task: locate, sequence, compare, interview, role-play or sort the evidence linked to ${subject.content}.`],
+            ["10-15 min", `Worksheet record: create the map, timeline, fact card, comparison grid or labelled explanation for "${subject.topic}".`],
+            ["5 min", "Explain like a historian/geographer: child answers one 'where', 'when', 'how has it changed?' or 'why is it important?' question."]
           ],
           worksheet: [
-            `Complete the main task: ${subject.content}.`,
-            `Use at least three words: ${subject.vocabulary.join(", ")}.`,
-            "Draw, label or sequence the key information.",
-            "Tell an adult one new thing you know now."
+            { title: "Evidence starter", body: `Look at or create: ${subject.content}. Circle, label or list three clues.` },
+            { title: "Knowledge words", body: `Use at least three of these words accurately: ${vocab}.` },
+            { title: "Main record", body: `Complete a map, timeline, route, comparison grid or fact card for "${subject.topic}".` },
+            { title: "Explain", body: "Tell an adult: One thing I know now is __________. I know because __________." }
           ]
         },
         creative: {
           steps: [
-            ["5 min", "Look and notice: study an example, object, sound or material."],
-            ["10 min", `Skill model: demonstrate one technique needed for ${subject.content}.`],
-            ["20-35 min", "Create: let your child make choices while you coach care, persistence and vocabulary."],
-            ["5 min", "Improve: choose one small change to make the work stronger."],
-            ["5 min", "Gallery talk: child names what they made, what they chose and what they might try next."]
+            ["5 min", `Look/listen/notice: study the material, example, sound or image connected to ${subject.content}. Name what you notice.`],
+            ["8 min", `Skill model: parent demonstrates one technique for "${subject.topic}" - line, shape, rhythm, texture, joining, composing or performing.`],
+            ["20-35 min", `Create: child makes ${subject.content}. Encourage choice, experimentation and vocabulary rather than copying perfectly.`],
+            ["5 min", "Improve: pause and choose one improvement - add detail, strengthen, change colour, rehearse again or make the pattern clearer."],
+            ["5 min", `Gallery talk: child explains choices using ${vocab} and says what they would try next time.`]
           ],
           worksheet: [
-            `Plan your creative outcome: ${subject.content}.`,
-            "Draw a quick design before making.",
-            `Label your choices using: ${subject.vocabulary.join(", ")}.`,
-            "After making, circle: I kept going / I improved / I tried something new."
+            { title: "Design plan", body: `Sketch or plan your creative outcome: ${subject.content}. Label the materials or sounds you will use.` },
+            { title: "Make/create", body: `Create the work for "${subject.topic}". Try at least one technique from the teaching flow.` },
+            { title: "Artist words", body: `Use these words to label or explain your work: ${vocab}.` },
+            { title: "Evaluate", body: "Circle one: I added detail / I improved it / I tried a new idea. Write or say what changed." }
           ]
         },
         life: {
           steps: [
-            ["3 min", "Connect: explain why this practical habit matters in real life."],
-            ["7 min", "Model: adult silently demonstrates the task slowly from start to finish."],
-            ["10-15 min", `Child practice: complete ${subject.content} with minimal prompting.`],
-            ["5 min", "Self-check: child checks quality using the worksheet checklist."],
-            ["5 min", "Reflect: name one thing that felt easier and one thing to practise next time."]
+            ["3 min", `Real-life link: explain when your child will actually need "${subject.topic}" at home, outside or with other people.`],
+            ["7 min", `Silent model: adult demonstrates ${subject.content} slowly without over-talking. Child watches for the order of steps.`],
+            ["10-15 min", `Child practice: child completes ${subject.content}. Adult prompts only with short cues, not full rescue.`],
+            ["5 min", `Self-check: child uses the words ${vocab} to check what went well and what still needs practice.`],
+            ["5 min", "Repeat in real life: decide when this habit will be practised again this week."]
           ],
           worksheet: [
-            `Do the practical task: ${subject.content}.`,
-            "Tick: I prepared / I tried / I checked / I tidied.",
-            `Use these words while explaining: ${subject.vocabulary.join(", ")}.`,
-            "Draw or write one thing I can now do more independently."
+            { title: "Do the real task", body: `Complete the practical task: ${subject.content}. This is the main learning, not an add-on.` },
+            { title: "Step checklist", body: "Tick when done: prepared carefully / tried independently / checked my work / tidied or reset." },
+            { title: "Use the habit words", body: `Explain the task using at least two words: ${vocab}.` },
+            { title: "Reflection", body: "Finish: I can now __________. Next time I will practise __________." }
           ]
         }
       };
@@ -1890,6 +1905,7 @@
               <span class="badge">${meta.global}</span>
             </div>
             <div class="note"><strong>Learning objective:</strong> ${plan.objective}</div>
+            <div class="note"><strong>Subject link:</strong> ${plan.why}</div>
             <p><strong>Parent script:</strong> ${plan.parentScript}</p>
             <div>
               <h3>Materials</h3>
@@ -1944,8 +1960,8 @@
             <p><strong>Today I am learning to:</strong> ${plan.subject.skill.toLowerCase()}.</p>
             ${plan.worksheet.map((task, index) => `
               <div class="worksheet-task">
-                <strong>Task ${index + 1}</strong>
-                <p>${task}</p>
+                <strong>Task ${index + 1}: ${task.title}</strong>
+                <p>${task.body}</p>
                 <div class="writing-lines">
                   <div class="writing-line"></div>
                   <div class="writing-line"></div>
