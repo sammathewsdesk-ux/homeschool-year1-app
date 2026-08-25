@@ -543,6 +543,105 @@
       resize: vertical;
     }
 
+    .lesson-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .lesson-panel {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .lesson-step {
+      display: grid;
+      grid-template-columns: 5.5rem 1fr;
+      gap: 0.8rem;
+      padding: 0.8rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-bg-elevated);
+    }
+
+    .lesson-time {
+      color: var(--cp-accent);
+      font-weight: 900;
+    }
+
+    .worksheet {
+      padding: 1rem;
+      border: 1px dashed var(--cp-border-strong);
+      border-radius: 16px;
+      background: var(--cp-surface);
+    }
+
+    .worksheet h3 {
+      font-size: 1.15rem;
+    }
+
+    .worksheet-task {
+      padding: 0.8rem;
+      margin-top: 0.65rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface-soft);
+    }
+
+    .writing-lines {
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 0.65rem;
+    }
+
+    .writing-line {
+      height: 1.7rem;
+      border-bottom: 1px solid var(--cp-border-strong);
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: var(--cp-bg);
+      }
+
+      .sidebar,
+      .hero,
+      .toolbar,
+      .nav,
+      .no-print {
+        display: none !important;
+      }
+
+      .app {
+        display: block;
+      }
+
+      main {
+        padding: 0;
+      }
+
+      .view {
+        display: none !important;
+      }
+
+      #lesson-library {
+        display: block !important;
+      }
+
+      .lesson-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .print-only {
+        display: block;
+      }
+    }
+
     @media (max-width: 980px) {
       .app {
         grid-template-columns: 1fr;
@@ -560,6 +659,7 @@
       }
 
       .hero,
+      .lesson-layout,
       .grid.cols-2,
       .grid.cols-3 {
         grid-template-columns: 1fr;
@@ -577,6 +677,7 @@
       }
 
       .planner-row,
+      .lesson-step,
       .timeline-item {
         grid-template-columns: 1fr;
       }
@@ -598,6 +699,7 @@
         <button class="active" data-view="today">Today</button>
         <button data-view="curriculum">Curriculum Map</button>
         <button data-view="activities">Activity Builder</button>
+        <button data-view="lesson-library">Lesson Library</button>
         <button data-view="progress">Progress</button>
         <button data-view="principles">Design Principles</button>
       </nav>
@@ -619,9 +721,9 @@
     <main>
       <section class="hero">
         <div>
-          <p class="section-kicker">Prototype v1</p>
-          <h2>A calm, joyful Year 1 learning companion.</h2>
-          <p>Built around England's Year 1 expectations, enriched with Singapore-style maths, Finnish play and outdoor learning, IB inquiry, Montessori independence, and knowledge-rich projects.</p>
+          <p class="section-kicker">Full-year planner v2</p>
+          <h2>A practical Year 1 homeschool companion.</h2>
+          <p>Built around England's Year 1 expectations, enriched with Singapore-style maths, Finnish play and outdoor learning, IB inquiry, Montessori independence, and knowledge-rich projects. Now includes a 36-week lesson library with printable worksheet prompts.</p>
           <div class="chips" aria-label="Curriculum blend">
             <span class="badge accent">England core</span>
             <span class="badge">Singapore maths</span>
@@ -720,6 +822,24 @@
         </div>
         <div class="grid cols-3" id="subjectGrid"></div>
         <div class="activity" id="activityCard"></div>
+      </section>
+
+      <section id="lesson-library" class="view">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Detailed homeschool lessons</p>
+            <h2>Weekly lesson and printable worksheet</h2>
+          </div>
+          <div class="controls no-print">
+            <select id="lessonWeek" aria-label="Choose week"></select>
+            <select id="lessonSubject" aria-label="Choose subject"></select>
+            <button class="primary-button" id="printWorksheet">Print worksheet</button>
+          </div>
+        </div>
+        <div class="note no-print">
+          Use this view for actual teaching. Each lesson gives you the objective, materials, parent script, minute-by-minute flow, worksheet tasks, stretch/support, and what to record as evidence.
+        </div>
+        <div id="lessonDetail"></div>
       </section>
 
       <section id="progress" class="view">
@@ -1022,6 +1142,381 @@
       "Capture evidence lightly: a photo, a quote, a drawing or one sentence is enough."
     ];
 
+    const detailedScheme = [
+      {
+        week: 1,
+        theme: "Settling, routines and baseline confidence",
+        english: { topic: "Oral blending and first graphemes s, a, t, p", skill: "Hear, say and blend simple CVC words", vocabulary: ["sound", "blend", "word", "sentence"], content: "sat, pat, tap, sap" },
+        maths: { topic: "Counting objects to 10 accurately", skill: "One-to-one correspondence and stable order", vocabulary: ["count", "how many", "more", "fewer"], content: "objects in rows, circles and scattered groups" },
+        science: { topic: "Seasonal signs of late summer and early autumn", skill: "Observe closely and describe changes", vocabulary: ["season", "weather", "leaf", "change"], content: "a short garden, park or window observation" },
+        humanities: { topic: "My home and my learning space", skill: "Use simple positional language and draw a map", vocabulary: ["map", "near", "far", "behind"], content: "home learning area map" },
+        creative: { topic: "Self-portrait with careful looking", skill: "Use line, shape and colour intentionally", vocabulary: ["portrait", "line", "shape", "detail"], content: "self-portrait for learning journal cover" },
+        life: { topic: "Starting and ending a learning session", skill: "Follow a simple visual routine independently", vocabulary: ["ready", "choose", "tidy", "reflect"], content: "four-step routine card" }
+      },
+      {
+        week: 2,
+        theme: "All about me and number sense",
+        english: { topic: "Graphemes i, n, m, d and CVC blending", skill: "Read and build words with known sounds", vocabulary: ["phoneme", "grapheme", "middle sound", "decode"], content: "pin, mat, dip, sit, tin" },
+        maths: { topic: "Representing numbers 0-10", skill: "Match numerals, quantities and ten-frame images", vocabulary: ["zero", "number", "represent", "ten-frame"], content: "numbers 0-10 in different representations" },
+        science: { topic: "My body and senses", skill: "Name body parts and link senses to observations", vocabulary: ["sense", "sight", "hearing", "touch"], content: "five senses investigation" },
+        humanities: { topic: "Family and personal timeline", skill: "Sequence events from past to present", vocabulary: ["past", "present", "then", "now"], content: "baby, toddler, now timeline" },
+        creative: { topic: "Colour mixing for feelings", skill: "Choose colours to express mood", vocabulary: ["mix", "warm", "cool", "feeling"], content: "feelings colour wheel" },
+        life: { topic: "Preparing snack safely", skill: "Sequence a practical task and clean up", vocabulary: ["wash", "prepare", "safe", "clean"], content: "fruit snack routine" }
+      },
+      {
+        week: 3,
+        theme: "Stories, counting and the local world",
+        english: { topic: "Graphemes g, o, c, k and story retell", skill: "Read CVC words and retell a known story", vocabulary: ["character", "setting", "beginning", "ending"], content: "got, cot, kit, dog, sock" },
+        maths: { topic: "Comparing numbers within 10", skill: "Use more, fewer and equal with evidence", vocabulary: ["more", "fewer", "equal", "compare"], content: "two groups of household objects" },
+        science: { topic: "Everyday materials around the home", skill: "Identify object material and property", vocabulary: ["wood", "plastic", "metal", "fabric"], content: "home material hunt" },
+        humanities: { topic: "Local area walk", skill: "Notice human and physical features", vocabulary: ["road", "shop", "tree", "building"], content: "street feature tally" },
+        creative: { topic: "Printing with found objects", skill: "Create repeated patterns", vocabulary: ["print", "repeat", "pattern", "texture"], content: "object-print pattern strip" },
+        life: { topic: "Tidy and reset", skill: "Sort resources into labelled homes", vocabulary: ["sort", "label", "belong", "reset"], content: "learning shelf labels" }
+      },
+      {
+        week: 4,
+        theme: "Patterns, labels and observation",
+        english: { topic: "Graphemes ck, e, u, r and caption writing", skill: "Read words and write a simple caption", vocabulary: ["caption", "capital letter", "finger space", "full stop"], content: "duck, run, red, sock" },
+        maths: { topic: "One more and one less", skill: "Find adjacent numbers practically and mentally", vocabulary: ["before", "after", "one more", "one less"], content: "number track to 20" },
+        science: { topic: "Material properties", skill: "Test and sort by observable properties", vocabulary: ["hard", "soft", "bendy", "waterproof"], content: "property sorting tray" },
+        humanities: { topic: "Simple route maps", skill: "Draw and follow a route using symbols", vocabulary: ["route", "symbol", "key", "turn"], content: "route from bedroom to kitchen" },
+        creative: { topic: "Pattern and rhythm", skill: "Create visual and sound patterns", vocabulary: ["beat", "rhythm", "repeat", "sequence"], content: "clap-stamp pattern cards" },
+        life: { topic: "Asking for help well", skill: "Use a calm help script after trying", vocabulary: ["try", "stuck", "help", "explain"], content: "I tried... I need... prompt" }
+      },
+      {
+        week: 5,
+        theme: "Building fluency with 10",
+        english: { topic: "Graphemes h, b, f, ff, l, ll, ss", skill: "Read longer CVC words and spell with sound buttons", vocabulary: ["digraph", "sound button", "spell", "check"], content: "hill, puff, bell, mess" },
+        maths: { topic: "Number bonds to 5 and 10", skill: "Partition numbers systematically", vocabulary: ["part", "whole", "bond", "altogether"], content: "part-whole models and ten-frames" },
+        science: { topic: "Animals including humans", skill: "Group animals by features", vocabulary: ["mammal", "bird", "fish", "body", "feature"], content: "animal sorting cards" },
+        humanities: { topic: "Homes now and in the past", skill: "Compare old and new objects or rooms", vocabulary: ["old", "new", "similar", "different"], content: "kitchen then and now" },
+        creative: { topic: "Clay or dough animal model", skill: "Shape, join and add features", vocabulary: ["roll", "pinch", "join", "texture"], content: "animal with labelled features" },
+        life: { topic: "Getting dressed and organising clothes", skill: "Order steps and check readiness", vocabulary: ["first", "next", "last", "check"], content: "weather clothes checklist" }
+      },
+      {
+        week: 6,
+        theme: "Addition stories and nonfiction facts",
+        english: { topic: "Read and write animal fact labels", skill: "Compose a factual phrase or sentence", vocabulary: ["fact", "label", "because", "and"], content: "animal body labels and one fact sentence" },
+        maths: { topic: "Addition within 10", skill: "Combine two groups and write an equation", vocabulary: ["add", "plus", "equals", "altogether"], content: "first, then, now stories" },
+        science: { topic: "Animal diets", skill: "Classify animals by what they eat", vocabulary: ["herbivore", "carnivore", "omnivore", "diet"], content: "food chain starter cards" },
+        humanities: { topic: "People who help us locally", skill: "Explain roles in the community", vocabulary: ["community", "role", "service", "help"], content: "helper interview or pretend interview" },
+        creative: { topic: "Observational animal drawing", skill: "Look closely and add accurate details", vocabulary: ["observe", "detail", "shape", "shade"], content: "draw from photo or toy animal" },
+        life: { topic: "Kindness and turn-taking", skill: "Practise social scripts through play", vocabulary: ["turn", "share", "kind", "fair"], content: "board game reflection" }
+      },
+      {
+        week: 7,
+        theme: "Subtraction and storytelling",
+        english: { topic: "Story sequencing with first, next, then, finally", skill: "Retell and write sequenced captions", vocabulary: ["sequence", "first", "next", "finally"], content: "four-picture story map" },
+        maths: { topic: "Subtraction as taking away", skill: "Act out and record subtraction stories", vocabulary: ["subtract", "take away", "left", "difference"], content: "10 small toys and story mats" },
+        science: { topic: "Plants: roots, stem, leaves and flower", skill: "Name and label plant parts", vocabulary: ["root", "stem", "leaf", "flower"], content: "real plant or photo labelling" },
+        humanities: { topic: "Compass language and direction", skill: "Use left, right, forwards and backwards", vocabulary: ["left", "right", "forwards", "backwards"], content: "floor-map route game" },
+        creative: { topic: "Story drama and freeze frames", skill: "Use body and expression to retell", vocabulary: ["pose", "expression", "scene", "audience"], content: "three freeze frames from a story" },
+        life: { topic: "Focus stamina", skill: "Use a timer and choose a reset strategy", vocabulary: ["focus", "timer", "pause", "reset"], content: "10-minute concentration challenge" }
+      },
+      {
+        week: 8,
+        theme: "Shape, plants and instructions",
+        english: { topic: "Writing simple instructions", skill: "Use bossy verbs and numbered steps", vocabulary: ["instruction", "verb", "step", "order"], content: "how to plant a seed" },
+        maths: { topic: "2D and 3D shape", skill: "Name, sort and describe shapes", vocabulary: ["side", "corner", "face", "edge"], content: "shape hunt and sorting table" },
+        science: { topic: "What plants need", skill: "Plan a simple fair comparison", vocabulary: ["water", "light", "soil", "predict"], content: "seed or cress test" },
+        humanities: { topic: "Weather and daily life", skill: "Link weather to clothing and activities", vocabulary: ["weather", "forecast", "season", "suitable"], content: "weather diary" },
+        creative: { topic: "Shape collage", skill: "Combine shapes to make an image", vocabulary: ["collage", "overlap", "arrange", "compose"], content: "shape town or garden" },
+        life: { topic: "Making a simple plan", skill: "Choose materials before starting", vocabulary: ["plan", "materials", "start", "finish"], content: "project planning card" }
+      },
+      {
+        week: 9,
+        theme: "Numbers to 20 and richer sentences",
+        english: { topic: "Sentence expansion using and", skill: "Join ideas orally and in writing", vocabulary: ["join", "and", "idea", "sentence"], content: "The dog ran and..." },
+        maths: { topic: "Teen numbers as ten and some more", skill: "Represent 11-20 with ten-frame structure", vocabulary: ["teen", "ten", "ones", "represent"], content: "10 + n teen number cards" },
+        science: { topic: "Weather measurement", skill: "Record weather using simple symbols", vocabulary: ["temperature", "rain", "wind", "cloud"], content: "daily weather chart" },
+        humanities: { topic: "Significant person: Mary Anning", skill: "Recall facts and explain significance", vocabulary: ["fossil", "discover", "scientist", "significant"], content: "Mary Anning fact sheet" },
+        creative: { topic: "Fossil rubbings and textures", skill: "Use texture to create an artwork", vocabulary: ["rubbing", "texture", "fossil", "surface"], content: "texture fossil page" },
+        life: { topic: "Managing mistakes", skill: "Use growth mindset language", vocabulary: ["mistake", "learn", "again", "improve"], content: "mistake-to-learning reflection" }
+      },
+      {
+        week: 10,
+        theme: "Place value and information writing",
+        english: { topic: "Information page with headings and labels", skill: "Organise facts for a reader", vocabulary: ["heading", "label", "fact", "reader"], content: "mini page about a chosen animal or fossil" },
+        maths: { topic: "Ordering and comparing numbers to 20", skill: "Use number lines and comparison language", vocabulary: ["greater", "less", "between", "order"], content: "number cards and number line" },
+        science: { topic: "Changing seasons evidence", skill: "Compare observations from different weeks", vocabulary: ["evidence", "compare", "darker", "colder"], content: "season photo or drawing comparison" },
+        humanities: { topic: "Local history clue", skill: "Ask questions about an old building or object", vocabulary: ["clue", "history", "question", "evidence"], content: "old-new local feature study" },
+        creative: { topic: "Model making from recycled materials", skill: "Join, strengthen and evaluate", vocabulary: ["join", "strong", "stable", "improve"], content: "model home, bridge or fossil museum" },
+        life: { topic: "Choosing a healthy movement break", skill: "Notice body energy and choose movement", vocabulary: ["energy", "stretch", "balance", "breath"], content: "movement menu" }
+      },
+      {
+        week: 11,
+        theme: "Review, apply and explain",
+        english: { topic: "Reading fluency and expression", skill: "Reread for accuracy, pace and meaning", vocabulary: ["fluent", "expression", "reread", "meaning"], content: "familiar decodable book performance" },
+        maths: { topic: "Mixed addition and subtraction within 20", skill: "Choose the right operation for a story", vocabulary: ["operation", "equation", "prove", "strategy"], content: "story problem cards" },
+        science: { topic: "Ask a scientific question", skill: "Turn wonderings into testable questions", vocabulary: ["question", "test", "observe", "result"], content: "which material is best?" },
+        humanities: { topic: "Map and timeline review", skill: "Use maps and timelines to explain learning", vocabulary: ["timeline", "map", "key", "explain"], content: "my learning journey page" },
+        creative: { topic: "Prepare a mini exhibition", skill: "Select, arrange and explain work", vocabulary: ["exhibit", "choose", "display", "explain"], content: "three-piece home gallery" },
+        life: { topic: "Reflecting on strengths", skill: "Name strengths and next steps", vocabulary: ["strength", "proud", "next", "goal"], content: "two stars and a wish" }
+      },
+      {
+        week: 12,
+        theme: "Autumn project and celebration",
+        english: { topic: "Create an Autumn learning book", skill: "Plan, write, edit and read aloud", vocabulary: ["author", "edit", "page", "blurb"], content: "4-page booklet" },
+        maths: { topic: "Autumn maths challenge trail", skill: "Apply counting, bonds, shape and measures", vocabulary: ["challenge", "strategy", "check", "explain"], content: "four-station maths trail" },
+        science: { topic: "Seasonal change presentation", skill: "Use evidence to explain change", vocabulary: ["evidence", "season", "observe", "because"], content: "season poster or talk" },
+        humanities: { topic: "My place in the world", skill: "Connect home, local area and wider world", vocabulary: ["home", "local", "country", "world"], content: "nested places diagram" },
+        creative: { topic: "Performance or gallery share", skill: "Present creative work to an audience", vocabulary: ["perform", "gallery", "audience", "feedback"], content: "family showcase" },
+        life: { topic: "Celebration and next-term goals", skill: "Reflect and set gentle goals", vocabulary: ["celebrate", "goal", "practise", "ready"], content: "certificate and goal card" }
+      }
+    ];
+
+    const lessonSubjectMeta = {
+      english: { name: "English", duration: "35-45 min", global: "England phonics and writing, with Montessori sound handling and narration before writing", materials: ["paper or notebook", "pencil", "sound cards", "favourite picture book"] },
+      maths: { name: "Maths", duration: "30-40 min", global: "England Year 1 objectives taught through Singapore concrete-pictorial-abstract structure", materials: ["counters or pasta", "ten-frame", "number cards", "pencil"] },
+      science: { name: "Science", duration: "35-50 min", global: "England science with Finnish outdoor observation and inquiry questioning", materials: ["observation sheet", "pencil", "coloured pencils", "real objects or photos"] },
+      humanities: { name: "Humanities", duration: "30-45 min", global: "England history/geography enriched with knowledge-rich vocabulary and IB-style inquiry", materials: ["paper", "pencil", "map/photo/object prompt", "coloured pencils"] },
+      creative: { name: "Creative Arts", duration: "40-60 min", global: "England art/music/design with Reggio-inspired expressive making", materials: ["paper", "colouring materials", "recycled materials", "glue or tape"] },
+      life: { name: "Life Skills", duration: "20-35 min", global: "Montessori practical life and wellbeing habits", materials: ["real household materials", "checklist paper", "pencil", "timer if useful"] }
+    };
+
+    detailedScheme.push(
+      {
+        week: 13,
+        theme: "Spring launch: stories, place value and growing things",
+        english: { topic: "New story language and predictions", skill: "Predict, explain and answer why questions", vocabulary: ["predict", "because", "character", "clue"], content: "picture-book prediction grid" },
+        maths: { topic: "Numbers to 50", skill: "Build tens and ones with equipment", vocabulary: ["tens", "ones", "fifty", "partition"], content: "bundles of ten and loose ones" },
+        science: { topic: "Planting seeds", skill: "Set up an observation over time", vocabulary: ["seed", "germinate", "soil", "water"], content: "bean or cress growing diary" },
+        humanities: { topic: "The United Kingdom", skill: "Name the four countries of the UK", vocabulary: ["country", "capital", "United Kingdom", "island"], content: "UK map labelling" },
+        creative: { topic: "Spring sketchbook page", skill: "Draw from observation", vocabulary: ["sketch", "detail", "light", "shade"], content: "spring object study" },
+        life: { topic: "Morning independence", skill: "Prepare for learning without repeated reminders", vocabulary: ["routine", "ready", "independent", "check"], content: "morning launch checklist" }
+      },
+      {
+        week: 14,
+        theme: "Questioning and comparing",
+        english: { topic: "Question sentences", skill: "Ask and write questions using question marks", vocabulary: ["question", "who", "what", "where"], content: "question cards for a character" },
+        maths: { topic: "Comparing numbers to 50", skill: "Use greater than, less than and equal language", vocabulary: ["greater", "less", "equal", "compare"], content: "number comparison cards" },
+        science: { topic: "What plants need", skill: "Make a prediction and keep one variable different", vocabulary: ["light", "water", "fair", "predict"], content: "seed in light vs dark" },
+        humanities: { topic: "England and London", skill: "Locate England and describe a capital city", vocabulary: ["England", "London", "capital", "landmark"], content: "London landmark mini fact file" },
+        creative: { topic: "Landmark line drawing", skill: "Use lines and shapes to represent a building", vocabulary: ["landmark", "vertical", "horizontal", "outline"], content: "simple landmark drawing" },
+        life: { topic: "Polite conversation", skill: "Ask and answer questions in full sentences", vocabulary: ["listen", "answer", "question", "turn"], content: "conversation prompt cards" }
+      },
+      {
+        week: 15,
+        theme: "Addition strategies and explanation",
+        english: { topic: "Character description", skill: "Use adjectives in spoken and written sentences", vocabulary: ["adjective", "describe", "appearance", "personality"], content: "describe a story character" },
+        maths: { topic: "Addition by counting on", skill: "Start with the larger number and count on", vocabulary: ["count on", "larger", "add", "strategy"], content: "number line jumps" },
+        science: { topic: "Plant parts and jobs", skill: "Explain what each plant part does", vocabulary: ["root", "stem", "leaf", "flower"], content: "plant-part flap sheet" },
+        humanities: { topic: "Scotland, Wales and Northern Ireland", skill: "Compare UK countries using simple facts", vocabulary: ["Scotland", "Wales", "Northern Ireland", "compare"], content: "UK country fact cards" },
+        creative: { topic: "Textured plant collage", skill: "Select materials for visual effect", vocabulary: ["texture", "layer", "collage", "stem"], content: "plant collage with labels" },
+        life: { topic: "Caring for living things", skill: "Follow a care routine responsibly", vocabulary: ["care", "gentle", "daily", "responsible"], content: "plant-care rota" }
+      },
+      {
+        week: 16,
+        theme: "Subtraction strategies and recounts",
+        english: { topic: "Personal recount", skill: "Write events in order using time words", vocabulary: ["recount", "yesterday", "first", "then"], content: "three-part recount of a real event" },
+        maths: { topic: "Subtraction by counting back and finding difference", skill: "Choose a subtraction strategy", vocabulary: ["count back", "difference", "left", "subtract"], content: "number line subtraction" },
+        science: { topic: "Evergreen and deciduous trees", skill: "Sort and compare leaves", vocabulary: ["evergreen", "deciduous", "leaf", "tree"], content: "leaf comparison table" },
+        humanities: { topic: "Weather across the UK", skill: "Read a simple weather map", vocabulary: ["forecast", "symbol", "north", "south"], content: "UK weather symbol map" },
+        creative: { topic: "Weather soundscape", skill: "Create and order sounds to match weather", vocabulary: ["soundscape", "loud", "quiet", "tempo"], content: "rain-wind-sun sound score" },
+        life: { topic: "Choosing clothing for weather", skill: "Match clothing choices to conditions", vocabulary: ["suitable", "waterproof", "warm", "comfortable"], content: "weather clothing planner" }
+      },
+      {
+        week: 17,
+        theme: "Equal groups and instruction writing",
+        english: { topic: "Instructions with bossy verbs", skill: "Write ordered instructions for a real task", vocabulary: ["verb", "instruction", "first", "finally"], content: "how to care for a plant" },
+        maths: { topic: "Equal groups", skill: "Make and describe equal groups practically", vocabulary: ["equal", "group", "each", "total"], content: "groups of 2, 5 and 10" },
+        science: { topic: "Growing investigation check-in", skill: "Record changes using drawings and labels", vocabulary: ["observe", "record", "measure", "change"], content: "growth diary update" },
+        humanities: { topic: "Continents and oceans introduction", skill: "Name world-scale places", vocabulary: ["continent", "ocean", "world", "globe"], content: "world map colouring" },
+        creative: { topic: "Repeating world patterns", skill: "Design a border pattern", vocabulary: ["motif", "repeat", "border", "symmetry"], content: "passport page border" },
+        life: { topic: "Following multi-step instructions", skill: "Listen, repeat back, complete and check", vocabulary: ["listen", "repeat", "complete", "check"], content: "three-step challenge card" }
+      },
+      {
+        week: 18,
+        theme: "Halves, quarters and fair sharing",
+        english: { topic: "Traditional tales", skill: "Retell a tale and change one element", vocabulary: ["traditional", "tale", "problem", "solution"], content: "story mountain for a tale" },
+        maths: { topic: "Halves of objects and quantities", skill: "Share into two equal parts", vocabulary: ["half", "equal", "share", "whole"], content: "halve shapes and small sets" },
+        science: { topic: "Animals and their young", skill: "Match adults and offspring", vocabulary: ["adult", "offspring", "young", "grow"], content: "animal life-stage cards" },
+        humanities: { topic: "A contrasting place", skill: "Compare local area with a non-European locality", vocabulary: ["similar", "different", "climate", "place"], content: "local place vs Kenya village comparison" },
+        creative: { topic: "Tale puppet making", skill: "Design a puppet for performance", vocabulary: ["puppet", "character", "attach", "perform"], content: "stick puppet and theatre" },
+        life: { topic: "Fair sharing", skill: "Share resources and explain fairness", vocabulary: ["fair", "equal", "share", "agree"], content: "sharing snack or counters" }
+      },
+      {
+        week: 19,
+        theme: "Fractions, animals and richer vocabulary",
+        english: { topic: "Vocabulary collector", skill: "Choose precise words for description", vocabulary: ["precise", "interesting", "synonym", "describe"], content: "word bank for animals or settings" },
+        maths: { topic: "Quarters of shapes and objects", skill: "Make four equal parts", vocabulary: ["quarter", "four", "equal", "part"], content: "paper folding quarters" },
+        science: { topic: "Animal groups", skill: "Classify animals using observable features", vocabulary: ["mammal", "bird", "reptile", "amphibian"], content: "animal classification mat" },
+        humanities: { topic: "Hot and cold places", skill: "Link location to climate", vocabulary: ["equator", "pole", "hot", "cold"], content: "world heat map" },
+        creative: { topic: "Animal pattern study", skill: "Use repeated marks to show pattern", vocabulary: ["stripe", "spot", "scale", "pattern"], content: "animal skin pattern panel" },
+        life: { topic: "Trying hard things", skill: "Break a challenge into smaller steps", vocabulary: ["challenge", "step", "practise", "persist"], content: "I can try card" }
+      },
+      {
+        week: 20,
+        theme: "Measure through real life",
+        english: { topic: "Poetry and rhythm", skill: "Hear rhyme and perform a short poem", vocabulary: ["poem", "rhyme", "rhythm", "perform"], content: "spring poem performance" },
+        maths: { topic: "Length and height", skill: "Measure and compare using non-standard and standard units", vocabulary: ["length", "height", "longer", "shorter"], content: "measure plants and toys" },
+        science: { topic: "Human body and exercise", skill: "Notice body changes after movement", vocabulary: ["heart", "breathing", "exercise", "healthy"], content: "movement observation chart" },
+        humanities: { topic: "Transport past and present", skill: "Sequence transport changes", vocabulary: ["transport", "past", "modern", "journey"], content: "transport timeline" },
+        creative: { topic: "Vehicle design", skill: "Design and test a simple vehicle model", vocabulary: ["wheel", "axle", "test", "improve"], content: "recycled vehicle build" },
+        life: { topic: "Safe movement", skill: "Warm up, move safely and cool down", vocabulary: ["warm-up", "space", "control", "cool-down"], content: "movement safety poster" }
+      },
+      {
+        week: 21,
+        theme: "Mass, capacity and explanation",
+        english: { topic: "Explanation sentences", skill: "Use because to explain an idea", vocabulary: ["because", "explain", "reason", "evidence"], content: "I think... because..." },
+        maths: { topic: "Mass and capacity", skill: "Compare, order and describe", vocabulary: ["heavier", "lighter", "full", "empty"], content: "kitchen weighing and pouring" },
+        science: { topic: "Healthy food groups", skill: "Sort foods and explain balanced choices", vocabulary: ["fruit", "vegetable", "protein", "balanced"], content: "healthy plate worksheet" },
+        humanities: { topic: "Food journeys", skill: "Trace where food can come from", vocabulary: ["farm", "shop", "journey", "source"], content: "from farm to plate chain" },
+        creative: { topic: "Still life fruit drawing", skill: "Look closely at shape and colour", vocabulary: ["still life", "shadow", "shape", "colour"], content: "fruit bowl drawing" },
+        life: { topic: "Preparing a balanced plate", skill: "Make a simple healthy choice", vocabulary: ["balanced", "portion", "choice", "energy"], content: "snack plate plan" }
+      },
+      {
+        week: 22,
+        theme: "Time and daily sequence",
+        english: { topic: "Diary writing", skill: "Write a first-person diary sentence sequence", vocabulary: ["diary", "today", "felt", "because"], content: "one-day diary page" },
+        maths: { topic: "Time: before, after, o'clock and half past", skill: "Sequence events and read simple clocks", vocabulary: ["before", "after", "o'clock", "half past"], content: "daily timetable cards" },
+        science: { topic: "Seasonal daylight changes", skill: "Compare morning and evening light", vocabulary: ["daylight", "shadow", "sunrise", "sunset"], content: "daylight observation log" },
+        humanities: { topic: "School day around the world", skill: "Compare daily routines respectfully", vocabulary: ["routine", "culture", "similar", "different"], content: "two-school-day comparison" },
+        creative: { topic: "Clock face design", skill: "Combine function and decoration", vocabulary: ["clockwise", "face", "hands", "numbers"], content: "make a teaching clock" },
+        life: { topic: "Using a timetable", skill: "Anticipate transitions calmly", vocabulary: ["now", "next", "later", "finish"], content: "visual day planner" }
+      },
+      {
+        week: 23,
+        theme: "Spring review and project making",
+        english: { topic: "Edit for sense", skill: "Reread writing and improve one thing", vocabulary: ["edit", "improve", "sense", "punctuation"], content: "best sentence editing" },
+        maths: { topic: "Mixed spring review", skill: "Choose strategies for number and measure problems", vocabulary: ["strategy", "prove", "check", "explain"], content: "spring maths quest" },
+        science: { topic: "Present plant investigation", skill: "Use observations to say what happened", vocabulary: ["result", "because", "grew", "evidence"], content: "plant investigation poster" },
+        humanities: { topic: "UK and world review", skill: "Use maps to answer questions", vocabulary: ["map", "country", "continent", "ocean"], content: "map quiz mat" },
+        creative: { topic: "Spring exhibition", skill: "Curate and explain a display", vocabulary: ["display", "label", "explain", "audience"], content: "spring gallery labels" },
+        life: { topic: "Self-assessment", skill: "Identify what helped learning", vocabulary: ["reflect", "helped", "proud", "next"], content: "learning habits review" }
+      },
+      {
+        week: 24,
+        theme: "Spring celebration",
+        english: { topic: "Read aloud celebration", skill: "Read familiar text with confidence", vocabulary: ["fluent", "clear", "voice", "audience"], content: "reading performance card" },
+        maths: { topic: "Maths games festival", skill: "Practise fluency through games", vocabulary: ["turn", "score", "strategy", "fair"], content: "three number games" },
+        science: { topic: "Spring nature journal", skill: "Select best evidence and explain it", vocabulary: ["journal", "evidence", "season", "change"], content: "best nature page" },
+        humanities: { topic: "My world mini book", skill: "Connect personal, local, national and global knowledge", vocabulary: ["local", "national", "global", "belong"], content: "my world booklet" },
+        creative: { topic: "Performance choice", skill: "Choose music, drama or art to share", vocabulary: ["perform", "share", "practise", "feedback"], content: "family performance plan" },
+        life: { topic: "Spring goals review", skill: "Celebrate progress and set one summer goal", vocabulary: ["goal", "progress", "celebrate", "next"], content: "goal card" }
+      },
+      {
+        week: 25,
+        theme: "Summer launch: independence and mastery",
+        english: { topic: "Plan a longer story", skill: "Plan beginning, middle and end before writing", vocabulary: ["plan", "problem", "solution", "ending"], content: "story mountain planner" },
+        maths: { topic: "Numbers to 100", skill: "Count, read and represent numbers to 100", vocabulary: ["hundred", "tens", "ones", "count"], content: "100 square exploration" },
+        science: { topic: "Summer seasonal changes", skill: "Compare seasonal evidence", vocabulary: ["summer", "temperature", "sunlight", "change"], content: "summer observation page" },
+        humanities: { topic: "Seaside places", skill: "Identify physical and human features", vocabulary: ["coast", "beach", "cliff", "harbour"], content: "seaside feature sort" },
+        creative: { topic: "Seaside colour wash", skill: "Use colour and texture for effect", vocabulary: ["wash", "horizon", "texture", "foreground"], content: "seaside painting" },
+        life: { topic: "Independent project choice", skill: "Choose a project and plan first steps", vocabulary: ["choice", "project", "materials", "deadline"], content: "summer project planner" }
+      },
+      {
+        week: 26,
+        theme: "Reading stamina and place value",
+        english: { topic: "Reading stamina", skill: "Read for longer and talk about meaning", vocabulary: ["stamina", "meaning", "favourite", "recommend"], content: "book recommendation card" },
+        maths: { topic: "One more and one less to 100", skill: "Use a 100 square to reason", vocabulary: ["before", "after", "row", "column"], content: "100 square puzzles" },
+        science: { topic: "Materials for a purpose", skill: "Choose materials based on properties", vocabulary: ["property", "purpose", "waterproof", "strong"], content: "best bag material test" },
+        humanities: { topic: "Seaside past and present", skill: "Compare holidays then and now", vocabulary: ["past", "present", "holiday", "compare"], content: "old-new seaside photos" },
+        creative: { topic: "Postcard design", skill: "Combine image and message", vocabulary: ["postcard", "message", "address", "illustration"], content: "seaside postcard" },
+        life: { topic: "Packing for a trip", skill: "Plan items for a purpose", vocabulary: ["pack", "need", "weather", "safe"], content: "seaside bag checklist" }
+      },
+      {
+        week: 27,
+        theme: "Problem solving and persuasive language",
+        english: { topic: "Persuasive sentences", skill: "Give a reason to persuade", vocabulary: ["persuade", "reason", "should", "because"], content: "visit my beach poster" },
+        maths: { topic: "Addition and subtraction to 100 context", skill: "Solve practical two-digit problems with support", vocabulary: ["solve", "count on", "count back", "check"], content: "shell shop problems" },
+        science: { topic: "Floating and sinking", skill: "Predict, test and record", vocabulary: ["float", "sink", "predict", "material"], content: "boat material test" },
+        humanities: { topic: "Protecting places", skill: "Explain how people care for environments", vocabulary: ["protect", "environment", "litter", "care"], content: "beach care sign" },
+        creative: { topic: "Build a boat", skill: "Design, test and improve a model", vocabulary: ["design", "test", "improve", "float"], content: "foil or recycled boat" },
+        life: { topic: "Safety near water", skill: "Recall simple safety rules", vocabulary: ["safe", "adult", "edge", "listen"], content: "water safety poster" }
+      },
+      {
+        week: 28,
+        theme: "Multiplication foundations",
+        english: { topic: "Nonfiction contents and glossary", skill: "Use simple nonfiction features", vocabulary: ["contents", "glossary", "index", "fact"], content: "mini nonfiction page" },
+        maths: { topic: "Counting in 2s, 5s and 10s", skill: "Skip count through equal groups", vocabulary: ["skip count", "multiple", "group", "pattern"], content: "socks, fingers and coins counting" },
+        science: { topic: "Habitats introduction", skill: "Match animals to suitable habitats", vocabulary: ["habitat", "shelter", "food", "survive"], content: "habitat matching sheet" },
+        humanities: { topic: "World habitats", skill: "Locate broad habitats on a world map", vocabulary: ["desert", "rainforest", "ocean", "polar"], content: "habitat world map" },
+        creative: { topic: "Habitat diorama", skill: "Create a 3D scene with relevant details", vocabulary: ["diorama", "background", "detail", "model"], content: "shoebox habitat" },
+        life: { topic: "Looking after shared spaces", skill: "Take responsibility for a small area", vocabulary: ["shared", "care", "responsibility", "respect"], content: "space-care chart" }
+      },
+      {
+        week: 29,
+        theme: "Division foundations and animal reports",
+        english: { topic: "Animal report", skill: "Write grouped facts under headings", vocabulary: ["report", "heading", "diet", "habitat"], content: "animal report template" },
+        maths: { topic: "Sharing and grouping", skill: "Solve division-style problems practically", vocabulary: ["share", "group", "equal", "left over"], content: "share shells or counters" },
+        science: { topic: "Simple food chains", skill: "Order who eats what", vocabulary: ["producer", "consumer", "predator", "prey"], content: "basic food chain arrows" },
+        humanities: { topic: "Amazing explorers", skill: "Explain why an explorer is remembered", vocabulary: ["explorer", "journey", "discover", "remembered"], content: "explorer fact card" },
+        creative: { topic: "Explorer map art", skill: "Use symbols and routes creatively", vocabulary: ["route", "symbol", "compass", "map"], content: "treasure map" },
+        life: { topic: "Planning a safe adventure", skill: "Think ahead about risks and needs", vocabulary: ["risk", "safe", "plan", "adult"], content: "adventure safety checklist" }
+      },
+      {
+        week: 30,
+        theme: "Money and real-world maths",
+        english: { topic: "Writing reviews", skill: "Express an opinion with a reason", vocabulary: ["review", "opinion", "recommend", "because"], content: "book or activity review" },
+        maths: { topic: "Money: coins and simple totals", skill: "Recognise coins and make small amounts", vocabulary: ["coin", "pence", "pound", "total"], content: "home shop price labels" },
+        science: { topic: "Recycling materials", skill: "Sort materials for recycling and reuse", vocabulary: ["recycle", "reuse", "waste", "material"], content: "recycling sort" },
+        humanities: { topic: "Shops and local economy", skill: "Explain what shops and services do", vocabulary: ["shop", "service", "buy", "sell"], content: "local shop role play" },
+        creative: { topic: "Shop sign and packaging", skill: "Design for a purpose and audience", vocabulary: ["logo", "label", "brand", "customer"], content: "pretend shop design" },
+        life: { topic: "Needs and wants", skill: "Separate essential needs from wants", vocabulary: ["need", "want", "choice", "save"], content: "needs/wants sorting" }
+      },
+      {
+        week: 31,
+        theme: "Geometry and precise description",
+        english: { topic: "Prepositions and setting description", skill: "Describe where things are", vocabulary: ["under", "beside", "between", "behind"], content: "hidden toy setting" },
+        maths: { topic: "Position and direction", skill: "Use turns and positional language", vocabulary: ["left", "right", "turn", "position"], content: "robot route commands" },
+        science: { topic: "Shadows", skill: "Observe how light makes shadows", vocabulary: ["shadow", "light", "block", "source"], content: "shadow tracing" },
+        humanities: { topic: "Map coordinates introduction", skill: "Use simple grid references informally", vocabulary: ["grid", "square", "row", "column"], content: "toy treasure grid" },
+        creative: { topic: "Shadow puppet theatre", skill: "Use shape and light for effect", vocabulary: ["silhouette", "screen", "puppet", "light"], content: "shadow puppet scene" },
+        life: { topic: "Giving clear directions", skill: "Speak instructions clearly and check understanding", vocabulary: ["clear", "direction", "repeat", "check"], content: "blindfold route game" }
+      },
+      {
+        week: 32,
+        theme: "Data and explaining findings",
+        english: { topic: "Oral presentation", skill: "Speak clearly using notes", vocabulary: ["present", "audience", "clear", "notes"], content: "one-minute topic talk" },
+        maths: { topic: "Simple data handling", skill: "Collect, tally and interpret data", vocabulary: ["tally", "chart", "most", "least"], content: "family favourites survey" },
+        science: { topic: "Investigation results", skill: "Say what results show", vocabulary: ["result", "table", "most", "least"], content: "classify and count materials" },
+        humanities: { topic: "Fieldwork question", skill: "Collect simple local area data", vocabulary: ["fieldwork", "survey", "tally", "observe"], content: "traffic, trees or birds tally" },
+        creative: { topic: "Infographic poster", skill: "Show information visually", vocabulary: ["chart", "icon", "title", "label"], content: "data poster" },
+        life: { topic: "Listening to presentations", skill: "Ask a relevant question kindly", vocabulary: ["listen", "question", "kind", "feedback"], content: "audience feedback card" }
+      },
+      {
+        week: 33,
+        theme: "Writing stamina and cumulative maths",
+        english: { topic: "Independent writing project", skill: "Write several sentences on one idea", vocabulary: ["draft", "sentence", "reread", "improve"], content: "chosen topic page" },
+        maths: { topic: "Cumulative maths problem solving", skill: "Select known strategies independently", vocabulary: ["strategy", "efficient", "explain", "check"], content: "mixed problem mat" },
+        science: { topic: "Animal and plant review", skill: "Connect learning across the year", vocabulary: ["living", "grow", "need", "habitat"], content: "living things concept map" },
+        humanities: { topic: "Year timeline", skill: "Sequence personal and learning events", vocabulary: ["timeline", "month", "event", "order"], content: "my Year 1 timeline" },
+        creative: { topic: "Portfolio cover", skill: "Design a meaningful cover", vocabulary: ["portfolio", "symbol", "title", "design"], content: "Year 1 portfolio cover" },
+        life: { topic: "Working independently", skill: "Choose, start, persist and finish", vocabulary: ["independent", "persist", "finish", "review"], content: "independence checklist" }
+      },
+      {
+        week: 34,
+        theme: "Preparing for Year 2",
+        english: { topic: "Editing checklist", skill: "Check capital letters, spaces, punctuation and sense", vocabulary: ["capital", "space", "punctuation", "sense"], content: "edit my best work" },
+        maths: { topic: "Fluency games to 100", skill: "Recall and apply number facts with speed and care", vocabulary: ["fluent", "recall", "double", "bond"], content: "dice and card fluency games" },
+        science: { topic: "Design a science question", skill: "Plan a simple question to investigate", vocabulary: ["investigate", "question", "predict", "record"], content: "child-choice mini enquiry" },
+        humanities: { topic: "My place knowledge review", skill: "Explain local, national and world knowledge", vocabulary: ["local", "UK", "world", "explain"], content: "knowledge organiser page" },
+        creative: { topic: "Improve a previous artwork", skill: "Evaluate and improve using feedback", vocabulary: ["evaluate", "feedback", "improve", "choice"], content: "before-and-after art" },
+        life: { topic: "Setting Year 2 habits", skill: "Choose routines that support learning", vocabulary: ["habit", "routine", "goal", "ready"], content: "Year 2 readiness card" }
+      },
+      {
+        week: 35,
+        theme: "Show what you know",
+        english: { topic: "Author share", skill: "Read own writing aloud and answer questions", vocabulary: ["author", "share", "question", "proud"], content: "author chair session" },
+        maths: { topic: "Maths explanation", skill: "Explain a favourite strategy clearly", vocabulary: ["strategy", "explain", "model", "prove"], content: "teach someone a maths trick" },
+        science: { topic: "Science showcase", skill: "Present one investigation or observation", vocabulary: ["showcase", "evidence", "result", "because"], content: "science display board" },
+        humanities: { topic: "Map, timeline and people showcase", skill: "Use evidence to explain humanities learning", vocabulary: ["evidence", "map", "timeline", "significant"], content: "humanities display" },
+        creative: { topic: "Final performance rehearsal", skill: "Practise and refine for an audience", vocabulary: ["rehearse", "refine", "perform", "audience"], content: "performance plan" },
+        life: { topic: "Hosting a showcase", skill: "Welcome, explain and thank an audience", vocabulary: ["welcome", "explain", "thank", "host"], content: "showcase hosting script" }
+      },
+      {
+        week: 36,
+        theme: "Year-end celebration and next steps",
+        english: { topic: "Year 1 memory book", skill: "Write reflections about learning", vocabulary: ["memory", "reflection", "favourite", "next"], content: "memory book pages" },
+        maths: { topic: "Maths treasure hunt", skill: "Apply Year 1 maths in playful challenges", vocabulary: ["challenge", "solve", "measure", "count"], content: "treasure hunt worksheet" },
+        science: { topic: "Four seasons review", skill: "Compare the year across seasons", vocabulary: ["autumn", "winter", "spring", "summer"], content: "four seasons wheel" },
+        humanities: { topic: "My year in places and people", skill: "Connect personal experience to wider knowledge", vocabulary: ["place", "people", "journey", "world"], content: "places and people reflection" },
+        creative: { topic: "Celebration gallery", skill: "Curate final pieces and explain choices", vocabulary: ["gallery", "curate", "choice", "celebrate"], content: "final gallery labels" },
+        life: { topic: "Celebration and transition", skill: "Name strengths and prepare emotionally for next step", vocabulary: ["strength", "transition", "ready", "proud"], content: "Year 2 confidence certificate" }
+      }
+    );
+
     const state = {
       activeSubject: "english",
       term: "autumn",
@@ -1040,6 +1535,9 @@
     const progressGrid = document.getElementById("progressGrid");
     const reflection = document.getElementById("reflection");
     const savedReflection = document.getElementById("savedReflection");
+    const lessonWeek = document.getElementById("lessonWeek");
+    const lessonSubject = document.getElementById("lessonSubject");
+    const lessonDetail = document.getElementById("lessonDetail");
 
     function saveProgress() {
       localStorage.setItem("year1-progress", JSON.stringify(state.progress));
@@ -1070,6 +1568,117 @@
 
     function renderWeeklyFocus() {
       document.getElementById("weeklyFocus").innerHTML = weeklyFocus.map(item => `<li>${item}</li>`).join("");
+    }
+
+    function termForWeek(week) {
+      if (week <= 12) return "Autumn";
+      if (week <= 24) return "Spring";
+      return "Summer";
+    }
+
+    function subjectLessonPlan(subjectKey, weekPlan) {
+      const subject = weekPlan[subjectKey];
+      const subjectName = lessonSubjectMeta[subjectKey].name;
+      const shared = {
+        objective: `I can ${subject.skill.toLowerCase()}.`,
+        parentScript: `Today we are learning about ${subject.topic.toLowerCase()}. First we will do it together, then you will try it with help, then you will show what you can do on your worksheet.`,
+        success: [`I can use the words ${subject.vocabulary.slice(0, 2).join(" and ")} correctly.`, "I can explain my answer or choice.", "I can complete the main worksheet task with care."]
+      };
+
+      const plans = {
+        english: {
+          steps: [
+            ["5 min", `Sound and word warm-up: say the key words aloud, clap syllables, then spot known sounds in ${subject.content}.`],
+            ["10 min", "Teach/model: read or tell a short example, thinking aloud about sounds, words and sentence meaning."],
+            ["10 min", "Guided practice: build or orally rehearse three words/sentences together before writing."],
+            ["10-15 min", "Independent worksheet: complete the reading/writing tasks, saying each sentence before writing."],
+            ["5 min", "Review: read the work aloud and fix one thing: spelling, spacing, capital letter or full stop."]
+          ],
+          worksheet: [
+            `Read or build these focus items: ${subject.content}.`,
+            `Write three words or labels using today's focus.`,
+            "Write one full sentence. Check capital letter, finger spaces and full stop.",
+            "Draw a small picture to match your sentence."
+          ]
+        },
+        maths: {
+          steps: [
+            ["5 min", "Fluency warm-up: count forwards and backwards, then show a number with fingers or objects."],
+            ["10 min", `Concrete teach: use real objects for ${subject.content}; parent models the maths language precisely.`],
+            ["10 min", "Pictorial practice: draw the objects, ten-frame, number line, shape or table."],
+            ["10-15 min", "Abstract/worksheet: record numbers, symbols or explanations after the practical work."],
+            ["5 min", "Reasoning: ask, 'How do you know?' and invite your child to prove one answer."]
+          ],
+          worksheet: [
+            `Make or draw ${subject.content}.`,
+            "Complete six carefully chosen examples using pictures first.",
+            "Solve one story problem and explain your strategy.",
+            "Create one similar problem for an adult to solve."
+          ]
+        },
+        science: {
+          steps: [
+            ["5 min", "Wonder question: ask what your child notices and wonders about the topic."],
+            ["10 min", `Explore: handle, observe, test or look closely at ${subject.content}.`],
+            ["10 min", "Vocabulary teach: practise the key words and connect them to real observations."],
+            ["10-20 min", "Worksheet/investigation record: draw, label, sort, measure or record evidence."],
+            ["5 min", "Conclusion: finish the sentence, 'I found out that...' using because if possible."]
+          ],
+          worksheet: [
+            `Draw or record what you observed in ${subject.content}.`,
+            `Use these words in labels or speech bubbles: ${subject.vocabulary.join(", ")}.`,
+            "Answer: What changed, matched, worked best, or surprised you?",
+            "Write or dictate one because sentence."
+          ]
+        },
+        humanities: {
+          steps: [
+            ["5 min", "Big question: look at a map, photo, object or timeline and say what you already know."],
+            ["10 min", `Knowledge input: teach the key facts for ${subject.topic.toLowerCase()} using simple examples.`],
+            ["10 min", "Talk task: compare, sequence, locate or describe using the vocabulary."],
+            ["10-15 min", "Worksheet: map, timeline, fact card, comparison grid or labelled drawing."],
+            ["5 min", "Explain: your child answers one 'how' or 'why' question aloud."]
+          ],
+          worksheet: [
+            `Complete the main task: ${subject.content}.`,
+            `Use at least three words: ${subject.vocabulary.join(", ")}.`,
+            "Draw, label or sequence the key information.",
+            "Tell an adult one new thing you know now."
+          ]
+        },
+        creative: {
+          steps: [
+            ["5 min", "Look and notice: study an example, object, sound or material."],
+            ["10 min", `Skill model: demonstrate one technique needed for ${subject.content}.`],
+            ["20-35 min", "Create: let your child make choices while you coach care, persistence and vocabulary."],
+            ["5 min", "Improve: choose one small change to make the work stronger."],
+            ["5 min", "Gallery talk: child names what they made, what they chose and what they might try next."]
+          ],
+          worksheet: [
+            `Plan your creative outcome: ${subject.content}.`,
+            "Draw a quick design before making.",
+            `Label your choices using: ${subject.vocabulary.join(", ")}.`,
+            "After making, circle: I kept going / I improved / I tried something new."
+          ]
+        },
+        life: {
+          steps: [
+            ["3 min", "Connect: explain why this practical habit matters in real life."],
+            ["7 min", "Model: adult silently demonstrates the task slowly from start to finish."],
+            ["10-15 min", `Child practice: complete ${subject.content} with minimal prompting.`],
+            ["5 min", "Self-check: child checks quality using the worksheet checklist."],
+            ["5 min", "Reflect: name one thing that felt easier and one thing to practise next time."]
+          ],
+          worksheet: [
+            `Do the practical task: ${subject.content}.`,
+            "Tick: I prepared / I tried / I checked / I tidied.",
+            `Use these words while explaining: ${subject.vocabulary.join(", ")}.`,
+            "Draw or write one thing I can now do more independently."
+          ]
+        }
+      };
+
+      return { subjectName, subject, ...shared, ...plans[subjectKey] };
     }
 
     function renderTermMap(term = state.term) {
@@ -1127,6 +1736,118 @@
         </div>
         <ul class="list">${activity.steps.map(step => `<li>${step}</li>`).join("")}</ul>
         <div class="note"><strong>Stretch:</strong> ${activity.stretch}</div>
+      `;
+      bindChecks();
+    }
+
+    function renderLessonControls() {
+      lessonWeek.innerHTML = detailedScheme.map(week => `
+        <option value="${week.week}">Week ${week.week} · ${termForWeek(week.week)} · ${week.theme}</option>
+      `).join("");
+
+      lessonSubject.innerHTML = Object.entries(lessonSubjectMeta).map(([key, meta]) => `
+        <option value="${key}">${meta.name}</option>
+      `).join("");
+    }
+
+    function renderLessonDetail() {
+      const weekPlan = detailedScheme.find(item => item.week === Number(lessonWeek.value)) || detailedScheme[0];
+      const subjectKey = lessonSubject.value || "english";
+      const meta = lessonSubjectMeta[subjectKey];
+      const plan = subjectLessonPlan(subjectKey, weekPlan);
+      const progressId = `lesson-${weekPlan.week}-${subjectKey}`;
+
+      lessonDetail.innerHTML = `
+        <div class="lesson-layout">
+          <section class="card big-card lesson-panel">
+            <div class="card-header">
+              <div>
+                <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} · ${plan.subjectName}</p>
+                <h3>${plan.subject.topic}</h3>
+              </div>
+              <label class="badge accent no-print">
+                <input type="checkbox" data-progress="${progressId}" ${state.progress[progressId] ? "checked" : ""} aria-label="Mark lesson complete" />
+                Complete
+              </label>
+            </div>
+            <div class="activity-meta">
+              <span class="badge">${meta.duration}</span>
+              <span class="badge">${weekPlan.theme}</span>
+              <span class="badge">${meta.global}</span>
+            </div>
+            <div class="note"><strong>Learning objective:</strong> ${plan.objective}</div>
+            <p><strong>Parent script:</strong> ${plan.parentScript}</p>
+            <div>
+              <h3>Materials</h3>
+              <ul class="list">${meta.materials.map(item => `<li>${item}</li>`).join("")}</ul>
+            </div>
+            <div>
+              <h3>Teaching flow</h3>
+              ${plan.steps.map(([time, step]) => `
+                <div class="lesson-step">
+                  <div class="lesson-time">${time}</div>
+                  <div>${step}</div>
+                </div>
+              `).join("")}
+            </div>
+            <div class="grid cols-2">
+              <div>
+                <h3>Support</h3>
+                <ul class="list">
+                  <li>Reduce writing load: let him answer orally while you scribe one sentence.</li>
+                  <li>Use fewer examples but insist on careful language and confidence.</li>
+                  <li>Return to concrete objects, pictures or acting out before recording.</li>
+                </ul>
+              </div>
+              <div>
+                <h3>Stretch</h3>
+                <ul class="list">
+                  <li>Ask him to explain how he knows, not just give an answer.</li>
+                  <li>Add one extra example, challenge question or independent sentence.</li>
+                  <li>Invite him to teach the idea back to you, a sibling or a toy.</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <h3>Success criteria</h3>
+              <ul class="list">${plan.success.map(item => `<li>${item}</li>`).join("")}</ul>
+            </div>
+            <div>
+              <h3>Evidence to keep</h3>
+              <p class="muted">Keep the worksheet, a photo of practical work, or one dictated quote. Add a short note in Progress if something important happened.</p>
+            </div>
+          </section>
+
+          <aside class="worksheet">
+            <p class="section-kicker">Printable worksheet</p>
+            <h3>${plan.subjectName}: ${plan.subject.topic}</h3>
+            <p><strong>Name:</strong> ____________________ <strong>Date:</strong> ____________________</p>
+            <p><strong>Today I am learning to:</strong> ${plan.subject.skill.toLowerCase()}.</p>
+            ${plan.worksheet.map((task, index) => `
+              <div class="worksheet-task">
+                <strong>Task ${index + 1}</strong>
+                <p>${task}</p>
+                <div class="writing-lines">
+                  <div class="writing-line"></div>
+                  <div class="writing-line"></div>
+                  <div class="writing-line"></div>
+                </div>
+              </div>
+            `).join("")}
+            <div class="worksheet-task">
+              <strong>Vocabulary box</strong>
+              <p>${plan.subject.vocabulary.join(" · ")}</p>
+            </div>
+            <div class="worksheet-task">
+              <strong>Parent note</strong>
+              <p>What did I notice?</p>
+              <div class="writing-lines">
+                <div class="writing-line"></div>
+                <div class="writing-line"></div>
+              </div>
+            </div>
+          </aside>
+        </div>
       `;
       bindChecks();
     }
@@ -1194,6 +1915,9 @@
     document.getElementById("dayType").addEventListener("change", renderDailyPlan);
     document.getElementById("refreshDay").addEventListener("click", renderDailyPlan);
     document.getElementById("activityTerm").addEventListener("change", renderActivity);
+    lessonWeek.addEventListener("change", renderLessonDetail);
+    lessonSubject.addEventListener("change", renderLessonDetail);
+    document.getElementById("printWorksheet").addEventListener("click", () => window.print());
     document.getElementById("resetProgress").addEventListener("click", () => {
       state.progress = {};
       state.reflection = "";
@@ -1202,6 +1926,7 @@
       localStorage.removeItem("year1-reflection");
       renderDailyPlan();
       renderActivity();
+      renderLessonDetail();
       renderProgress();
     });
 
@@ -1217,6 +1942,8 @@
     renderTermMap();
     renderSubjects();
     renderActivity();
+    renderLessonControls();
+    renderLessonDetail();
     renderProgress();
     renderPrinciples();
   </script>
