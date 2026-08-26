@@ -857,6 +857,86 @@
       text-align: center;
     }
 
+    .journey-grid {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .journey-card {
+      padding: 0.85rem;
+      border: 1px solid var(--power, var(--cp-border));
+      border-radius: 16px;
+      background: var(--power-soft, var(--cp-surface-soft));
+    }
+
+    .journey-card strong {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .connection-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem;
+      margin-top: 0.7rem;
+    }
+
+    .connection-pill {
+      padding: 0.55rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .progression-ladder {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.55rem;
+      margin-top: 0.7rem;
+    }
+
+    .ladder-step {
+      padding: 0.65rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .ladder-step.current {
+      border-color: var(--power, var(--cp-accent));
+      background: var(--power-soft, var(--cp-accent-soft));
+      font-weight: 800;
+    }
+
+    .daily-flow {
+      display: grid;
+      gap: 0.6rem;
+      padding: 0.85rem;
+      margin: 0.8rem 0;
+      border: 1px solid var(--power, var(--cp-border));
+      border-radius: 16px;
+      background: var(--power-soft, var(--cp-surface-soft));
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 6.5rem 1fr;
+      gap: 0.6rem;
+      align-items: start;
+      padding: 0.5rem;
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+    }
+
+    .flow-step strong {
+      color: var(--power, var(--cp-accent));
+    }
+
     .day-tabs {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1109,6 +1189,14 @@
       .mission-strip {
         grid-template-columns: 1fr;
       }
+
+      .connection-list {
+        grid-template-columns: 1fr;
+      }
+
+      .progression-ladder {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 640px) {
@@ -1124,6 +1212,10 @@
       .planner-row,
       .lesson-step,
       .timeline-item {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step {
         grid-template-columns: 1fr;
       }
 
@@ -2158,6 +2250,151 @@
       return "Summer";
     }
 
+    const journeyQuestions = [
+      "How do I get ready to learn well at home?",
+      "What makes me unique, and how can I represent numbers about myself?",
+      "What can stories, numbers and my street tell me about my world?",
+      "How do patterns help me read, count, move and organise?",
+      "How do parts make a whole in words, numbers, animals and homes?",
+      "How do facts help us explain animals, helpers and number stories?",
+      "How do stories, subtraction and plant parts show change?",
+      "How can instructions, shapes and plant tests help us make something work?",
+      "How can I use better sentences, teen numbers and evidence?",
+      "How do numbers, facts and local clues help us organise information?",
+      "How can I explain what I know using books, problems, maps and displays?",
+      "How can I share my Autumn learning with confidence?",
+      "What new growth can I notice in stories, numbers, plants and places?",
+      "How do questions help me learn about characters, numbers and the UK?",
+      "How can I describe, add, compare and care more precisely?",
+      "How do recounts, subtraction, weather and transport show change over time?",
+      "How do equal groups, instructions and world maps help us organise ideas?",
+      "How can fair sharing help us understand stories, animals and places?",
+      "How do precise words, fractions and habitats help us explain hard things?",
+      "How can measuring help us understand our bodies, plants and designs?",
+      "How do reasons and evidence help us explain food, mass and choices?",
+      "How does time help us organise diaries, routines, daylight and cultures?",
+      "How can I review Spring learning and turn it into a project?",
+      "How can I celebrate Spring progress and choose my next goal?",
+      "How can I become more independent as I explore summer places?",
+      "How can stamina and place value help me understand journeys and materials?",
+      "How can I solve problems and protect places through testing and persuasion?",
+      "How do groups, habitats and patterns help us understand the world?",
+      "How can sharing, food chains, reports and maps explain relationships?",
+      "How do money, shops and recycling connect to everyday choices?",
+      "How can position, direction and shadows help me guide someone?",
+      "How can data help me investigate, present and listen well?",
+      "How can I bring together my best Year 1 skills independently?",
+      "How can I get ready for Year 2 by improving and explaining?",
+      "How can I show what I know to an audience?",
+      "How can I celebrate my Year 1 journey and step into Year 2?"
+    ];
+
+    function weeklyJourney(weekPlan) {
+      const week = weekPlan.week;
+      const question = journeyQuestions[week - 1] || `How does this week's learning connect?`;
+      const outcomeByBand = [
+        "a simple routine, drawing, model or explanation to start the year",
+        "a small labelled page, model, map or performance showing connected learning",
+        "a mini exhibition page that combines reading, maths, science and a real-life habit",
+        "a Spring investigation, map, story or practical routine explained clearly",
+        "a connected project or presentation using evidence, number, words and creativity",
+        "a Year 1 portfolio piece that shows readiness for Year 2"
+      ];
+      const band = Math.min(outcomeByBand.length - 1, Math.floor((week - 1) / 6));
+      return {
+        question,
+        story: `This week is about "${weekPlan.theme}". Each subject contributes one part of the same learning story rather than sitting separately.`,
+        outcome: `By the end of the week, aim to create ${outcomeByBand[band]}.`,
+        parentCompass: "Teach the subject skill, then always ask: how does this connect to this week's big question?",
+        days: [
+          { label: "D1", name: "Discover", purpose: "Launch the big question, introduce vocabulary, and make the first concrete model or routine." },
+          { label: "D2", name: "Build", purpose: "Practise the core skill with a small variation so it is not just repetition." },
+          { label: "D3", name: "Connect", purpose: "Use the skill in a real object, book, map, movement, investigation or home situation." },
+          { label: "D4", name: "Create", purpose: "Make, explain, improve or teach something linked to the weekly outcome." },
+          { label: "D5", name: "Share", purpose: "Review the week, choose evidence, celebrate effort and name the next step." }
+        ]
+      };
+    }
+
+    function subjectConnection(subjectKey, weekPlan) {
+      const subject = weekPlan[subjectKey];
+      const connections = {
+        english: `Words and sentences for: ${subject.topic}.`,
+        maths: `Number, shape or measure thinking for: ${subject.topic}.`,
+        science: `Observation, testing or evidence for: ${subject.topic}.`,
+        humanities: `Place, time, people or map context for: ${subject.topic}.`,
+        creative: `Making, drawing or performance for: ${subject.topic}.`,
+        life: `Real-life habit for: ${subject.topic}.`
+      };
+      return connections[subjectKey];
+    }
+
+    function dailyFlow(dayPlan, subjectKey, weekPlan) {
+      const subject = weekPlan[subjectKey];
+      const journey = weeklyJourney(weekPlan);
+      const day = journey.days.find(item => item.label === dayPlan.label) || journey.days[0];
+      return [
+        ["Big question", journey.question],
+        ["Today", `${day.name}: ${day.purpose}`],
+        ["Subject focus", `${lessonSubjectMeta[subjectKey].name}: ${subject.topic}.`],
+        ["Connection", subjectConnection(subjectKey, weekPlan)]
+      ];
+    }
+
+    function subjectProgression(subjectKey, week) {
+      const ladders = {
+        english: [
+          "Hear, say, blend and enjoy stories.",
+          "Read/write short captions and sentences.",
+          "Plan, edit and share connected writing."
+        ],
+        maths: [
+          "Build number sense with objects and images.",
+          "Use strategies for operations, shape and measure.",
+          "Solve, explain and choose efficient methods."
+        ],
+        science: [
+          "Notice, name and describe real things.",
+          "Test, compare and record evidence.",
+          "Explain patterns and present conclusions."
+        ],
+        humanities: [
+          "Know home, family and local places.",
+          "Use maps, timelines and comparisons.",
+          "Explain people, places and change with evidence."
+        ],
+        creative: [
+          "Explore materials, sound, line and colour.",
+          "Design, make, perform and improve.",
+          "Curate, explain and present creative choices."
+        ],
+        life: [
+          "Build routines, independence and calm starts.",
+          "Practise resilience, care, safety and social habits.",
+          "Reflect, self-manage and prepare for Year 2."
+        ]
+      };
+      const stage = week <= 12 ? 0 : week <= 24 ? 1 : 2;
+      return ladders[subjectKey].map((text, index) => ({
+        label: index === 0 ? "Earlier" : index === 1 ? "Now" : "Next",
+        text,
+        current: index === stage
+      }));
+    }
+
+    function evidencePrompt(subjectKey, weekPlan) {
+      const subject = weekPlan[subjectKey];
+      const prompts = {
+        english: `Keep one sentence, caption, retell note or reading comment that shows ${subject.skill.toLowerCase()}.`,
+        maths: `Keep one photo/drawing of the model plus one recorded answer or explanation.`,
+        science: `Keep one labelled drawing, sort, table, observation or conclusion sentence.`,
+        humanities: `Keep one map, timeline, comparison, interview note, fact card or labelled drawing.`,
+        creative: `Keep the creative piece or a photo, plus one sentence about a choice or improvement.`,
+        life: `Keep a photo, checklist, card or parent note showing the habit used in real life.`
+      };
+      return prompts[subjectKey];
+    }
+
     function concreteMission(subjectKey, weekPlan) {
       const subject = weekPlan[subjectKey];
       const vocab = subject.vocabulary.join(", ");
@@ -2758,16 +2995,51 @@
       const level = learnerLevel(totalPoints);
       const progressToNext = level.next === level.min ? 100 : Math.min(100, Math.round(((totalPoints - level.min) / (level.next - level.min)) * 100));
       const dayPlan = plan.dailyWorksheets.find(day => day.label === `D${state.learnerDay}`) || plan.dailyWorksheets[0];
+      const journey = weeklyJourney(weekPlan);
+      const selectedDay = journey.days.find(day => day.label === dayPlan.label) || journey.days[0];
+      const flow = dailyFlow(dayPlan, state.learnerSubject, weekPlan);
+      const ladder = subjectProgression(state.learnerSubject, weekPlan.week);
+      const evidence = evidencePrompt(state.learnerSubject, weekPlan);
 
       learnerActivity.innerHTML = `
         <div class="quest-layout power-${state.learnerSubject}">
           <section class="learner-card power-card">
-            <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} · ${plan.subjectName}</p>
-            <h3>${plan.subject.topic}</h3>
-            <p><strong>Your mission:</strong> ${plan.objective}</p>
-            <p class="muted">${plan.focusLine}</p>
+            <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} learning journey</p>
+            <h3>${journey.question}</h3>
+            <p class="muted">${journey.story}</p>
+            <div class="journey-grid">
+              <div class="journey-card">
+                <strong>Weekly outcome</strong>
+                <span>${journey.outcome}</span>
+              </div>
+              <div class="journey-card">
+                <strong>Parent compass</strong>
+                <span>${journey.parentCompass}</span>
+              </div>
+              <div class="journey-card">
+                <strong>Today in the journey</strong>
+                <span>${selectedDay.label}: ${selectedDay.name} — ${selectedDay.purpose}</span>
+              </div>
+              <div class="journey-card">
+                <strong>Evidence to keep</strong>
+                <span>${evidence}</span>
+              </div>
+            </div>
+            <div class="progression-ladder">
+              ${ladder.map(step => `
+                <div class="ladder-step ${step.current ? "current" : ""}">
+                  <strong>${step.label}</strong>
+                  <span>${step.text}</span>
+                </div>
+              `).join("")}
+            </div>
             <div class="note">
               <strong>How to use this week:</strong> ${plan.weeklyUse}
+            </div>
+            <div class="connection-list">
+              ${Object.keys(lessonSubjectMeta).map(key => `
+                <div class="connection-pill"><strong>${lessonSubjectMeta[key].name}</strong><br>${subjectConnection(key, weekPlan)}</div>
+              `).join("")}
             </div>
             <div class="activity-meta">
               <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
@@ -2796,12 +3068,18 @@
           </section>
 
           <section class="learner-card">
-            <p class="section-kicker">My worksheet</p>
+            <p class="section-kicker">Daily worksheet · ${plan.subjectName}</p>
             <h3>${dayPlan.label}: ${dayPlan.title}</h3>
+            <p><strong>Subject mission:</strong> ${plan.subject.topic} — ${plan.objective}</p>
             <p class="muted">${dayPlan.intro}</p>
             <div class="day-tabs" aria-label="Choose daily worksheet">
               ${plan.dailyWorksheets.map(day => `
                 <button class="day-tab ${day.label === dayPlan.label ? "active" : ""}" data-learner-day="${day.label.slice(1)}">${day.label}</button>
+              `).join("")}
+            </div>
+            <div class="daily-flow">
+              ${flow.map(([label, text]) => `
+                <div class="flow-step"><strong>${label}</strong><span>${text}</span></div>
               `).join("")}
             </div>
             ${dayPlan.tasks.map((task, index) => `
