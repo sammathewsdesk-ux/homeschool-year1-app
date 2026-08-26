@@ -2315,6 +2315,401 @@
       return unitCatalog.find(unit => unit.week === Number(week)) || unitCatalog[0];
     }
 
+    const authoredDailyTasks = {
+      1: {
+        english: [
+          { label: "D1", title: "Name your basecamp", intro: "Use the first sounds s, a, t, p to begin labelling your learning space.", tasks: [
+            { title: "Get ready", body: "Look at your learning space. Choose three things to label, such as pen, mat, tap, sat card or pot." },
+            { title: "Do it", body: "Say each word slowly. Clap the sounds you can hear. Ask a grown-up to help you hear the first sound." },
+            { title: "Show it", body: "Write or copy three labels and place them near the objects." },
+            { title: "Tell me", body: "Point to one label and say the first sound. Say how labels help your basecamp." }
+          ] },
+          { label: "D2", title: "Blend and find", intro: "Read simple CVC words and connect them to real things.", tasks: [
+            { title: "Get ready", body: "Make word cards: sat, pat, tap, sap. Put them on the table." },
+            { title: "Do it", body: "Sound-talk each word, then blend it. Match any real words to an action or object." },
+            { title: "Show it", body: "Choose two words and draw a tiny picture for each." },
+            { title: "Tell me", body: "Read your two words to a grown-up without rushing." }
+          ] },
+          { label: "D3", title: "Basecamp sentence talk", intro: "Say a sentence before writing.", tasks: [
+            { title: "Get ready", body: "Choose one thing in your learning basecamp." },
+            { title: "Do it", body: "Say: 'I can see a ____.' Count the words on your fingers." },
+            { title: "Show it", body: "Ask a grown-up to write the sentence, then you copy one word or label the picture." },
+            { title: "Tell me", body: "Read the sentence back and point to each word." }
+          ] },
+          { label: "D4", title: "Story corner label", intro: "Add a reading label to your basecamp.", tasks: [
+            { title: "Get ready", body: "Choose where books will live in your learning space." },
+            { title: "Do it", body: "Say the phrase 'book spot' or 'story spot'. Listen for the first sounds." },
+            { title: "Show it", body: "Make a label for the book area and draw one book you want to read." },
+            { title: "Tell me", body: "Tell a grown-up why stories belong in your basecamp." }
+          ] },
+          { label: "D5", title: "Basecamp tour", intro: "Use your labels to give a short tour.", tasks: [
+            { title: "Get ready", body: "Stand by your learning space with your labels visible." },
+            { title: "Do it", body: "Give a tour: 'This is my ____. I use it to ____.'" },
+            { title: "Show it", body: "Choose your best label and add it to your weekly project." },
+            { title: "Tell me", body: "What word are you proud you can read or say?" }
+          ] }
+        ],
+        maths: [
+          { label: "D1", title: "Count your tools", intro: "Count real learning objects carefully to 10.", tasks: [
+            { title: "Get ready", body: "Collect up to 10 learning tools: pencils, counters, books or cards." },
+            { title: "Do it", body: "Touch and count each object once. Move it into a line as you count." },
+            { title: "Show it", body: "Draw the objects and write the total number." },
+            { title: "Tell me", body: "How did you make sure you counted each object once?" }
+          ] },
+          { label: "D2", title: "Count in different layouts", intro: "Numbers stay the same even when objects move.", tasks: [
+            { title: "Get ready", body: "Use the same set of objects from D1." },
+            { title: "Do it", body: "Count them in a line, then in a circle, then scattered." },
+            { title: "Show it", body: "Draw two layouts and write the same total beside each." },
+            { title: "Tell me", body: "Did the number change when the objects moved? Why?" }
+          ] },
+          { label: "D3", title: "More or fewer", intro: "Compare two groups from your basecamp.", tasks: [
+            { title: "Get ready", body: "Make two groups, such as pencils and books." },
+            { title: "Do it", body: "Count both groups. Use more, fewer or equal." },
+            { title: "Show it", body: "Draw both groups and circle the group with more." },
+            { title: "Tell me", body: "Say: ____ has more than ____." }
+          ] },
+          { label: "D4", title: "Make a basecamp number card", intro: "Represent one number in different ways.", tasks: [
+            { title: "Get ready", body: "Choose one number from 1 to 10." },
+            { title: "Do it", body: "Show it with objects, fingers and dots." },
+            { title: "Show it", body: "Make a number card with numeral, dots and a drawing." },
+            { title: "Tell me", body: "Which representation is easiest for you to read?" }
+          ] },
+          { label: "D5", title: "Maths tour", intro: "Use counting to explain your learning basecamp.", tasks: [
+            { title: "Get ready", body: "Look around your finished basecamp." },
+            { title: "Do it", body: "Find three things to count." },
+            { title: "Show it", body: "Make a mini tally or drawing: I have ____, ____, ____." },
+            { title: "Tell me", body: "Which count should go in your weekly project?" }
+          ] }
+        ],
+        science: [
+          { label: "D1", title: "Look out of the window", intro: "Start a seasonal observation for your basecamp.", tasks: [
+            { title: "Get ready", body: "Look outside from a window or doorway." },
+            { title: "Do it", body: "Notice three signs of the season: sky, leaves, weather, clothes or light." },
+            { title: "Show it", body: "Draw one thing you noticed and label it." },
+            { title: "Tell me", body: "Say: I noticed ____ because ____." }
+          ] },
+          { label: "D2", title: "Use your senses", intro: "Observe like a scientist.", tasks: [
+            { title: "Get ready", body: "Go outside for two minutes or open a window safely." },
+            { title: "Do it", body: "Use eyes, ears and skin: what can you see, hear and feel?" },
+            { title: "Show it", body: "Make three boxes: I see, I hear, I feel." },
+            { title: "Tell me", body: "Which sense helped you most today?" }
+          ] },
+          { label: "D3", title: "Basecamp weather mark", intro: "Add weather evidence to your learning space.", tasks: [
+            { title: "Get ready", body: "Choose one weather symbol: sun, cloud, rain, wind or cold." },
+            { title: "Do it", body: "Check today's weather and choose the matching symbol." },
+            { title: "Show it", body: "Draw the symbol and write or copy the weather word." },
+            { title: "Tell me", body: "How might the weather change what you wear or do?" }
+          ] },
+          { label: "D4", title: "Leaf or object study", intro: "Look closely at one seasonal object.", tasks: [
+            { title: "Get ready", body: "Find a leaf, twig, stone or safe outdoor object." },
+            { title: "Do it", body: "Look closely for colour, shape, texture and size." },
+            { title: "Show it", body: "Draw it carefully and add two labels." },
+            { title: "Tell me", body: "What detail did you notice after looking carefully?" }
+          ] },
+          { label: "D5", title: "Season evidence choice", intro: "Choose your best seasonal evidence.", tasks: [
+            { title: "Get ready", body: "Look at your weather symbol, sense boxes and object drawing." },
+            { title: "Do it", body: "Choose one piece for your basecamp project." },
+            { title: "Show it", body: "Add a sentence: The season looks/feels like ____." },
+            { title: "Tell me", body: "Why is this good evidence?" }
+          ] }
+        ],
+        humanities: [
+          { label: "D1", title: "Draw your learning space", intro: "Make a simple map of your basecamp.", tasks: [
+            { title: "Get ready", body: "Stand in your learning space and look at what is near you." },
+            { title: "Do it", body: "Draw the table, chair, shelf or book basket." },
+            { title: "Show it", body: "Add labels: near, far, beside or behind." },
+            { title: "Tell me", body: "What is beside your learning spot?" }
+          ] },
+          { label: "D2", title: "Route to learning", intro: "Use direction words to get to your basecamp.", tasks: [
+            { title: "Get ready", body: "Start at a doorway or another safe place." },
+            { title: "Do it", body: "Walk to your learning space and say the route." },
+            { title: "Show it", body: "Draw arrows for the route." },
+            { title: "Tell me", body: "Use first, next and last to describe the route." }
+          ] },
+          { label: "D3", title: "Map symbols", intro: "Create symbols for your map.", tasks: [
+            { title: "Get ready", body: "Choose three things on your map." },
+            { title: "Do it", body: "Invent a simple symbol for each thing." },
+            { title: "Show it", body: "Add a key: symbol = object." },
+            { title: "Tell me", body: "Why do maps use symbols?" }
+          ] },
+          { label: "D4", title: "Then and now basecamp", intro: "Think about how the space changes when learning starts.", tasks: [
+            { title: "Get ready", body: "Look at the space before learning and after setting up." },
+            { title: "Do it", body: "Name what changed." },
+            { title: "Show it", body: "Draw before and after." },
+            { title: "Tell me", body: "What change helps you learn?" }
+          ] },
+          { label: "D5", title: "Basecamp map share", intro: "Use your map to explain your learning space.", tasks: [
+            { title: "Get ready", body: "Put your map, symbols and route together." },
+            { title: "Do it", body: "Use your map to give a tour." },
+            { title: "Show it", body: "Add one final label or arrow." },
+            { title: "Tell me", body: "How does your map help someone understand your basecamp?" }
+          ] }
+        ],
+        creative: [
+          { label: "D1", title: "Look in the mirror", intro: "Begin your journal cover with careful looking.", tasks: [
+            { title: "Get ready", body: "Look in a mirror or at a photo of yourself." },
+            { title: "Do it", body: "Notice face shape, hair, eyes and one special detail." },
+            { title: "Show it", body: "Draw a quick self-portrait sketch." },
+            { title: "Tell me", body: "What detail makes it look like you?" }
+          ] },
+          { label: "D2", title: "Add learning powers", intro: "Show what kind of learner you want to be.", tasks: [
+            { title: "Get ready", body: "Choose three learning powers: brave, kind, curious, careful or calm." },
+            { title: "Do it", body: "Add symbols for the powers around your portrait." },
+            { title: "Show it", body: "Colour the symbols." },
+            { title: "Tell me", body: "Which power will help you this week?" }
+          ] },
+          { label: "D3", title: "Design the cover", intro: "Turn the portrait into a journal cover.", tasks: [
+            { title: "Get ready", body: "Put your portrait in the middle of a page." },
+            { title: "Do it", body: "Add a title: My Year 1 Learning Journal." },
+            { title: "Show it", body: "Add a border or pattern." },
+            { title: "Tell me", body: "What does your cover say about you?" }
+          ] },
+          { label: "D4", title: "Improve one part", intro: "Artists improve by looking again.", tasks: [
+            { title: "Get ready", body: "Look carefully at your cover." },
+            { title: "Do it", body: "Improve one part: colour, line, detail or spacing." },
+            { title: "Show it", body: "Circle or describe what you improved." },
+            { title: "Tell me", body: "Why is it better now?" }
+          ] },
+          { label: "D5", title: "Gallery moment", intro: "Share your finished journal cover.", tasks: [
+            { title: "Get ready", body: "Put your cover beside your basecamp map and labels." },
+            { title: "Do it", body: "Show it to a grown-up." },
+            { title: "Show it", body: "Write or dictate the title of your gallery." },
+            { title: "Tell me", body: "What are you proud of on your cover?" }
+          ] }
+        ],
+        life: [
+          { label: "D1", title: "Make the routine card", intro: "Create the tool that will help you start and finish learning.", tasks: [
+            { title: "Get ready", body: "Fold paper into four boxes: Ready, Learn, Tidy, Reflect." },
+            { title: "Do it", body: "Draw a picture for each step." },
+            { title: "Show it", body: "Put the card where you can see it." },
+            { title: "Tell me", body: "Which step comes first?" }
+          ] },
+          { label: "D2", title: "Practise ready", intro: "Use the first part of the routine.", tasks: [
+            { title: "Get ready", body: "Use your card. Do the Ready step: pencil, paper, book or object ready." },
+            { title: "Do it", body: "Start one tiny task without extra reminders." },
+            { title: "Show it", body: "Tick or draw the Ready box." },
+            { title: "Tell me", body: "What helped you get ready?" }
+          ] },
+          { label: "D3", title: "Practise tidy", intro: "Use the routine after learning.", tasks: [
+            { title: "Get ready", body: "Finish a short learning task." },
+            { title: "Do it", body: "Tidy the tools back into their homes." },
+            { title: "Show it", body: "Draw before and after tidy." },
+            { title: "Tell me", body: "What belongs where?" }
+          ] },
+          { label: "D4", title: "Practise reflect", intro: "End learning by noticing one thing.", tasks: [
+            { title: "Get ready", body: "Look at the Reflect box on your routine card." },
+            { title: "Do it", body: "Say one thing that went well and one thing to try again." },
+            { title: "Show it", body: "Draw a smile, star or arrow for your reflection." },
+            { title: "Tell me", body: "What will you remember for next time?" }
+          ] },
+          { label: "D5", title: "Use the full routine", intro: "Try all four steps in order.", tasks: [
+            { title: "Get ready", body: "Put your routine card beside you." },
+            { title: "Do it", body: "Do Ready, Learn, Tidy and Reflect with one short task." },
+            { title: "Show it", body: "Tick all four boxes." },
+            { title: "Tell me", body: "Which step made learning easier?" }
+          ] }
+        ]
+      },
+      2: {
+        english: [
+          { label: "D1", title: "Name labels", intro: "Read and build words for your All About Me Museum.", tasks: [
+            { title: "Get ready", body: "Make word cards: pin, mat, dip, sit, tin." },
+            { title: "Do it", body: "Sound-talk and blend each word." },
+            { title: "Show it", body: "Choose two words to copy beside your self picture." },
+            { title: "Tell me", body: "Which sounds helped you read the word?" }
+          ] },
+          { label: "D2", title: "Me sentence", intro: "Say a sentence before writing.", tasks: [
+            { title: "Get ready", body: "Choose one fact about yourself." },
+            { title: "Do it", body: "Say: I am ____ or I like ____." },
+            { title: "Show it", body: "Write or copy your sentence for the museum." },
+            { title: "Tell me", body: "Point to the word I and the full stop." }
+          ] },
+          { label: "D3", title: "Favourite book talk", intro: "Use speaking and listening for your museum.", tasks: [
+            { title: "Get ready", body: "Choose a favourite picture book." },
+            { title: "Do it", body: "Tell a grown-up your favourite page." },
+            { title: "Show it", body: "Draw the page and write/copy one label." },
+            { title: "Tell me", body: "Why does this book belong in your museum?" }
+          ] },
+          { label: "D4", title: "Question about me", intro: "Ask and answer one simple question.", tasks: [
+            { title: "Get ready", body: "Choose a question starter: What, Who or Where." },
+            { title: "Do it", body: "Ask a grown-up a question about when you were little." },
+            { title: "Show it", body: "Draw or write the answer." },
+            { title: "Tell me", body: "What new thing did you learn about yourself?" }
+          ] },
+          { label: "D5", title: "Museum caption", intro: "Write one caption for your museum display.", tasks: [
+            { title: "Get ready", body: "Choose your best picture from the week." },
+            { title: "Do it", body: "Say a caption out loud." },
+            { title: "Show it", body: "Write or copy the caption." },
+            { title: "Tell me", body: "Read the caption as the museum guide." }
+          ] }
+        ],
+        maths: [
+          { label: "D1", title: "My number", intro: "Represent one number about yourself.", tasks: [
+            { title: "Get ready", body: "Choose a number about you, such as age, people in family or favourite toys." },
+            { title: "Do it", body: "Show the number with fingers, objects and dots." },
+            { title: "Show it", body: "Draw the number in a ten-frame." },
+            { title: "Tell me", body: "How many spaces are full? How many are empty?" }
+          ] },
+          { label: "D2", title: "Museum count", intro: "Count objects for your All About Me Museum.", tasks: [
+            { title: "Get ready", body: "Collect up to 10 small objects that tell something about you." },
+            { title: "Do it", body: "Count them carefully and move each one as you count." },
+            { title: "Show it", body: "Write the total and draw the objects." },
+            { title: "Tell me", body: "What does this number tell us about you?" }
+          ] },
+          { label: "D3", title: "Compare favourites", intro: "Compare two groups.", tasks: [
+            { title: "Get ready", body: "Make two groups, such as favourite colours and favourite toys." },
+            { title: "Do it", body: "Count each group." },
+            { title: "Show it", body: "Write more, fewer or equal." },
+            { title: "Tell me", body: "Which group has more? How do you know?" }
+          ] },
+          { label: "D4", title: "Order my numbers", intro: "Put personal numbers in order.", tasks: [
+            { title: "Get ready", body: "Choose three numbers from your museum work." },
+            { title: "Do it", body: "Put them from smallest to largest." },
+            { title: "Show it", body: "Write or place the numbers in order." },
+            { title: "Tell me", body: "Which number is greatest?" }
+          ] },
+          { label: "D5", title: "Number museum label", intro: "Choose one number for the final display.", tasks: [
+            { title: "Get ready", body: "Look at your ten-frame, count and comparison work." },
+            { title: "Do it", body: "Choose one number fact for the museum." },
+            { title: "Show it", body: "Make a neat number label." },
+            { title: "Tell me", body: "This number tells people..." }
+          ] }
+        ],
+        science: [
+          { label: "D1", title: "Five senses", intro: "Use your senses to learn about yourself.", tasks: [
+            { title: "Get ready", body: "Draw a face or body outline." },
+            { title: "Do it", body: "Point to eyes, ears, nose, tongue and hands." },
+            { title: "Show it", body: "Label two senses." },
+            { title: "Tell me", body: "Which sense helps you read a book?" }
+          ] },
+          { label: "D2", title: "Body parts", intro: "Name body parts for the museum.", tasks: [
+            { title: "Get ready", body: "Stand up and play 'touch your...' with a grown-up." },
+            { title: "Do it", body: "Name head, shoulders, knees, hands, feet and eyes." },
+            { title: "Show it", body: "Label a body outline." },
+            { title: "Tell me", body: "Which body part helps you write?" }
+          ] },
+          { label: "D3", title: "Sense investigation", intro: "Match senses to real objects.", tasks: [
+            { title: "Get ready", body: "Choose three safe objects: soft toy, fruit, bell, book or flower." },
+            { title: "Do it", body: "Use one sense for each object." },
+            { title: "Show it", body: "Draw object + sense." },
+            { title: "Tell me", body: "I used my ____ to find out ____." }
+          ] },
+          { label: "D4", title: "Growing and changing", intro: "Notice how your body has changed.", tasks: [
+            { title: "Get ready", body: "Look at a baby/toddler photo if available." },
+            { title: "Do it", body: "Name two things that changed as you grew." },
+            { title: "Show it", body: "Draw baby me and now me." },
+            { title: "Tell me", body: "What can you do now that you could not do before?" }
+          ] },
+          { label: "D5", title: "Science museum piece", intro: "Choose one body or senses fact.", tasks: [
+            { title: "Get ready", body: "Look at your body labels and sense drawings." },
+            { title: "Do it", body: "Choose one fact to share." },
+            { title: "Show it", body: "Make a fact card: My ____ helps me ____." },
+            { title: "Tell me", body: "Read your science fact as museum guide." }
+          ] }
+        ],
+        humanities: [
+          { label: "D1", title: "Baby, toddler, now", intro: "Start your personal timeline.", tasks: [
+            { title: "Get ready", body: "Talk about three times: baby, toddler, now." },
+            { title: "Do it", body: "Put the times in order." },
+            { title: "Show it", body: "Draw three boxes for the timeline." },
+            { title: "Tell me", body: "Which came first?" }
+          ] },
+          { label: "D2", title: "Family interview", intro: "Ask about the past.", tasks: [
+            { title: "Get ready", body: "Ask a family member about when you were little." },
+            { title: "Do it", body: "Listen for one memory." },
+            { title: "Show it", body: "Draw or write the memory." },
+            { title: "Tell me", body: "This happened when I was..." }
+          ] },
+          { label: "D3", title: "Then and now object", intro: "Compare an object from then and now.", tasks: [
+            { title: "Get ready", body: "Choose a baby object/photo and a now object/photo." },
+            { title: "Do it", body: "Say what is same and different." },
+            { title: "Show it", body: "Draw then/now." },
+            { title: "Tell me", body: "What changed?" }
+          ] },
+          { label: "D4", title: "Museum timeline label", intro: "Make the timeline clear for visitors.", tasks: [
+            { title: "Get ready", body: "Look at your three timeline boxes." },
+            { title: "Do it", body: "Add labels: baby, toddler, now." },
+            { title: "Show it", body: "Add one sentence or dictated fact." },
+            { title: "Tell me", body: "What does your timeline show?" }
+          ] },
+          { label: "D5", title: "Timeline guide", intro: "Use the timeline in your museum.", tasks: [
+            { title: "Get ready", body: "Put your timeline with your other museum pieces." },
+            { title: "Do it", body: "Tell the story from baby to now." },
+            { title: "Show it", body: "Add one final detail." },
+            { title: "Tell me", body: "What are you proud you can do now?" }
+          ] }
+        ],
+        creative: [
+          { label: "D1", title: "Feeling colours", intro: "Choose colours for feelings.", tasks: [
+            { title: "Get ready", body: "Choose three feelings: happy, calm, excited, worried or proud." },
+            { title: "Do it", body: "Pick a colour for each feeling." },
+            { title: "Show it", body: "Make three colour patches." },
+            { title: "Tell me", body: "Why did you choose one colour?" }
+          ] },
+          { label: "D2", title: "Mix a feeling", intro: "Mix or layer colours.", tasks: [
+            { title: "Get ready", body: "Choose two colours from D1." },
+            { title: "Do it", body: "Mix, layer or place them together." },
+            { title: "Show it", body: "Name the new feeling colour." },
+            { title: "Tell me", body: "What feeling does it show?" }
+          ] },
+          { label: "D3", title: "Museum background", intro: "Create a background for the All About Me Museum.", tasks: [
+            { title: "Get ready", body: "Choose one feeling colour." },
+            { title: "Do it", body: "Use it as a border or background." },
+            { title: "Show it", body: "Add your name or initials." },
+            { title: "Tell me", body: "How should visitors feel when they see it?" }
+          ] },
+          { label: "D4", title: "Add symbols", intro: "Use symbols to show what you like.", tasks: [
+            { title: "Get ready", body: "Choose two things you like." },
+            { title: "Do it", body: "Draw a symbol for each." },
+            { title: "Show it", body: "Add the symbols to the museum page." },
+            { title: "Tell me", body: "What does each symbol mean?" }
+          ] },
+          { label: "D5", title: "Gallery choice", intro: "Choose your best creative piece.", tasks: [
+            { title: "Get ready", body: "Look at your colours, symbols and background." },
+            { title: "Do it", body: "Choose what to display." },
+            { title: "Show it", body: "Add a title: My Museum." },
+            { title: "Tell me", body: "What does your design tell people about you?" }
+          ] }
+        ],
+        life: [
+          { label: "D1", title: "Snack safety steps", intro: "Learn the safe snack routine.", tasks: [
+            { title: "Get ready", body: "Get a plate, napkin and fruit with a grown-up." },
+            { title: "Do it", body: "Wash hands, prepare snack, eat, wipe table, put rubbish away." },
+            { title: "Show it", body: "Draw the five snack steps." },
+            { title: "Tell me", body: "Which step keeps food safe?" }
+          ] },
+          { label: "D2", title: "Do more yourself", intro: "Try the snack routine with less help.", tasks: [
+            { title: "Get ready", body: "Look at yesterday's snack steps." },
+            { title: "Do it", body: "Do as many steps as you can independently." },
+            { title: "Show it", body: "Tick the steps you did yourself." },
+            { title: "Tell me", body: "Which step was easiest?" }
+          ] },
+          { label: "D3", title: "Serve neatly", intro: "Make the snack look cared for.", tasks: [
+            { title: "Get ready", body: "Prepare a snack safely." },
+            { title: "Do it", body: "Arrange it neatly on the plate." },
+            { title: "Show it", body: "Draw or photograph the plate." },
+            { title: "Tell me", body: "How did you make it ready for someone to eat?" }
+          ] },
+          { label: "D4", title: "Clean-up check", intro: "The job is not done until clean-up is done.", tasks: [
+            { title: "Get ready", body: "Look at the table after snack." },
+            { title: "Do it", body: "Wipe, bin, wash or put away what is needed." },
+            { title: "Show it", body: "Draw before and after clean-up." },
+            { title: "Tell me", body: "What did you leave ready for next time?" }
+          ] },
+          { label: "D5", title: "Museum helper snack", intro: "Use your snack routine as a museum host.", tasks: [
+            { title: "Get ready", body: "Choose a simple snack for your All About Me Museum visitor." },
+            { title: "Do it", body: "Prepare and serve it safely with a grown-up." },
+            { title: "Show it", body: "Tick all routine steps." },
+            { title: "Tell me", body: "How did this show independence?" }
+          ] }
+        ]
+      }
+    };
+
+    function authoredTasksFor(week, subjectKey) {
+      return authoredDailyTasks[week]?.[subjectKey];
+    }
+
     const curriculumGuardrails = {
       english: [
         "Phonics and decoding remain explicit and frequent.",
@@ -2929,7 +3324,8 @@
       const selectedPlan = plans[subjectKey];
       selectedPlan.steps = concrete.steps;
       selectedPlan.worksheet = concrete.worksheet;
-      selectedPlan.dailyWorksheets = concrete.dailyWorksheets;
+      selectedPlan.dailyWorksheets = authoredTasksFor(weekPlan.week, subjectKey) || concrete.dailyWorksheets;
+      selectedPlan.isHandAuthored = Boolean(authoredTasksFor(weekPlan.week, subjectKey));
       return { subjectName, subject, ...shared, ...selectedPlan };
     }
 
@@ -3112,6 +3508,7 @@
             </div>
             <div class="activity-meta">
               <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
+              <span class="badge ${plan.isHandAuthored ? "accent" : ""}">${plan.isHandAuthored ? "Hand-authored unit" : "Framework unit"}</span>
               <span class="badge accent">${lessonMode(state.learnerSubject)}</span>
               <span class="badge">${plan.subject.vocabulary.join(" · ")}</span>
             </div>
