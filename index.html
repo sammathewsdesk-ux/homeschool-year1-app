@@ -2135,10 +2135,142 @@
       return "Summer";
     }
 
+    function concreteMission(subjectKey, weekPlan) {
+      const subject = weekPlan[subjectKey];
+      const vocab = subject.vocabulary.join(", ");
+      const lifeDetails = {
+        "four-step routine card": {
+          setup: "Fold a sheet into four boxes and write: 1 Ready, 2 Learn, 3 Tidy, 4 Reflect.",
+          doTask: "Draw or choose one picture for each box, then practise the routine with a real 3-minute mini lesson: get pencil/book ready, do one tiny task, tidy it away, say what went well.",
+          record: "Point to each box and tell an adult what you do first, next, after that and last.",
+          outcome: "A four-box routine card your child can use at the start and end of future lessons."
+        },
+        "learning shelf labels": {
+          setup: "Choose one real shelf, tray or box with mixed learning items such as pencils, books, counters, cards and paper.",
+          doTask: "Sort the items into 3-5 groups, make a clear label for each group, then put every item back where its label says it belongs.",
+          record: "Draw the shelf before and after, or type the labels you made.",
+          outcome: "A labelled learning space your child can reset independently."
+        },
+        "fruit snack routine": {
+          setup: "Choose one simple snack such as banana slices, apple pieces or washed berries. Put out plate, napkin and bin/compost bowl.",
+          doTask: "Wash hands, prepare the snack with adult-safe tools, serve it neatly, eat, then clean the surface and put waste away.",
+          record: "List or draw the snack routine in order.",
+          outcome: "A safe, repeatable snack routine with clean-up included."
+        },
+        "weather clothes checklist": {
+          setup: "Look outside or check the weather together. Put out 6 clothing options, including at least one unsuitable option.",
+          doTask: "Choose clothes for today's weather, explain why each item is suitable, and put away anything not needed.",
+          record: "Make a weather-to-clothes checklist with pictures or words.",
+          outcome: "A checklist your child can use before outdoor time."
+        },
+        "I tried... I need... prompt": {
+          setup: "Pick one mildly tricky task, such as a puzzle, word card, zip, button, or counting challenge.",
+          doTask: "Try independently first. If stuck, use the sentence: 'I tried ____. I need help with ____.'",
+          record: "Write or dictate one example of the help sentence.",
+          outcome: "A calm help-seeking script instead of giving up or becoming frustrated."
+        },
+        "board game reflection": {
+          setup: "Choose a short turn-taking game: snap, pairs, snakes and ladders, dice race or a simple board game.",
+          doTask: "Play one round focusing on waiting, fair turns, kind words and coping with losing or winning.",
+          record: "Finish: 'I was kind when ____.' and 'Next time I will ____.'",
+          outcome: "Evidence of social language and fair play."
+        },
+        "10-minute concentration challenge": {
+          setup: "Choose one focused task and set a visible 10-minute timer.",
+          doTask: "Work until the timer ends. If attention drifts, use one reset: stretch, breathe, sip water, or point back to the task.",
+          record: "Tick each minute or draw a battery showing focus energy before and after.",
+          outcome: "A practical focus strategy your child can reuse."
+        },
+        "project planning card": {
+          setup: "Choose a small project, then put out possible materials before starting.",
+          doTask: "Fill a card with: what I will make, what I need, first step, and how I will know it is finished.",
+          record: "Complete the planning card before touching the materials.",
+          outcome: "A plan-first habit for making and project work."
+        },
+        "mistake-to-learning reflection": {
+          setup: "Choose a real mistake from today's work, such as a reversed letter, wrong count, spill or forgotten step.",
+          doTask: "Say what happened without blame, fix or retry it, then name what the mistake taught you.",
+          record: "Finish: 'My mistake was ____. It taught me ____.'",
+          outcome: "A visible example of resilience and learning from errors."
+        },
+        "movement menu": {
+          setup: "Make four movement choices: stretch, jump, balance, breathe. Put them on cards.",
+          doTask: "Notice body energy, choose one movement, do it for one minute, then check whether focus improved.",
+          record: "Circle the movement used and draw how your body felt after.",
+          outcome: "A personal menu for healthy breaks."
+        }
+      };
+
+      const defaultLife = {
+        setup: `Set up the real-life task: ${subject.content}. Use actual household materials, not only a worksheet.`,
+        doTask: `Practise "${subject.topic}" in real life. Adult models once, then the child completes the task with only short prompts.`,
+        record: `Draw, type or dictate the steps used for ${subject.content}.`,
+        outcome: `A repeatable habit linked to ${subject.skill.toLowerCase()}.`
+      };
+
+      const subjectPlans = {
+        english: {
+          setup: `Put out the focus words/text: ${subject.content}. Add paper, pencil and sound cards if useful.`,
+          doTask: `Say it first, then read/build the words or rehearse the sentence linked to "${subject.topic}".`,
+          record: `Write labels, captions or sentences using ${subject.content}. Reread aloud and improve one thing.`,
+          outcome: `A readable English output showing ${subject.skill.toLowerCase()}.`
+        },
+        maths: {
+          setup: `Collect concrete objects for ${subject.content}: counters, toys, coins, cubes, paper shapes or a number line.`,
+          doTask: `Build the maths first, then draw the model before writing symbols or answers for "${subject.topic}".`,
+          record: `Complete 4-6 examples using pictures, numbers and one explanation sentence.`,
+          outcome: `A maths page that shows the concrete model, the drawing and the recorded answer.`
+        },
+        science: {
+          setup: `Prepare the investigation resources for ${subject.content}. Use real objects, photos, outdoor observation or a simple test.`,
+          doTask: `Observe, sort, test, compare or measure to answer a question about "${subject.topic}".`,
+          record: `Draw and label evidence using ${vocab}, then finish an 'I found out...' sentence.`,
+          outcome: `A science record with evidence, labels and a conclusion.`
+        },
+        humanities: {
+          setup: `Start with an evidence source for ${subject.content}: map, photo, object, route, timeline, interview or local observation.`,
+          doTask: `Use the evidence to locate, sequence, compare or explain something about "${subject.topic}".`,
+          record: `Create a map, timeline, labelled drawing, fact card or comparison grid using ${vocab}.`,
+          outcome: `A humanities record that explains place, time, people or change.`
+        },
+        creative: {
+          setup: `Set out the materials for ${subject.content}. Show one simple technique before your child begins.`,
+          doTask: `Make, draw, build, perform or design the creative outcome for "${subject.topic}". Pause once to improve it.`,
+          record: `Sketch the plan, label choices using ${vocab}, and say what changed after improving it.`,
+          outcome: `A creative piece plus one sentence explaining choices.`
+        },
+        life: lifeDetails[subject.content] || defaultLife
+      };
+
+      const detail = subjectPlans[subjectKey];
+      return {
+        focusLine: `Today you will ${detail.doTask.charAt(0).toLowerCase()}${detail.doTask.slice(1)}`,
+        parentScript: `Today is Week ${weekPlan.week}: ${weekPlan.theme}. The focus is "${subject.topic}". Set up: ${detail.setup} Then help your child do the real activity before using the worksheet.`,
+        success: [
+          `I can do the real activity: ${subject.content}.`,
+          `I can use key words such as ${subject.vocabulary.slice(0, 2).join(" and ")}.`,
+          detail.outcome
+        ],
+        steps: [
+          ["Set up", detail.setup],
+          ["Do", detail.doTask],
+          ["Record", detail.record],
+          ["Check", `Look for this outcome: ${detail.outcome}`]
+        ],
+        worksheet: [
+          { title: "Set up the mission", body: detail.setup },
+          { title: "Do the real activity", body: detail.doTask },
+          { title: "Show what happened", body: detail.record },
+          { title: "Power check", body: `Tell a grown-up: What did you do? Which words did you use (${vocab})? What proves you completed the mission?` }
+        ]
+      };
+    }
+
     function subjectLessonPlan(subjectKey, weekPlan) {
       const subject = weekPlan[subjectKey];
       const subjectName = lessonSubjectMeta[subjectKey].name;
       const vocab = subject.vocabulary.join(", ");
+      const concrete = concreteMission(subjectKey, weekPlan);
       const why = {
         english: `This is an English lesson because it develops the ability to ${subject.skill.toLowerCase()} through spoken rehearsal, reading, vocabulary and sentence-level recording.`,
         maths: `This is a Maths lesson because it develops the ability to ${subject.skill.toLowerCase()} through concrete objects, visual models, symbols and reasoning.`,
@@ -2149,13 +2281,10 @@
       };
 
       const shared = {
-        objective: `I can ${subject.skill.toLowerCase()}.`,
-        parentScript: `Today is Week ${weekPlan.week}: ${weekPlan.theme}. In ${subjectName}, we are focusing on "${subject.topic}". We will start with a real experience, practise the key vocabulary (${vocab}), then record what you can do on the worksheet.`,
-        success: [
-          `I can explain or show the focus: ${subject.topic.toLowerCase()}.`,
-          `I can use at least two key words: ${subject.vocabulary.slice(0, 2).join(" and ")}.`,
-          `I can complete the worksheet task so someone else can see what I learned.`
-        ],
+        objective: `${subject.skill.charAt(0).toUpperCase()}${subject.skill.slice(1)}.`,
+        focusLine: concrete.focusLine,
+        parentScript: concrete.parentScript,
+        success: concrete.success,
         why: why[subjectKey]
       };
 
@@ -2252,7 +2381,10 @@
         }
       };
 
-      return { subjectName, subject, ...shared, ...plans[subjectKey] };
+      const selectedPlan = plans[subjectKey];
+      selectedPlan.steps = concrete.steps;
+      selectedPlan.worksheet = concrete.worksheet;
+      return { subjectName, subject, ...shared, ...selectedPlan };
     }
 
     function renderTermMap(term = state.term) {
@@ -2388,7 +2520,7 @@
             <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} · ${plan.subjectName}</p>
             <h3>${plan.subject.topic}</h3>
             <p><strong>Your mission:</strong> ${plan.objective}</p>
-            <p class="muted">${plan.subject.content}</p>
+            <p class="muted">${plan.focusLine}</p>
             <div class="activity-meta">
               <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
               <span class="badge accent">${lessonMode(state.learnerSubject)}</span>
