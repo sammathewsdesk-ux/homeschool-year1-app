@@ -2198,6 +2198,13 @@
           doTask: "Choose one card. Do that movement for one minute. Notice how your body feels.",
           record: "Circle the movement you used. Draw how your body felt after.",
           outcome: "A personal menu for healthy breaks."
+        },
+        "I can try card": {
+          setup: "Get a small card or paper. Ask a grown-up to write: 1 Stop, 2 Breathe, 3 Try one small step, 4 Ask for help.",
+          doTask: "Choose one tricky thing, such as a puzzle, zip, button, word, drawing or counting task. Use your card. Do one small step instead of stopping.",
+          record: "Draw the tricky thing. Then draw or write the small step you tried.",
+          outcome: "A try card your child can use when a task feels hard.",
+          grownup: "Choose a task that is only a little bit hard. Do not rescue too quickly. Praise the small step, not whether the whole task was finished."
         }
       };
 
@@ -2205,7 +2212,8 @@
         setup: `Get ready for this real-life task: ${subject.content}. Ask a grown-up to show you once.`,
         doTask: `Try the task yourself. The focus is: ${subject.topic}.`,
         record: `Draw or type the steps you used for ${subject.content}.`,
-        outcome: `A repeatable habit linked to ${subject.skill.toLowerCase()}.`
+        outcome: `A repeatable habit linked to ${subject.skill.toLowerCase()}.`,
+        grownup: "Model the habit once, then let your child try. Give short prompts only, and notice independence, effort and calm problem-solving."
       };
 
       const subjectPlans = {
@@ -2213,39 +2221,54 @@
           setup: `Get your words or text ready: ${subject.content}. You also need paper and a pencil.`,
           doTask: `Say the words out loud. Point to the sounds, words or sentence parts for: ${subject.topic}.`,
           record: `Write words, labels or sentences using ${subject.content}. Read your writing back out loud.`,
-          outcome: `A readable English output showing ${subject.skill.toLowerCase()}.`
+          outcome: `A readable English output showing ${subject.skill.toLowerCase()}.`,
+          grownup: "Listen first, then help with one sound, word or sentence at a time. Keep the screen part short; the real work is saying, reading and writing."
         },
         maths: {
           setup: `Get objects you can move: counters, toys, coins, cubes, shapes or a number line. Your task is: ${subject.content}.`,
           doTask: `Move the objects first. Show the maths for: ${subject.topic}.`,
           record: `Draw what you made. Then write the numbers or answer.`,
-          outcome: `A maths page that shows the concrete model, the drawing and the recorded answer.`
+          outcome: `A maths page that shows the concrete model, the drawing and the recorded answer.`,
+          grownup: "Start with objects in his hands. Only move to drawing or numbers once he can explain what the objects show."
         },
         science: {
           setup: `Get the things you need to investigate: ${subject.content}. You may use real objects, photos, outside space or a simple test.`,
           doTask: `Look closely. Sort, test, compare or measure to learn about: ${subject.topic}.`,
           record: `Draw what you saw. Add labels. Finish: 'I found out...'`,
-          outcome: `A science record with evidence, labels and a conclusion.`
+          outcome: `A science record with evidence, labels and a conclusion.`,
+          grownup: "Let him observe before explaining. Ask: What do you notice? What changed? What makes you think that?"
         },
         humanities: {
           setup: `Look at the clue for today: ${subject.content}. It might be a map, photo, object, route, timeline or interview.`,
           doTask: `Use the clue to find, order, compare or explain something about: ${subject.topic}.`,
           record: `Make a map, timeline, labelled drawing, fact card or comparison grid.`,
-          outcome: `A humanities record that explains place, time, people or change.`
+          outcome: `A humanities record that explains place, time, people or change.`,
+          grownup: "Begin with a real clue: a map, object, photo, place or story. Help him explain what the clue tells us."
         },
         creative: {
           setup: `Get the materials for: ${subject.content}. Look at them before you start.`,
           doTask: `Make, draw, build, perform or design something for: ${subject.topic}. Stop once and make it better.`,
           record: `Draw your plan or take a photo. Say what you changed to improve it.`,
-          outcome: `A creative piece plus one sentence explaining choices.`
+          outcome: `A creative piece plus one sentence explaining choices.`,
+          grownup: "Avoid taking over the making. Offer one technique, then let him choose, try, change and explain."
         },
         life: lifeDetails[subject.content] || defaultLife
       };
 
       const detail = subjectPlans[subjectKey];
+      const weeklyUse = {
+        english: "Use this focus 3-5 short times this week with different words, books or sentences.",
+        maths: "Use this focus 3-5 short times this week with different objects, examples or games.",
+        science: "Use this as 1 main investigation this week, then revisit once with a quick observation or drawing.",
+        humanities: "Use this as 1 main session this week, with one short follow-up talk, map or story.",
+        creative: "Use this as 1 longer making session, or split plan/make/share across two days.",
+        life: "Practise this habit 2-4 times in real life this week. The worksheet is only the first practice."
+      };
       return {
         focusLine: `Today you will ${detail.doTask.charAt(0).toLowerCase()}${detail.doTask.slice(1)}`,
         parentScript: `Today is Week ${weekPlan.week}: ${weekPlan.theme}. The focus is "${subject.topic}". Set up: ${detail.setup} Then help your child do the real activity before using the worksheet.`,
+        grownupTip: detail.grownup,
+        weeklyUse: weeklyUse[subjectKey],
         success: [
           `I can do the real activity: ${subject.content}.`,
           `I can use key words such as ${subject.vocabulary.slice(0, 2).join(" and ")}.`,
@@ -2284,6 +2307,8 @@
         objective: `${subject.skill.charAt(0).toUpperCase()}${subject.skill.slice(1)}.`,
         focusLine: concrete.focusLine,
         parentScript: concrete.parentScript,
+        grownupTip: concrete.grownupTip,
+        weeklyUse: concrete.weeklyUse,
         success: concrete.success,
         why: why[subjectKey]
       };
@@ -2521,6 +2546,9 @@
             <h3>${plan.subject.topic}</h3>
             <p><strong>Your mission:</strong> ${plan.objective}</p>
             <p class="muted">${plan.focusLine}</p>
+            <div class="note">
+              <strong>How to use this week:</strong> ${plan.weeklyUse}
+            </div>
             <div class="activity-meta">
               <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
               <span class="badge accent">${lessonMode(state.learnerSubject)}</span>
@@ -2543,7 +2571,7 @@
               ${[0, 1, 2, 3].map(index => `<span class="star ${index < doneCount ? "earned" : ""}">${index < doneCount ? "*" : ""}</span>`).join("")}
             </div>
             <div class="note">
-              <strong>Grown-up nearby:</strong> start with the real object, book, movement, map or making task first. The screen is for a short recording part, not the whole lesson.
+              <strong>Grown-up nearby:</strong> ${plan.grownupTip}
             </div>
           </section>
 
