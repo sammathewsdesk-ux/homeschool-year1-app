@@ -678,6 +678,7 @@
       border-radius: 16px;
       background: var(--cp-surface);
       box-shadow: 0 0 2px var(--cp-border), 0 1px 2px var(--cp-border);
+      height: 100%;
     }
 
     .learner-card.power-card {
@@ -983,9 +984,34 @@
 
     .quest-layout {
       display: grid;
-      grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
-      align-items: start;
+      align-items: stretch;
+    }
+
+    .mission-control {
+      display: grid;
+      align-content: start;
+      gap: 0.9rem;
+    }
+
+    .worksheet-panel {
+      display: grid;
+      align-content: start;
+      gap: 0.8rem;
+    }
+
+    .compact-details {
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+      padding: 0.75rem 0.9rem;
+    }
+
+    .compact-details summary {
+      cursor: pointer;
+      color: var(--power, var(--cp-accent));
+      font-weight: 900;
     }
 
     .quest-step {
@@ -2792,7 +2818,6 @@
       const journey = weeklyJourney(weekPlan);
       const day = journey.days.find(item => item.label === dayPlan.label) || journey.days[0];
       return [
-        ["Big question", journey.question],
         ["Today", `${day.name}: ${day.purpose}`],
         ["Subject focus", `${lessonSubjectMeta[subjectKey].name}: ${subject.topic}.`],
         ["Connection", subjectConnection(subjectKey, weekPlan)]
@@ -3464,7 +3489,7 @@
 
       learnerActivity.innerHTML = `
         <div class="quest-layout power-${state.learnerSubject}">
-          <section class="learner-card power-card">
+          <section class="learner-card power-card mission-control">
             <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} learning journey</p>
             <h3>${journey.question}</h3>
             <p class="muted">${journey.story}</p>
@@ -3478,31 +3503,12 @@
                 <span>${journey.parentCompass}</span>
               </div>
               <div class="journey-card">
-                <strong>Evidence to keep</strong>
-                <span>${evidence}</span>
+                <strong>Week rhythm</strong>
+                <span>D1 discover · D2 build · D3 connect · D4 create · D5 share.</span>
               </div>
-            </div>
-            <div class="progression-ladder">
-              ${ladder.map(step => `
-                <div class="ladder-step ${step.current ? "current" : ""}">
-                  <strong>${step.label}</strong>
-                  <span>${step.text}</span>
-                </div>
-              `).join("")}
             </div>
             <div class="note">
               <strong>How to use this week:</strong> ${plan.weeklyUse}
-            </div>
-            <div class="connection-list">
-              ${Object.keys(lessonSubjectMeta).map(key => `
-                <div class="connection-pill"><strong>${lessonSubjectMeta[key].name}</strong><br>${subjectConnection(key, weekPlan)}</div>
-              `).join("")}
-            </div>
-            <div class="activity-meta">
-              <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
-              <span class="badge ${plan.isHandAuthored ? "accent" : ""}">${plan.isHandAuthored ? "Hand-authored unit" : "Framework unit"}</span>
-              <span class="badge accent">${lessonMode(state.learnerSubject)}</span>
-              <span class="badge">${plan.subject.vocabulary.join(" · ")}</span>
             </div>
             <div class="superhero-panel">
               <span class="level-badge">${level.name}</span>
@@ -3512,24 +3518,26 @@
               </div>
               <p class="small">${level.message}</p>
             </div>
-            <div class="mission-strip">
-              <div class="mission-pill">1. Try</div>
-              <div class="mission-pill">2. Explain</div>
-              <div class="mission-pill">3. Power up</div>
-            </div>
-            <div class="star-trail" aria-label="${doneCount} of 4 learner tasks complete">
-              ${[0, 1, 2, 3].map(index => `<span class="star ${index < doneCount ? "earned" : ""}">${index < doneCount ? "*" : ""}</span>`).join("")}
-            </div>
-            <div class="note">
-              <strong>Grown-up nearby:</strong> ${plan.grownupTip}
-            </div>
+            <details class="compact-details">
+              <summary>Subject map for the week</summary>
+              <div class="connection-list">
+                ${Object.keys(lessonSubjectMeta).map(key => `
+                  <div class="connection-pill"><strong>${lessonSubjectMeta[key].name}</strong><br>${subjectConnection(key, weekPlan)}</div>
+                `).join("")}
+              </div>
+            </details>
           </section>
 
-          <section class="learner-card">
+          <section class="learner-card worksheet-panel">
             <p class="section-kicker">Daily worksheet · ${plan.subjectName}</p>
             <h3>${dayPlan.label}: ${dayPlan.title}</h3>
             <p><strong>Subject mission:</strong> ${plan.subject.topic} — ${plan.objective}</p>
             <p class="muted">${dayPlan.intro}</p>
+            <div class="activity-meta">
+              <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
+              <span class="badge ${plan.isHandAuthored ? "accent" : ""}">${plan.isHandAuthored ? "Hand-authored unit" : "Framework unit"}</span>
+              <span class="badge">${plan.subject.vocabulary.join(" · ")}</span>
+            </div>
             <div class="day-tabs" aria-label="Choose daily worksheet">
               ${plan.dailyWorksheets.map(day => `
                 <button class="day-tab ${day.label === dayPlan.label ? "active" : ""}" data-learner-day="${day.label.slice(1)}">${day.label}</button>
@@ -3541,12 +3549,15 @@
               `).join("")}
             </div>
             <div class="journey-card">
-              <strong>Curriculum guardrails for ${plan.subjectName}</strong>
-              <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
+              <strong>Evidence to keep</strong>
+              <span>${evidence}</span>
             </div>
-            <div class="resource-links">
-              ${bbcPracticeLinks[state.learnerSubject].map(link => `
-                <a class="resource-link" href="${link.url}" target="_blank" rel="noopener noreferrer">Further practice: ${link.label}</a>
+            <div class="progression-ladder">
+              ${ladder.map(step => `
+                <div class="ladder-step ${step.current ? "current" : ""}">
+                  <strong>${step.label}</strong>
+                  <span>${step.text}</span>
+                </div>
               `).join("")}
             </div>
             ${dayPlan.tasks.map((task, index) => `
@@ -3559,6 +3570,18 @@
                 <textarea data-learner-answer="${index}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
               </div>
             `).join("")}
+            <div class="note">
+              <strong>Grown-up nearby:</strong> ${plan.grownupTip}
+            </div>
+            <details class="compact-details">
+              <summary>Curriculum guardrails and BBC practice</summary>
+              <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
+              <div class="resource-links">
+                ${bbcPracticeLinks[state.learnerSubject].map(link => `
+                  <a class="resource-link" href="${link.url}" target="_blank" rel="noopener noreferrer">Further practice: ${link.label}</a>
+                `).join("")}
+              </div>
+            </details>
             <button class="primary-button" id="learnerCelebrate">I finished for now</button>
             <p class="small" id="learnerSaved">Saved on this device.</p>
           </section>
