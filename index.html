@@ -857,6 +857,28 @@
       text-align: center;
     }
 
+    .day-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.45rem;
+      margin: 0.8rem 0 1rem;
+    }
+
+    .day-tab {
+      padding: 0.7rem 0.45rem;
+      border: 1px solid var(--power, var(--cp-border));
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .day-tab.active {
+      background: var(--power, var(--cp-accent));
+      color: var(--cp-accent-fg);
+    }
+
     .quest-layout {
       display: grid;
       grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
@@ -2018,6 +2040,7 @@
       learnerWeek: Number(localStorage.getItem("year1-learner-week") || "1"),
       learnerSubject: localStorage.getItem("year1-learner-subject") || "english",
       learnerWork: JSON.parse(localStorage.getItem("year1-learner-work") || "{}"),
+      learnerDay: localStorage.getItem("year1-learner-day") || "1",
       pendingAdultView: "today"
     };
 
@@ -2068,8 +2091,8 @@
       return `week-${week}-${subject}`;
     }
 
-    function learnerKey(week = state.learnerWeek, subject = state.learnerSubject) {
-      return `week-${week}-${subject}`;
+    function learnerKey(week = state.learnerWeek, subject = state.learnerSubject, day = state.learnerDay) {
+      return `week-${week}-${subject}-day-${day}`;
     }
 
     function saveLearnerWork() {
@@ -2264,6 +2287,200 @@
         creative: "Use this as 1 longer making session, or split plan/make/share across two days.",
         life: "Practise this habit 2-4 times in real life this week. The worksheet is only the first practice."
       };
+      const dailyWorksheets = {
+        english: [
+          { label: "D1", title: "Meet the words", intro: "Start the week. Say, read and touch today's words or sentence parts.", tasks: [
+            { title: "Get ready", body: detail.setup },
+            { title: "Do it", body: detail.doTask },
+            { title: "Show it", body: "Write or build three focus words. Read them back to a grown-up." },
+            { title: "Tell me", body: `Point to one word and say which sound, word or idea you used. Try one of these words: ${vocab}.` }
+          ] },
+          { label: "D2", title: "Read and build", intro: "Use the same weekly focus, but with fresh examples.", tasks: [
+            { title: "Get ready", body: `Choose 3 new words, labels or sentence ideas linked to ${subject.topic}.` },
+            { title: "Do it", body: "Say each one, clap the words or sounds, then read/build them." },
+            { title: "Show it", body: "Write one caption or short sentence using one of your examples." },
+            { title: "Tell me", body: "Read your sentence aloud. What did you do well?" }
+          ] },
+          { label: "D3", title: "Use it in a book", intro: "Find the weekly focus inside a real story, poem or information book.", tasks: [
+            { title: "Get ready", body: "Choose a book or page with a grown-up." },
+            { title: "Do it", body: `Look for examples connected to ${subject.topic}.` },
+            { title: "Show it", body: "Draw or write one thing you found in the book." },
+            { title: "Tell me", body: "Tell a grown-up where you found it and why it matches this week's focus." }
+          ] },
+          { label: "D4", title: "Write with help", intro: "Use the weekly focus in your own writing.", tasks: [
+            { title: "Get ready", body: "Say your idea out loud before writing." },
+            { title: "Do it", body: `Write 1-3 sentences or labels about ${subject.topic}.` },
+            { title: "Show it", body: "Check one thing: capital letter, spaces, spelling or full stop." },
+            { title: "Tell me", body: "Read your best sentence to a grown-up." }
+          ] },
+          { label: "D5", title: "Share your best", intro: "End the week by showing what improved.", tasks: [
+            { title: "Get ready", body: "Choose your best word, label, caption or sentence from this week." },
+            { title: "Do it", body: "Read it clearly and improve one small thing." },
+            { title: "Show it", body: "Copy or type your improved version." },
+            { title: "Tell me", body: "Tell a grown-up: This is better because..." }
+          ] }
+        ],
+        maths: [
+          { label: "D1", title: "Build it", intro: "Start with objects in your hands.", tasks: [
+            { title: "Get ready", body: detail.setup },
+            { title: "Do it", body: detail.doTask },
+            { title: "Show it", body: detail.record },
+            { title: "Tell me", body: `Use one maths word to explain it: ${vocab}.` }
+          ] },
+          { label: "D2", title: "Draw it", intro: "Use the same maths idea, but draw the model.", tasks: [
+            { title: "Get ready", body: `Make one example of ${subject.topic} with objects.` },
+            { title: "Do it", body: "Draw what you made. Add numbers or labels." },
+            { title: "Show it", body: "Complete 3 more examples with drawings." },
+            { title: "Tell me", body: "How does your drawing show the answer?" }
+          ] },
+          { label: "D3", title: "Play it", intro: "Practise the maths through a short game.", tasks: [
+            { title: "Get ready", body: "Get dice, cards, counters, coins, shapes or a number line." },
+            { title: "Do it", body: `Play a 5-10 minute game using ${subject.topic}.` },
+            { title: "Show it", body: "Write or draw two examples from the game." },
+            { title: "Tell me", body: "What strategy helped you?" }
+          ] },
+          { label: "D4", title: "Solve it", intro: "Try a small problem using the weekly skill.", tasks: [
+            { title: "Get ready", body: `Ask a grown-up for a tiny story problem about ${subject.content}.` },
+            { title: "Do it", body: "Solve it with objects first, then draw or write the answer." },
+            { title: "Show it", body: "Make your own similar problem." },
+            { title: "Tell me", body: "Explain how you know your answer is right." }
+          ] },
+          { label: "D5", title: "Teach it", intro: "Show someone else how this maths works.", tasks: [
+            { title: "Get ready", body: "Choose your favourite example from this week." },
+            { title: "Do it", body: "Teach it to a grown-up, toy or sibling." },
+            { title: "Show it", body: "Draw the example one final time." },
+            { title: "Tell me", body: "Finish: I know this because..." }
+          ] }
+        ],
+        science: [
+          { label: "D1", title: "Wonder", intro: "Start with noticing and questions.", tasks: [
+            { title: "Get ready", body: detail.setup },
+            { title: "Do it", body: "Look closely. Say what you notice and what you wonder." },
+            { title: "Show it", body: "Draw one thing you noticed." },
+            { title: "Tell me", body: `Use one science word: ${vocab}.` }
+          ] },
+          { label: "D2", title: "Test or sort", intro: "Use your hands to investigate.", tasks: [
+            { title: "Get ready", body: `Get the objects or photos for ${subject.content}.` },
+            { title: "Do it", body: detail.doTask },
+            { title: "Show it", body: "Sort, label, tally or draw your evidence." },
+            { title: "Tell me", body: "What did you find out?" }
+          ] },
+          { label: "D3", title: "Look again", intro: "Scientists check more than once.", tasks: [
+            { title: "Get ready", body: "Look again at your object, plant, material, weather or result." },
+            { title: "Do it", body: "Find one thing that is the same and one thing that is different." },
+            { title: "Show it", body: "Draw before/after or same/different." },
+            { title: "Tell me", body: "Say: I noticed..." }
+          ] },
+          { label: "D4", title: "Use science words", intro: "Practise explaining like a scientist.", tasks: [
+            { title: "Get ready", body: `Choose two words: ${vocab}.` },
+            { title: "Do it", body: "Point to evidence for each word." },
+            { title: "Show it", body: "Add labels or speech bubbles to your drawing." },
+            { title: "Tell me", body: "Finish: I know because..." }
+          ] },
+          { label: "D5", title: "Conclusion", intro: "End the week with what you found out.", tasks: [
+            { title: "Get ready", body: "Look at your drawings, labels or results from the week." },
+            { title: "Do it", body: "Choose the most important thing you learned." },
+            { title: "Show it", body: "Write or dictate: I found out..." },
+            { title: "Tell me", body: "Tell a grown-up one new science fact." }
+          ] }
+        ],
+        humanities: [
+          { label: "D1", title: "Find the clue", intro: "Start with a map, photo, object, place or story.", tasks: [
+            { title: "Get ready", body: detail.setup },
+            { title: "Do it", body: "Look for three clues." },
+            { title: "Show it", body: "Circle, draw or list the clues." },
+            { title: "Tell me", body: "What do the clues tell us?" }
+          ] },
+          { label: "D2", title: "Map or order", intro: "Put information in the right place or order.", tasks: [
+            { title: "Get ready", body: `Use the clue for ${subject.content}.` },
+            { title: "Do it", body: "Map it, sequence it, sort it or compare it." },
+            { title: "Show it", body: "Make a simple map, timeline or sort." },
+            { title: "Tell me", body: `Use one word: ${vocab}.` }
+          ] },
+          { label: "D3", title: "Compare", intro: "Look for what is the same and different.", tasks: [
+            { title: "Get ready", body: `Think about ${subject.topic}.` },
+            { title: "Do it", body: "Find one same thing and one different thing." },
+            { title: "Show it", body: "Draw or write same/different." },
+            { title: "Tell me", body: "Tell a grown-up which difference matters most." }
+          ] },
+          { label: "D4", title: "Make a fact card", intro: "Turn your learning into a small fact card.", tasks: [
+            { title: "Get ready", body: "Choose one important fact." },
+            { title: "Do it", body: "Draw it and add labels." },
+            { title: "Show it", body: "Write or dictate one sentence." },
+            { title: "Tell me", body: "Why is this fact useful?" }
+          ] },
+          { label: "D5", title: "Be the guide", intro: "Explain the learning to someone else.", tasks: [
+            { title: "Get ready", body: "Choose your best map, drawing, object or fact card." },
+            { title: "Do it", body: "Use it to teach a grown-up." },
+            { title: "Show it", body: "Add one final label or detail." },
+            { title: "Tell me", body: "Finish: Now I know..." }
+          ] }
+        ],
+        creative: [
+          { label: "D1", title: "Plan it", intro: "Look, imagine and plan before making.", tasks: [
+            { title: "Get ready", body: detail.setup },
+            { title: "Do it", body: "Make a quick plan or try the technique once." },
+            { title: "Show it", body: "Draw your idea." },
+            { title: "Tell me", body: "What will you make first?" }
+          ] },
+          { label: "D2", title: "Make it", intro: "Start the creative work.", tasks: [
+            { title: "Get ready", body: `Get the materials for ${subject.content}.` },
+            { title: "Do it", body: detail.doTask },
+            { title: "Show it", body: "Take a photo or draw what you made." },
+            { title: "Tell me", body: "Which part do you like best?" }
+          ] },
+          { label: "D3", title: "Improve it", intro: "Artists and makers change things to make them better.", tasks: [
+            { title: "Get ready", body: "Look carefully at your work." },
+            { title: "Do it", body: "Add detail, strengthen, change colour, rehearse or tidy one part." },
+            { title: "Show it", body: "Mark or describe what changed." },
+            { title: "Tell me", body: "I improved..." }
+          ] },
+          { label: "D4", title: "Explain it", intro: "Use art words to explain your choices.", tasks: [
+            { title: "Get ready", body: `Choose two words: ${vocab}.` },
+            { title: "Do it", body: "Point to where those words show in your work." },
+            { title: "Show it", body: "Add labels or a title." },
+            { title: "Tell me", body: "Why did you choose that?" }
+          ] },
+          { label: "D5", title: "Share it", intro: "Show your finished work.", tasks: [
+            { title: "Get ready", body: "Put your work somewhere easy to see." },
+            { title: "Do it", body: "Show it to a grown-up." },
+            { title: "Show it", body: "Give it a title." },
+            { title: "Tell me", body: "Finish: I am proud of..." }
+          ] }
+        ],
+        life: [
+          { label: "D1", title: "Make it", intro: "Make the tool or try the habit for the first time.", tasks: [
+            { title: "Get ready", body: detail.setup },
+            { title: "Do it", body: detail.doTask },
+            { title: "Show it", body: detail.record },
+            { title: "Tell me", body: `Use one word: ${vocab}.` }
+          ] },
+          { label: "D2", title: "Try it again", intro: "Use the same habit in a new real moment.", tasks: [
+            { title: "Get ready", body: `Find a real moment today for: ${subject.topic}.` },
+            { title: "Do it", body: "Try the habit again with less help." },
+            { title: "Show it", body: "Tick or draw what you did." },
+            { title: "Tell me", body: "Was it easier, harder or the same?" }
+          ] },
+          { label: "D3", title: "Use it for real", intro: "This is the most important practice day.", tasks: [
+            { title: "Get ready", body: "Wait for a real-life chance to use the habit." },
+            { title: "Do it", body: `Use the habit during the day: ${subject.content}.` },
+            { title: "Show it", body: "Draw what happened." },
+            { title: "Tell me", body: "What helped you remember?" }
+          ] },
+          { label: "D4", title: "Teach it", intro: "Teaching helps you remember.", tasks: [
+            { title: "Get ready", body: "Choose a toy, sibling or grown-up to teach." },
+            { title: "Do it", body: "Show them the habit step by step." },
+            { title: "Show it", body: "Draw the steps or type them." },
+            { title: "Tell me", body: "Which step is most important?" }
+          ] },
+          { label: "D5", title: "Celebrate it", intro: "Look back at the habit and choose your next step.", tasks: [
+            { title: "Get ready", body: "Think about the times you used this habit this week." },
+            { title: "Do it", body: "Choose your best try." },
+            { title: "Show it", body: "Finish: I can now..." },
+            { title: "Tell me", body: "Next week I want to practise..." }
+          ] }
+        ]
+      };
       return {
         focusLine: `Today you will ${detail.doTask.charAt(0).toLowerCase()}${detail.doTask.slice(1)}`,
         parentScript: `Today is Week ${weekPlan.week}: ${weekPlan.theme}. The focus is "${subject.topic}". Set up: ${detail.setup} Then help your child do the real activity before using the worksheet.`,
@@ -2285,7 +2502,8 @@
           { title: "Do it", body: detail.doTask },
           { title: "Show it", body: detail.record },
           { title: "Tell me", body: `Tell a grown-up: What did you do? Use one or two of these words: ${vocab}.` }
-        ]
+        ],
+        dailyWorksheets: dailyWorksheets[subjectKey]
       };
     }
 
@@ -2409,6 +2627,7 @@
       const selectedPlan = plans[subjectKey];
       selectedPlan.steps = concrete.steps;
       selectedPlan.worksheet = concrete.worksheet;
+      selectedPlan.dailyWorksheets = concrete.dailyWorksheets;
       return { subjectName, subject, ...shared, ...selectedPlan };
     }
 
@@ -2538,6 +2757,7 @@
       const totalPoints = learnerPowerPoints();
       const level = learnerLevel(totalPoints);
       const progressToNext = level.next === level.min ? 100 : Math.min(100, Math.round(((totalPoints - level.min) / (level.next - level.min)) * 100));
+      const dayPlan = plan.dailyWorksheets.find(day => day.label === `D${state.learnerDay}`) || plan.dailyWorksheets[0];
 
       learnerActivity.innerHTML = `
         <div class="quest-layout power-${state.learnerSubject}">
@@ -2577,8 +2797,14 @@
 
           <section class="learner-card">
             <p class="section-kicker">My worksheet</p>
-            <h3>${subjectPowerName(state.learnerSubject)} quest steps</h3>
-            ${plan.worksheet.map((task, index) => `
+            <h3>${dayPlan.label}: ${dayPlan.title}</h3>
+            <p class="muted">${dayPlan.intro}</p>
+            <div class="day-tabs" aria-label="Choose daily worksheet">
+              ${plan.dailyWorksheets.map(day => `
+                <button class="day-tab ${day.label === dayPlan.label ? "active" : ""}" data-learner-day="${day.label.slice(1)}">${day.label}</button>
+              `).join("")}
+            </div>
+            ${dayPlan.tasks.map((task, index) => `
               <div class="quest-step">
                 <label class="quest-check">
                   <input type="checkbox" data-learner-done="${index}" ${entry.done?.[index] ? "checked" : ""} />
@@ -2593,6 +2819,14 @@
           </section>
         </div>
       `;
+
+      document.querySelectorAll("[data-learner-day]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.learnerDay = button.dataset.learnerDay;
+          localStorage.setItem("year1-learner-day", state.learnerDay);
+          renderLearnerActivity();
+        });
+      });
 
       document.querySelectorAll("[data-learner-done]").forEach(check => {
         check.addEventListener("change", () => {
