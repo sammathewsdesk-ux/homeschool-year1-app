@@ -2814,13 +2814,10 @@
     }
 
     function dailyFlow(dayPlan, subjectKey, weekPlan) {
-      const subject = weekPlan[subjectKey];
       const journey = weeklyJourney(weekPlan);
       const day = journey.days.find(item => item.label === dayPlan.label) || journey.days[0];
       return [
-        ["Today", `${day.name}: ${day.purpose}`],
-        ["Subject focus", `${lessonSubjectMeta[subjectKey].name}: ${subject.topic}.`],
-        ["Connection", subjectConnection(subjectKey, weekPlan)]
+        ["Today", `${day.name}: ${day.purpose}`]
       ];
     }
 
@@ -3510,6 +3507,17 @@
             <div class="note">
               <strong>How to use this week:</strong> ${plan.weeklyUse}
             </div>
+            <div class="journey-card">
+              <strong>${plan.subjectName} contribution</strong>
+              <span>${subjectConnection(state.learnerSubject, weekPlan)}</span>
+            </div>
+            <div class="journey-card">
+              <strong>Evidence to keep</strong>
+              <span>${evidence}</span>
+            </div>
+            <div class="note">
+              <strong>Grown-up role:</strong> ${plan.grownupTip}
+            </div>
             <div class="superhero-panel">
               <span class="level-badge">${level.name}</span>
               <strong>${totalPoints} power points</strong>
@@ -3519,12 +3527,21 @@
               <p class="small">${level.message}</p>
             </div>
             <details class="compact-details">
-              <summary>Subject map for the week</summary>
+              <summary>Subject map and curriculum reference</summary>
               <div class="connection-list">
                 ${Object.keys(lessonSubjectMeta).map(key => `
                   <div class="connection-pill"><strong>${lessonSubjectMeta[key].name}</strong><br>${subjectConnection(key, weekPlan)}</div>
                 `).join("")}
               </div>
+              <div class="progression-ladder">
+                ${ladder.map(step => `
+                  <div class="ladder-step ${step.current ? "current" : ""}">
+                    <strong>${step.label}</strong>
+                    <span>${step.text}</span>
+                  </div>
+                `).join("")}
+              </div>
+              <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
             </details>
           </section>
 
@@ -3533,11 +3550,6 @@
             <h3>${dayPlan.label}: ${dayPlan.title}</h3>
             <p><strong>Subject mission:</strong> ${plan.subject.topic} — ${plan.objective}</p>
             <p class="muted">${dayPlan.intro}</p>
-            <div class="activity-meta">
-              <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
-              <span class="badge ${plan.isHandAuthored ? "accent" : ""}">${plan.isHandAuthored ? "Hand-authored unit" : "Framework unit"}</span>
-              <span class="badge">${plan.subject.vocabulary.join(" · ")}</span>
-            </div>
             <div class="day-tabs" aria-label="Choose daily worksheet">
               ${plan.dailyWorksheets.map(day => `
                 <button class="day-tab ${day.label === dayPlan.label ? "active" : ""}" data-learner-day="${day.label.slice(1)}">${day.label}</button>
@@ -3546,18 +3558,6 @@
             <div class="daily-flow">
               ${flow.map(([label, text]) => `
                 <div class="flow-step"><strong>${label}</strong><span>${text}</span></div>
-              `).join("")}
-            </div>
-            <div class="journey-card">
-              <strong>Evidence to keep</strong>
-              <span>${evidence}</span>
-            </div>
-            <div class="progression-ladder">
-              ${ladder.map(step => `
-                <div class="ladder-step ${step.current ? "current" : ""}">
-                  <strong>${step.label}</strong>
-                  <span>${step.text}</span>
-                </div>
               `).join("")}
             </div>
             ${dayPlan.tasks.map((task, index) => `
@@ -3570,12 +3570,8 @@
                 <textarea data-learner-answer="${index}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
               </div>
             `).join("")}
-            <div class="note">
-              <strong>Grown-up nearby:</strong> ${plan.grownupTip}
-            </div>
             <details class="compact-details">
-              <summary>Curriculum guardrails and BBC practice</summary>
-              <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
+              <summary>Further practice</summary>
               <div class="resource-links">
                 ${bbcPracticeLinks[state.learnerSubject].map(link => `
                   <a class="resource-link" href="${link.url}" target="_blank" rel="noopener noreferrer">Further practice: ${link.label}</a>
