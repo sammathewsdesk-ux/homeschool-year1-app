@@ -103,7 +103,7 @@
 
     .app {
       display: grid;
-      grid-template-columns: 19rem 1fr;
+      grid-template-columns: 17.5rem 1fr;
       min-height: 100vh;
     }
 
@@ -112,7 +112,7 @@
       top: 0;
       height: 100vh;
       overflow: auto;
-      padding: 1.25rem;
+      padding: 1rem;
       border-right: 1px solid var(--cp-border);
       background: var(--cp-panel-strong);
     }
@@ -121,19 +121,20 @@
       display: flex;
       gap: 0.75rem;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
+      padding: 0.35rem;
     }
 
     .brand-mark {
       display: grid;
-      width: 2.75rem;
-      height: 2.75rem;
+      width: 3.1rem;
+      height: 3.1rem;
       place-items: center;
       border: 1px solid var(--cp-border);
-      border-radius: 0.625rem;
-      background: var(--cp-accent-soft);
-      color: var(--cp-accent);
-      font-weight: 800;
+      border-radius: 16px;
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      font-weight: 900;
       letter-spacing: -0.04em;
     }
 
@@ -171,8 +172,8 @@
 
     .nav {
       display: grid;
-      gap: 0.35rem;
-      margin-bottom: 1.25rem;
+      gap: 0.45rem;
+      margin-bottom: 0.9rem;
     }
 
     .nav button,
@@ -188,10 +189,20 @@
 
     .nav button {
       width: 100%;
-      padding: 0.72rem 0.8rem;
-      background: transparent;
+      padding: 0.76rem 0.85rem;
+      background: var(--cp-surface);
       color: var(--cp-text);
       text-align: left;
+      font-weight: 700;
+    }
+
+    .nav button:first-child {
+      min-height: 3.5rem;
+      border-color: var(--cp-accent);
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      font-size: 1rem;
+      font-weight: 900;
     }
 
     .nav button:hover,
@@ -200,15 +211,16 @@
     .chip:hover {
       border-color: var(--cp-border-strong);
       background: var(--cp-surface-soft);
+      transform: translateY(-1px);
     }
 
     .nav button.active,
     .pill-button.active,
     .chip.active {
       border-color: var(--cp-accent);
-      background: var(--cp-accent-soft);
-      color: var(--cp-accent);
-      font-weight: 700;
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      font-weight: 900;
     }
 
     .sidebar-card,
@@ -268,7 +280,10 @@
 
     main {
       min-width: 0;
-      padding: 1.5rem;
+      width: 100%;
+      max-width: 78rem;
+      margin: 0 auto;
+      padding: 1.75rem;
     }
 
     .hero {
@@ -276,13 +291,17 @@
       grid-template-columns: 1.4fr 0.6fr;
       gap: 1rem;
       align-items: stretch;
-      padding: 1.3rem;
-      margin-bottom: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
       background:
         linear-gradient(135deg, var(--cp-surface), var(--cp-accent-soft)),
         var(--cp-surface);
       overflow: hidden;
       position: relative;
+    }
+
+    body.learner-view .hero {
+      display: none;
     }
 
     .hero::after {
@@ -308,7 +327,7 @@
     .hero h2 {
       margin: 0;
       max-width: 58rem;
-      font-size: clamp(2rem, 4vw, 4rem);
+      font-size: clamp(2.2rem, 4.5vw, 4.6rem);
       line-height: 0.98;
       letter-spacing: -0.06em;
     }
@@ -350,7 +369,11 @@
       gap: 0.65rem;
       align-items: center;
       justify-content: space-between;
-      margin: 1rem 0;
+      margin: 0 0 1rem;
+      padding: 1rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-panel);
     }
 
     .controls,
@@ -410,7 +433,7 @@
     }
 
     .card {
-      padding: 1rem;
+      padding: 1.05rem;
     }
 
     .big-card {
@@ -643,18 +666,32 @@
 
     .learner-hero {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
       gap: 1rem;
       align-items: stretch;
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
     }
 
     .learner-card {
-      padding: 1.2rem;
+      padding: 1.35rem;
       border: 1px solid var(--cp-border);
       border-radius: 16px;
       background: var(--cp-surface);
       box-shadow: 0 0 2px var(--cp-border), 0 1px 2px var(--cp-border);
+    }
+
+    .learner-card.power-card {
+      border-color: var(--power);
+      background:
+        linear-gradient(135deg, var(--power-soft), var(--cp-surface) 70%),
+        var(--cp-surface);
+    }
+
+    #learner .learner-card:first-child {
+      border-color: var(--cp-link);
+      background:
+        radial-gradient(circle at top right, color-mix(in srgb, var(--cp-warning) 18%, var(--cp-surface)), transparent 12rem),
+        linear-gradient(135deg, color-mix(in srgb, var(--cp-link) 18%, var(--cp-surface)), var(--cp-surface));
     }
 
     .learner-title {
@@ -668,9 +705,11 @@
       display: grid;
       place-items: center;
       min-height: 13rem;
-      border: 1px dashed var(--cp-border-strong);
+      border: 1px solid var(--cp-warning);
       border-radius: 16px;
-      background: var(--cp-accent-soft);
+      background:
+        radial-gradient(circle at top, color-mix(in srgb, var(--cp-warning) 28%, var(--cp-surface)), transparent 7rem),
+        linear-gradient(145deg, color-mix(in srgb, var(--cp-success) 15%, var(--cp-surface)), var(--cp-surface));
       text-align: center;
     }
 
@@ -681,38 +720,46 @@
       height: 7rem;
       margin: 0 auto 0.8rem;
       border-radius: 50%;
-      border: 1px solid var(--cp-border);
-      background: var(--cp-surface);
-      color: var(--cp-accent);
+      border: 1px solid var(--cp-warning);
+      background: var(--cp-warning);
+      color: var(--cp-accent-fg);
       font-size: 2.4rem;
       font-weight: 900;
     }
 
     .learner-subjects {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 0.7rem;
-      margin: 1rem 0;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin: 1rem 0 1.2rem;
     }
 
     .learner-subject {
       display: grid;
       gap: 0.35rem;
-      min-height: 7.5rem;
-      padding: 0.9rem;
-      border: 1px solid var(--cp-border);
+      min-height: 8.3rem;
+      padding: 1rem;
+      border: 1px solid var(--power);
       border-radius: 16px;
-      background: var(--cp-surface);
+      background:
+        radial-gradient(circle at top right, var(--power-soft), transparent 6rem),
+        linear-gradient(145deg, var(--power-soft), var(--cp-surface) 76%),
+        var(--cp-surface);
       color: var(--cp-text);
       cursor: pointer;
       text-align: left;
     }
 
     .learner-subject.active {
-      border-color: var(--cp-accent);
-      background: var(--cp-accent-soft);
-      color: var(--cp-accent);
-      font-weight: 800;
+      border-color: var(--power);
+      background: var(--power);
+      color: var(--cp-accent-fg);
+      font-weight: 900;
+    }
+
+    .learner-subject.active .learner-icon {
+      background: var(--cp-surface);
+      color: var(--power);
     }
 
     .learner-icon {
@@ -721,14 +768,98 @@
       height: 2.7rem;
       place-items: center;
       border-radius: 0.625rem;
-      background: var(--cp-accent-soft);
-      color: var(--cp-accent);
+      background: var(--power-soft);
+      color: var(--power);
       font-weight: 900;
+    }
+
+    .power-english {
+      --power: var(--cp-link);
+      --power-soft: color-mix(in srgb, var(--cp-link) 18%, var(--cp-surface));
+    }
+
+    .power-maths {
+      --power: var(--cp-success);
+      --power-soft: color-mix(in srgb, var(--cp-success) 18%, var(--cp-surface));
+    }
+
+    .power-science {
+      --power: var(--cp-warning);
+      --power-soft: color-mix(in srgb, var(--cp-warning) 24%, var(--cp-surface));
+    }
+
+    .power-humanities {
+      --power: var(--cp-link);
+      --power-soft: color-mix(in srgb, var(--cp-link) 16%, var(--cp-surface));
+    }
+
+    .power-creative {
+      --power: var(--cp-danger);
+      --power-soft: color-mix(in srgb, var(--cp-danger) 16%, var(--cp-surface));
+    }
+
+    .power-life {
+      --power: var(--cp-accent);
+      --power-soft: color-mix(in srgb, var(--cp-accent) 14%, var(--cp-surface));
+    }
+
+    .superhero-panel {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-panel-strong);
+    }
+
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      width: fit-content;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--power, var(--cp-link));
+      border-radius: 999px;
+      background: var(--power, var(--cp-link));
+      color: var(--cp-accent-fg);
+      font-weight: 900;
+    }
+
+    .power-bar {
+      height: 0.85rem;
+      overflow: hidden;
+      border: 1px solid var(--cp-border);
+      border-radius: 999px;
+      background: var(--cp-surface-soft);
+    }
+
+    .power-fill {
+      height: 100%;
+      width: var(--fill);
+      border-radius: inherit;
+      background: var(--power, var(--cp-link));
+    }
+
+    .mission-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+      margin-top: 0.9rem;
+    }
+
+    .mission-pill {
+      padding: 0.7rem;
+      border: 1px solid var(--power, var(--cp-border));
+      border-radius: 16px;
+      background: var(--power-soft, var(--cp-surface));
+      font-weight: 800;
+      text-align: center;
     }
 
     .quest-layout {
       display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
       gap: 1rem;
       align-items: start;
     }
@@ -738,9 +869,16 @@
       gap: 0.6rem;
       padding: 1rem;
       margin-top: 0.8rem;
-      border: 1px solid var(--cp-border);
+      border: 1px solid var(--power);
       border-radius: 16px;
-      background: var(--cp-bg-elevated);
+      background:
+        linear-gradient(135deg, var(--power-soft), var(--cp-bg-elevated)),
+        var(--cp-bg-elevated);
+    }
+
+    .quest-step:focus-within {
+      border-color: var(--cp-accent);
+      background: var(--cp-surface);
     }
 
     .quest-step textarea {
@@ -778,8 +916,8 @@
     }
 
     .star.earned {
-      border-color: var(--cp-accent);
-      background: var(--cp-accent);
+      border-color: var(--power, var(--cp-accent));
+      background: var(--power, var(--cp-accent));
       color: var(--cp-accent-fg);
     }
 
@@ -808,7 +946,71 @@
     }
 
     body.child-mode .sidebar {
-      background: var(--cp-accent-soft);
+      position: static;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      height: auto;
+      padding: 0.8rem 1rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--cp-border);
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--cp-link) 20%, var(--cp-surface)), transparent 11rem),
+        radial-gradient(circle at bottom right, color-mix(in srgb, var(--cp-success) 18%, var(--cp-surface)), transparent 10rem),
+        var(--cp-panel-strong);
+    }
+
+    body.child-mode .app {
+      display: block;
+    }
+
+    body.child-mode .brand {
+      display: none;
+    }
+
+    body.child-mode .nav {
+      display: flex;
+      margin: 0;
+    }
+
+    body.child-mode .nav button:not(:first-child) {
+      display: none;
+    }
+
+    body.child-mode .nav button:first-child {
+      min-width: 10rem;
+      text-align: center;
+    }
+
+    body.child-mode .mode-card {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      margin: 0;
+      padding: 0.65rem;
+    }
+
+    body.child-mode .mode-card p {
+      display: none;
+    }
+
+    body.child-mode .sidebar-card {
+      display: none;
+    }
+
+    body.child-mode main {
+      max-width: 72rem;
+      padding: 1.2rem;
+    }
+
+    body.child-mode {
+      background:
+        radial-gradient(circle at 12% 12%, color-mix(in srgb, var(--cp-link) 24%, var(--cp-bg)), transparent 18rem),
+        radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--cp-warning) 26%, var(--cp-bg)), transparent 19rem),
+        radial-gradient(circle at 18% 88%, color-mix(in srgb, var(--cp-success) 24%, var(--cp-bg)), transparent 18rem),
+        radial-gradient(circle at 86% 84%, color-mix(in srgb, var(--cp-danger) 18%, var(--cp-bg)), transparent 18rem),
+        var(--cp-bg);
     }
 
     .print-only {
@@ -881,6 +1083,10 @@
       .learner-subjects {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+
+      .mission-strip {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 640px) {
@@ -917,7 +1123,7 @@
       </div>
 
       <nav class="nav" aria-label="Primary">
-        <button data-view="learner">Learner Mode</button>
+        <button data-view="learner">Adventure Zone</button>
         <button class="active" data-view="today">Today</button>
         <button data-view="curriculum">Curriculum Map</button>
         <button data-view="activities">Activity Builder</button>
@@ -928,8 +1134,8 @@
 
       <section class="mode-card">
         <strong id="modeLabel">Adult planner mode</strong>
-        <p class="small" id="modeHelp">Use planner tabs to choose lessons, then switch to Learner Mode for child-facing work.</p>
-        <button class="primary-button" id="modeToggle">Start Learner Mode</button>
+        <p class="small" id="modeHelp">Choose lessons, then launch the Adventure Zone for child-facing work.</p>
+        <button class="primary-button" id="modeToggle">Launch Adventure</button>
       </section>
 
       <section class="sidebar-card">
@@ -977,9 +1183,9 @@
       <section id="learner" class="view">
         <div class="learner-hero">
           <div class="learner-card">
-            <p class="section-kicker">Learner Mode</p>
-            <h2 class="learner-title">Pick today's quest.</h2>
-            <p class="muted">One activity at a time. Read the card, try the task, type or draw on paper, then tick the steps you finished.</p>
+            <p class="section-kicker">Adventure Zone</p>
+            <h2 class="learner-title">Become today’s learning hero.</h2>
+            <p class="muted">Pick a power, complete a mission, earn stars, and tell Captain Curiosity what you discovered.</p>
             <div class="controls">
               <select id="learnerWeek" aria-label="Choose learner week"></select>
               <button class="ghost-button" id="syncLearnerLesson">Use planner lesson</button>
@@ -988,8 +1194,8 @@
           <div class="mascot">
             <div>
               <div class="mascot-face">Y1</div>
-              <strong>Learning Buddy</strong>
-              <p class="small">Try, think, explain, celebrate.</p>
+              <strong>Captain Curiosity</strong>
+              <p class="small">Mission rule: try first, ask for help, celebrate effort.</p>
             </div>
           </div>
         </div>
@@ -1148,12 +1354,12 @@
     <div class="gate-card">
       <p class="section-kicker">Adult area</p>
       <h2 id="parentGateTitle">Parent unlock</h2>
-      <p class="muted">Learner Mode is on. Type <strong>grownup</strong> to open planner tabs.</p>
+      <p class="muted">Adventure Zone is on. Type <strong>grownup</strong> to open the adult planner.</p>
       <input type="text" id="parentGateInput" autocomplete="off" placeholder="Type grownup" />
       <p class="small hidden" id="parentGateError">That did not match. Ask a grown-up to unlock.</p>
       <div class="controls">
         <button class="primary-button" id="parentGateUnlock">Unlock adult mode</button>
-        <button class="ghost-button" id="parentGateCancel">Stay in Learner Mode</button>
+        <button class="ghost-button" id="parentGateCancel">Stay in Adventure Zone</button>
       </div>
     </div>
   </div>
@@ -1874,17 +2080,18 @@
       state.childMode = enabled;
       localStorage.setItem("year1-child-mode", String(enabled));
       document.body.classList.toggle("child-mode", enabled);
-      modeLabel.textContent = enabled ? "Learner Mode is on" : "Adult planner mode";
+      modeLabel.textContent = enabled ? "Adventure Zone is on" : "Adult planner mode";
       modeHelp.textContent = enabled
         ? "Planner tabs are locked. A grown-up can unlock them."
-        : "Use planner tabs to choose lessons, then switch to Learner Mode for child-facing work.";
-      modeToggle.textContent = enabled ? "Parent unlock" : "Start Learner Mode";
+        : "Choose lessons, then launch the Adventure Zone for child-facing work.";
+      modeToggle.textContent = enabled ? "Parent unlock" : "Launch Adventure";
       if (enabled) switchView("learner");
     }
 
     function switchView(viewName) {
       navButtons.forEach(item => item.classList.toggle("active", item.dataset.view === viewName));
       views.forEach(view => view.classList.toggle("active", view.id === viewName));
+      document.body.classList.toggle("learner-view", viewName === "learner");
     }
 
     function escapeHtml(value) {
@@ -2139,9 +2346,10 @@
         const sourceSubject = subjects.find(subject => subject.id === key);
         const icon = sourceSubject?.icon || meta.name.slice(0, 2);
         return `
-          <button class="learner-subject ${state.learnerSubject === key ? "active" : ""}" data-learner-subject="${key}">
+          <button class="learner-subject power-${key} ${state.learnerSubject === key ? "active" : ""}" data-learner-subject="${key}">
             <span class="learner-icon">${icon}</span>
             <strong>${meta.name}</strong>
+            <span class="small">${subjectPowerName(key)}</span>
             <span class="small">${lessonMode(key)}</span>
           </button>
         `;
@@ -2170,17 +2378,34 @@
       const plan = subjectLessonPlan(state.learnerSubject, weekPlan);
       const entry = learnerEntry(false);
       const doneCount = Object.values(entry.done || {}).filter(Boolean).length;
+      const totalPoints = learnerPowerPoints();
+      const level = learnerLevel(totalPoints);
+      const progressToNext = level.next === level.min ? 100 : Math.min(100, Math.round(((totalPoints - level.min) / (level.next - level.min)) * 100));
 
       learnerActivity.innerHTML = `
-        <div class="quest-layout">
-          <section class="learner-card">
+        <div class="quest-layout power-${state.learnerSubject}">
+          <section class="learner-card power-card">
             <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} · ${plan.subjectName}</p>
             <h3>${plan.subject.topic}</h3>
             <p><strong>Your mission:</strong> ${plan.objective}</p>
             <p class="muted">${plan.subject.content}</p>
             <div class="activity-meta">
+              <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
               <span class="badge accent">${lessonMode(state.learnerSubject)}</span>
               <span class="badge">${plan.subject.vocabulary.join(" · ")}</span>
+            </div>
+            <div class="superhero-panel">
+              <span class="level-badge">${level.name}</span>
+              <strong>${totalPoints} power points</strong>
+              <div class="power-bar" aria-label="${progressToNext}% to next superhero level">
+                <div class="power-fill" style="--fill: ${progressToNext}%"></div>
+              </div>
+              <p class="small">${level.message}</p>
+            </div>
+            <div class="mission-strip">
+              <div class="mission-pill">1. Try</div>
+              <div class="mission-pill">2. Explain</div>
+              <div class="mission-pill">3. Power up</div>
             </div>
             <div class="star-trail" aria-label="${doneCount} of 4 learner tasks complete">
               ${[0, 1, 2, 3].map(index => `<span class="star ${index < doneCount ? "earned" : ""}">${index < doneCount ? "*" : ""}</span>`).join("")}
@@ -2192,7 +2417,7 @@
 
           <section class="learner-card">
             <p class="section-kicker">My worksheet</p>
-            <h3>Try these steps</h3>
+            <h3>${subjectPowerName(state.learnerSubject)} quest steps</h3>
             ${plan.worksheet.map((task, index) => `
               <div class="quest-step">
                 <label class="quest-check">
@@ -2286,6 +2511,36 @@
         life: "Real household practice, movement or wellbeing routine"
       };
       return modes[subjectKey];
+    }
+
+    function learnerPowerPoints() {
+      return Object.values(state.learnerWork).reduce((total, entry) => {
+        return total + Object.values(entry.done || {}).filter(Boolean).length;
+      }, 0);
+    }
+
+    function learnerLevel(points = learnerPowerPoints()) {
+      const levels = [
+        { name: "Sidekick Starter", min: 0, next: 4, message: "Every superhero starts by trying." },
+        { name: "Word & Number Hero", min: 4, next: 10, message: "You are building learning powers." },
+        { name: "Quest Champion", min: 10, next: 18, message: "You keep going when tasks get tricky." },
+        { name: "Super Scholar", min: 18, next: 30, message: "You explain your thinking like a champion." },
+        { name: "Year 1 Guardian", min: 30, next: 44, message: "You are protecting your learning every week." },
+        { name: "Master of Missions", min: 44, next: 44, message: "Amazing effort. New missions await." }
+      ];
+      return [...levels].reverse().find(level => points >= level.min) || levels[0];
+    }
+
+    function subjectPowerName(subjectKey) {
+      const powers = {
+        english: "Word Power",
+        maths: "Number Power",
+        science: "Discovery Power",
+        humanities: "World Power",
+        creative: "Create Power",
+        life: "Brave Habits"
+      };
+      return powers[subjectKey];
     }
 
     function renderLessonDetail() {
