@@ -937,6 +937,28 @@
       color: var(--power, var(--cp-accent));
     }
 
+    .resource-links {
+      display: grid;
+      gap: 0.45rem;
+      margin: 0.8rem 0;
+    }
+
+    .resource-link {
+      display: block;
+      padding: 0.7rem;
+      border: 1px solid var(--power, var(--cp-border));
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-link);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .resource-link:hover {
+      background: var(--power-soft, var(--cp-surface-soft));
+      text-decoration: underline;
+    }
+
     .day-tabs {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -2293,6 +2315,61 @@
       return unitCatalog.find(unit => unit.week === Number(week)) || unitCatalog[0];
     }
 
+    const curriculumGuardrails = {
+      english: [
+        "Phonics and decoding remain explicit and frequent.",
+        "Children say sentences aloud before writing and reread for sense.",
+        "Reading, vocabulary, speaking and listening are built into every unit."
+      ],
+      maths: [
+        "Number and place value are built through concrete-pictorial-abstract practice.",
+        "Addition, subtraction, fractions, measure, shape and position recur across the year.",
+        "Reasoning is always oral first: show it, draw it, explain it."
+      ],
+      science: [
+        "Plants, animals including humans, materials and seasonal change are revisited.",
+        "Scientific enquiry is practical: observe, sort, test, compare, record and explain.",
+        "Evidence comes before conclusion."
+      ],
+      humanities: [
+        "Geography covers local area, UK, world, weather, maps and fieldwork.",
+        "History covers personal timeline, living memory, significant people and local clues.",
+        "Children use evidence: maps, photos, objects, interviews and timelines."
+      ],
+      creative: [
+        "Art, design, music and performance are used for expression and communication.",
+        "Children design, make, evaluate and improve purposeful products.",
+        "Creative output contributes to the weekly project, not decorative busywork."
+      ],
+      life: [
+        "PSHE-style learning is treated as practical habit formation.",
+        "Independence, safety, emotional language, resilience and social communication are practised in real life.",
+        "Adult support fades from modelling to prompting to independent use."
+      ]
+    };
+
+    const bbcPracticeLinks = {
+      english: [{ label: "BBC Bitesize Year 1 English", url: "https://www.bbc.co.uk/bitesize/subjects/z2n7ywx" }],
+      maths: [{ label: "BBC Bitesize Year 1 Maths", url: "https://www.bbc.co.uk/bitesize/subjects/z8x8h4j" }],
+      science: [{ label: "BBC Bitesize Year 1 Science", url: "https://www.bbc.co.uk/bitesize/subjects/zx3trmn" }],
+      humanities: [
+        { label: "BBC Bitesize Year 1 Geography", url: "https://www.bbc.co.uk/bitesize/subjects/zqs2vj6" },
+        { label: "BBC Bitesize Year 1 History", url: "https://www.bbc.co.uk/bitesize/subjects/zbqcmbk" }
+      ],
+      creative: [
+        { label: "BBC Bitesize Year 1 Art and Design", url: "https://www.bbc.co.uk/bitesize/subjects/zmyvcxs" },
+        { label: "BBC Bitesize Year 1 Design and Technology", url: "https://www.bbc.co.uk/bitesize/subjects/zs83jfr" }
+      ],
+      life: [{ label: "BBC Bitesize Year 1 Citizenship", url: "https://www.bbc.co.uk/bitesize/subjects/zst3g7h" }]
+    };
+
+    const curriculumSourceLinks = [
+      { label: "National curriculum in England: primary curriculum", url: "https://www.gov.uk/government/publications/national-curriculum-in-england-primary-curriculum" },
+      { label: "National curriculum collection", url: "https://www.gov.uk/government/collections/national-curriculum" },
+      { label: "PlanBee Year 1 curriculum overview", url: "https://planbee.com/pages/year-1-curriculum" },
+      { label: "BBC Bitesize Year 1 learning resources", url: "https://www.bbc.co.uk/bitesize/levels/zjpqqp3" }
+    ];
+
     function weeklyJourney(weekPlan) {
       const week = weekPlan.week;
       const unit = unitForWeek(week);
@@ -3029,6 +3106,10 @@
                 <div class="connection-pill"><strong>${lessonSubjectMeta[key].name}</strong><br>${subjectConnection(key, weekPlan)}</div>
               `).join("")}
             </div>
+            <div class="journey-card">
+              <strong>Curriculum guardrails for ${plan.subjectName}</strong>
+              <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
+            </div>
             <div class="activity-meta">
               <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
               <span class="badge accent">${lessonMode(state.learnerSubject)}</span>
@@ -3068,6 +3149,11 @@
             <div class="daily-flow">
               ${flow.map(([label, text]) => `
                 <div class="flow-step"><strong>${label}</strong><span>${text}</span></div>
+              `).join("")}
+            </div>
+            <div class="resource-links">
+              ${bbcPracticeLinks[state.learnerSubject].map(link => `
+                <a class="resource-link" href="${link.url}" target="_blank" rel="noopener noreferrer">Further practice: ${link.label}</a>
               `).join("")}
             </div>
             ${dayPlan.tasks.map((task, index) => `
@@ -3353,7 +3439,15 @@
           <h3>${principle.title}</h3>
           <p class="muted">${principle.body}</p>
         </article>
-      `).join("");
+      `).join("") + `
+        <article class="card big-card">
+          <h3>Curriculum and practice sources</h3>
+          <p class="muted">The app uses these as alignment references and practice links. It does not copy paid lesson content or BBC activities.</p>
+          <div class="resource-links">
+            ${curriculumSourceLinks.map(link => `<a class="resource-link" href="${link.url}" target="_blank" rel="noopener noreferrer">${link.label}</a>`).join("")}
+          </div>
+        </article>
+      `;
     }
 
     function bindChecks() {
