@@ -2250,83 +2250,69 @@
       return "Summer";
     }
 
-    const journeyQuestions = [
-      "How do I get ready to learn well at home?",
-      "What makes me unique, and how can I represent numbers about myself?",
-      "What can stories, numbers and my street tell me about my world?",
-      "How do patterns help me read, count, move and organise?",
-      "How do parts make a whole in words, numbers, animals and homes?",
-      "How do facts help us explain animals, helpers and number stories?",
-      "How do stories, subtraction and plant parts show change?",
-      "How can instructions, shapes and plant tests help us make something work?",
-      "How can I use better sentences, teen numbers and evidence?",
-      "How do numbers, facts and local clues help us organise information?",
-      "How can I explain what I know using books, problems, maps and displays?",
-      "How can I share my Autumn learning with confidence?",
-      "What new growth can I notice in stories, numbers, plants and places?",
-      "How do questions help me learn about characters, numbers and the UK?",
-      "How can I describe, add, compare and care more precisely?",
-      "How do recounts, subtraction, weather and transport show change over time?",
-      "How do equal groups, instructions and world maps help us organise ideas?",
-      "How can fair sharing help us understand stories, animals and places?",
-      "How do precise words, fractions and habitats help us explain hard things?",
-      "How can measuring help us understand our bodies, plants and designs?",
-      "How do reasons and evidence help us explain food, mass and choices?",
-      "How does time help us organise diaries, routines, daylight and cultures?",
-      "How can I review Spring learning and turn it into a project?",
-      "How can I celebrate Spring progress and choose my next goal?",
-      "How can I become more independent as I explore summer places?",
-      "How can stamina and place value help me understand journeys and materials?",
-      "How can I solve problems and protect places through testing and persuasion?",
-      "How do groups, habitats and patterns help us understand the world?",
-      "How can sharing, food chains, reports and maps explain relationships?",
-      "How do money, shops and recycling connect to everyday choices?",
-      "How can position, direction and shadows help me guide someone?",
-      "How can data help me investigate, present and listen well?",
-      "How can I bring together my best Year 1 skills independently?",
-      "How can I get ready for Year 2 by improving and explaining?",
-      "How can I show what I know to an audience?",
-      "How can I celebrate my Year 1 journey and step into Year 2?"
+    const unitCatalog = [
+      { week: 1, title: "Ready to Learn Basecamp", question: "How do I get ready to learn well at home?", project: "Create a personal learning basecamp: routine card, self-portrait cover, first counting record and learning-space map.", subjects: { english: "Use first sounds and oral blending to label the basecamp.", maths: "Count and arrange learning tools accurately to 10.", science: "Notice seasonal signs around the learning space.", humanities: "Map the home learning area using positional words.", creative: "Make a self-portrait journal cover.", life: "Build the start-learn-tidy-reflect routine." } },
+      { week: 2, title: "All About Me Museum", question: "What makes me unique, and how can I show it with words, numbers and pictures?", project: "Build a mini All About Me museum page with body, family, number and feeling evidence.", subjects: { english: "Read/build CVC words for personal labels.", maths: "Represent numbers about self on ten-frames.", science: "Use senses and body vocabulary to describe self.", humanities: "Sequence baby, toddler and now on a timeline.", creative: "Mix colours to show feelings.", life: "Prepare and clean up a healthy snack." } },
+      { week: 3, title: "My Street Story", question: "What can stories, counting and my street tell me about my world?", project: "Create a local-world story map with counted objects, street features and tidy learning shelves.", subjects: { english: "Retell a known story using characters and setting.", maths: "Compare groups found at home or outside.", science: "Identify materials in local/home objects.", humanities: "Tally human and physical features on a walk.", creative: "Print repeated patterns from found objects.", life: "Sort and label learning resources." } },
+      { week: 4, title: "Pattern Detectives", question: "How do patterns help me read, count, move and organise?", project: "Make a pattern detective board: captions, number track, route map and rhythm pattern.", subjects: { english: "Write captions using new graphemes.", maths: "Use one more and one less on a number track.", science: "Sort materials by properties.", humanities: "Draw and follow a simple route map.", creative: "Create sound and movement patterns.", life: "Use a calm help script when stuck." } },
+      { week: 5, title: "Parts and Wholes", question: "How do parts make a whole in words, numbers, animals and homes?", project: "Build a parts-and-wholes display with word parts, number bonds, animal features and then/now home evidence.", subjects: { english: "Read longer CVC words and notice digraphs.", maths: "Partition numbers into number bonds.", science: "Group animals by body features.", humanities: "Compare homes now and in the past.", creative: "Model an animal with labelled features.", life: "Choose suitable clothes for weather." } },
+      { week: 6, title: "Fact Finders", question: "How do facts help us explain animals, helpers and number stories?", project: "Create an animal-helper fact file with addition stories and community role play.", subjects: { english: "Write animal labels and fact sentences.", maths: "Act out addition stories within 10.", science: "Classify animals by diet.", humanities: "Explain how local helpers serve the community.", creative: "Draw an animal from observation.", life: "Practise kind turn-taking in a game." } },
+      { week: 7, title: "Change Stories", question: "How do stories, subtraction and plant parts show change?", project: "Make a change-story sequence showing taking away, plant growth and story events.", subjects: { english: "Sequence stories with time words.", maths: "Show subtraction as taking away.", science: "Label plant parts and their jobs.", humanities: "Use direction words on a floor map.", creative: "Retell through freeze-frame drama.", life: "Use a timer to build focus stamina." } },
+      { week: 8, title: "Make It Work", question: "How can instructions, shapes and plant tests help us make something work?", project: "Create an instruction-and-design page for planting, shape building and planning a project.", subjects: { english: "Write ordered instructions with bossy verbs.", maths: "Name, sort and describe 2D/3D shapes.", science: "Plan a plant-needs comparison.", humanities: "Connect weather to daily choices.", creative: "Make a shape collage.", life: "Plan materials before starting a project." } },
+      { week: 9, title: "Evidence Experts", question: "How can I use better sentences, teen numbers and evidence?", project: "Create an evidence page combining a joined sentence, teen number model, weather chart and fossil fact.", subjects: { english: "Join ideas using and.", maths: "Represent teen numbers as ten and ones.", science: "Record weather with symbols.", humanities: "Explain why Mary Anning is significant.", creative: "Make fossil texture rubbings.", life: "Turn a mistake into learning." } },
+      { week: 10, title: "Information Organisers", question: "How do numbers, facts and local clues help us organise information?", project: "Create an information page with headings, ordered numbers, seasonal evidence and a local-history clue.", subjects: { english: "Use headings, facts and labels.", maths: "Order and compare numbers to 20.", science: "Compare seasonal evidence.", humanities: "Ask questions from an old/new local clue.", creative: "Build and improve a recycled model.", life: "Choose a movement break for focus." } },
+      { week: 11, title: "Explain It Clearly", question: "How can I explain what I know using books, problems, maps and displays?", project: "Prepare a mini explanation board showing reading fluency, story problems, a science question and map/timeline review.", subjects: { english: "Reread familiar text for fluency.", maths: "Choose addition or subtraction for story problems.", science: "Turn a wondering into a testable question.", humanities: "Use maps and timelines to explain learning.", creative: "Select work for a mini exhibition.", life: "Name strengths and next steps." } },
+      { week: 12, title: "Autumn Showcase", question: "How can I share my Autumn learning with confidence?", project: "Host an Autumn showcase with a book, maths trail, seasonal explanation, nested places diagram and celebration goal.", subjects: { english: "Create and read an Autumn learning book.", maths: "Complete a four-station maths trail.", science: "Present seasonal change evidence.", humanities: "Explain home, local area, country and world.", creative: "Perform or gallery-share Autumn work.", life: "Set a next-term goal." } },
+      { week: 13, title: "Spring Growth Lab", question: "What new growth can I notice in stories, numbers, plants and places?", project: "Launch a Spring growth journal connecting predictions, numbers to 50, seeds and UK places.", subjects: { english: "Predict from story clues.", maths: "Build numbers to 50 with tens and ones.", science: "Plant seeds and begin a diary.", humanities: "Name the UK countries on a map.", creative: "Sketch a Spring object.", life: "Launch learning independently in the morning." } },
+      { week: 14, title: "Question Quest", question: "How do questions help me learn about characters, numbers and the UK?", project: "Create a question quest board with character questions, number comparisons and UK landmark facts.", subjects: { english: "Write who/what/where questions.", maths: "Compare numbers to 50.", science: "Predict what plants need.", humanities: "Locate England and London landmarks.", creative: "Draw a landmark with careful lines.", life: "Practise polite question-and-answer talk." } },
+      { week: 15, title: "Careful Describers", question: "How can I describe, add, compare and care more precisely?", project: "Create a precise-description page linking character adjectives, counting-on, plant parts and UK comparison.", subjects: { english: "Use adjectives for character description.", maths: "Add by counting on.", science: "Explain plant-part jobs.", humanities: "Compare UK countries with fact cards.", creative: "Make a textured plant collage.", life: "Care for a living thing responsibly." } },
+      { week: 16, title: "Then, Now and Change", question: "How do recounts, subtraction, weather and transport show change over time?", project: "Build a change-over-time display with a recount, subtraction model, weather map and transport timeline.", subjects: { english: "Write a personal recount in order.", maths: "Subtract by counting back or finding difference.", science: "Compare evergreen and deciduous trees.", humanities: "Read a UK weather map.", creative: "Create a weather soundscape.", life: "Choose suitable clothing for weather." } },
+      { week: 17, title: "Equal Groups Around the World", question: "How do equal groups, instructions and world maps help us organise ideas?", project: "Create a world explorer page with equal groups, seed-care instructions, continents/oceans and repeating patterns.", subjects: { english: "Write instructions with bossy verbs.", maths: "Make and describe equal groups.", science: "Record plant growth changes.", humanities: "Name continents and oceans.", creative: "Design repeating world patterns.", life: "Follow multi-step instructions." } },
+      { week: 18, title: "Fair Shares and Tales", question: "How can fair sharing help us understand stories, animals and places?", project: "Retell a traditional tale using halves, animal young, place comparison and puppets.", subjects: { english: "Retell and change a traditional tale.", maths: "Find halves of shapes and quantities.", science: "Match animal adults and young.", humanities: "Compare local area with a contrasting place.", creative: "Make tale puppets.", life: "Practise fair sharing." } },
+      { week: 19, title: "Brave Explainers", question: "How do precise words, fractions and habitats help us explain hard things?", project: "Create a brave explainer card: vocabulary, quarters, animal groups, hot/cold places and a try strategy.", subjects: { english: "Collect precise vocabulary.", maths: "Make quarters of shapes/objects.", science: "Classify animal groups.", humanities: "Locate hot and cold places.", creative: "Study animal patterns.", life: "Use an I-can-try card for hard tasks." } },
+      { week: 20, title: "Measure My World", question: "How can measuring help us understand our bodies, plants and designs?", project: "Make a measurement lab page linking poem rhythm, length/height, exercise, transport and a vehicle model.", subjects: { english: "Perform a rhyming poem.", maths: "Measure length and height.", science: "Observe body changes after exercise.", humanities: "Sequence transport past and present.", creative: "Design and test a vehicle.", life: "Move safely with warm-up and cool-down." } },
+      { week: 21, title: "Healthy Choices", question: "How do reasons and evidence help us explain food, mass and choices?", project: "Create a healthy-choice board with because sentences, mass/capacity tests, food groups and farm-to-plate journey.", subjects: { english: "Use because to explain.", maths: "Compare mass and capacity.", science: "Sort food groups.", humanities: "Trace food journeys.", creative: "Draw a fruit still life.", life: "Prepare a balanced snack plate." } },
+      { week: 22, title: "Time Travellers", question: "How does time help us organise diaries, routines, daylight and cultures?", project: "Make a time-traveller page: diary sequence, clocks, daylight log and school-day comparison.", subjects: { english: "Write a first-person diary.", maths: "Read o'clock and half past.", science: "Compare daylight changes.", humanities: "Compare school routines around the world.", creative: "Make a teaching clock.", life: "Use a visual timetable." } },
+      { week: 23, title: "Spring Project Studio", question: "How can I review Spring learning and turn it into a project?", project: "Build a Spring project exhibition using edited writing, mixed maths, plant results and map review.", subjects: { english: "Edit writing for sense.", maths: "Solve mixed Spring maths challenges.", science: "Present plant investigation results.", humanities: "Answer map questions.", creative: "Label a Spring gallery.", life: "Reflect on learning habits." } },
+      { week: 24, title: "Spring Celebration", question: "How can I celebrate Spring progress and choose my next goal?", project: "Host a Spring celebration with reading performance, maths games, nature journal and personal goal.", subjects: { english: "Read familiar text aloud confidently.", maths: "Practise fluency through games.", science: "Select the best nature journal page.", humanities: "Create a my-world mini book.", creative: "Share a performance choice.", life: "Review goals and choose a Summer goal." } },
+      { week: 25, title: "Summer Explorer Launch", question: "How can I become more independent as I explore summer places?", project: "Launch a Summer explorer portfolio with story plan, 100-square, seasonal observation and seaside art.", subjects: { english: "Plan a longer story.", maths: "Represent numbers to 100.", science: "Observe Summer seasonal changes.", humanities: "Sort seaside physical/human features.", creative: "Paint a seaside colour wash.", life: "Choose and plan an independent project." } },
+      { week: 26, title: "Journey Builders", question: "How can stamina and place value help me understand journeys and materials?", project: "Create a journey builder page with reading recommendation, 100-square puzzles, material tests and seaside then/now.", subjects: { english: "Read longer and recommend a book.", maths: "Use one more/less to 100.", science: "Choose materials for a purpose.", humanities: "Compare seaside holidays past/present.", creative: "Design a postcard.", life: "Pack for a trip using a checklist." } },
+      { week: 27, title: "Protect and Persuade", question: "How can I solve problems and protect places through testing and persuasion?", project: "Make a protect-the-beach campaign with persuasive sentences, shell-shop maths, boat test and water-safety poster.", subjects: { english: "Write persuasive reasons.", maths: "Solve shell-shop problems.", science: "Test floating and sinking.", humanities: "Explain how to protect places.", creative: "Build and improve a boat.", life: "Recall water-safety rules." } },
+      { week: 28, title: "Habitat Designers", question: "How do groups, habitats and patterns help us understand the world?", project: "Design a habitat diorama with nonfiction features, skip counting, habitat map and shared-space care.", subjects: { english: "Use contents and glossary features.", maths: "Count in 2s, 5s and 10s.", science: "Match animals to habitats.", humanities: "Locate world habitats.", creative: "Build a habitat diorama.", life: "Care for shared spaces." } },
+      { week: 29, title: "Relationships in Nature", question: "How can sharing, food chains, reports and maps explain relationships?", project: "Create a relationship map connecting animal reports, sharing/grouping, food chains and explorer routes.", subjects: { english: "Write an animal report under headings.", maths: "Share/group objects equally.", science: "Order simple food chains.", humanities: "Explain an explorer's journey.", creative: "Create explorer map art.", life: "Plan a safe adventure." } },
+      { week: 30, title: "Everyday Economy", question: "How do money, shops and recycling connect to everyday choices?", project: "Open a pretend eco-shop with reviews, coin totals, recycling sort, shop roles and packaging design.", subjects: { english: "Write an opinion review.", maths: "Recognise coins and make totals.", science: "Sort recycling and reuse materials.", humanities: "Explain shops and services.", creative: "Design shop signs and packaging.", life: "Sort needs and wants." } },
+      { week: 31, title: "Direction Mission", question: "How can position, direction and shadows help me guide someone?", project: "Create a direction mission with hidden-toy descriptions, robot routes, shadow puppets and clear instructions.", subjects: { english: "Use prepositions in setting description.", maths: "Use position and direction language.", science: "Investigate shadows.", humanities: "Use simple grid references.", creative: "Make shadow puppet theatre.", life: "Give clear directions." } },
+      { week: 32, title: "Data Detectives", question: "How can data help me investigate, present and listen well?", project: "Build a data detective report using a survey, science counts, fieldwork tally and infographic.", subjects: { english: "Give a one-minute presentation.", maths: "Collect and interpret tally data.", science: "Say what results show.", humanities: "Do a local fieldwork tally.", creative: "Make an infographic poster.", life: "Ask kind audience questions." } },
+      { week: 33, title: "Independent Author Lab", question: "How can I bring together my best Year 1 skills independently?", project: "Create an independent portfolio page: writing project, mixed maths, living-things map and Year 1 timeline.", subjects: { english: "Write several connected sentences.", maths: "Choose strategies for mixed problems.", science: "Connect animal and plant learning.", humanities: "Sequence the Year 1 timeline.", creative: "Design a portfolio cover.", life: "Use an independence checklist." } },
+      { week: 34, title: "Year 2 Ready Lab", question: "How can I get ready for Year 2 by improving and explaining?", project: "Prepare a Year 2 readiness page with edited writing, fluency games, child-choice enquiry and improved artwork.", subjects: { english: "Use an editing checklist.", maths: "Practise fluent facts to 100.", science: "Plan a child-choice science question.", humanities: "Review local, UK and world knowledge.", creative: "Improve earlier artwork.", life: "Set Year 2 learning habits." } },
+      { week: 35, title: "Show What You Know", question: "How can I show what I know to an audience?", project: "Host a showcase where each subject contributes one display, explanation or performance.", subjects: { english: "Read own writing and answer questions.", maths: "Teach a favourite maths strategy.", science: "Present a science display.", humanities: "Explain maps, timelines and significant people.", creative: "Rehearse and perform.", life: "Host and thank the audience." } },
+      { week: 36, title: "Year 1 Graduation Quest", question: "How can I celebrate my Year 1 journey and step into Year 2?", project: "Create a Year 1 graduation portfolio with memory book, maths treasure hunt, seasons wheel and confidence certificate.", subjects: { english: "Write Year 1 memory reflections.", maths: "Complete a maths treasure hunt.", science: "Compare the four seasons.", humanities: "Reflect on places and people learned.", creative: "Curate a final gallery.", life: "Celebrate strengths and transition." } }
     ];
+
+    function unitForWeek(week) {
+      return unitCatalog.find(unit => unit.week === Number(week)) || unitCatalog[0];
+    }
 
     function weeklyJourney(weekPlan) {
       const week = weekPlan.week;
-      const question = journeyQuestions[week - 1] || `How does this week's learning connect?`;
-      const outcomeByBand = [
-        "a simple routine, drawing, model or explanation to start the year",
-        "a small labelled page, model, map or performance showing connected learning",
-        "a mini exhibition page that combines reading, maths, science and a real-life habit",
-        "a Spring investigation, map, story or practical routine explained clearly",
-        "a connected project or presentation using evidence, number, words and creativity",
-        "a Year 1 portfolio piece that shows readiness for Year 2"
-      ];
-      const band = Math.min(outcomeByBand.length - 1, Math.floor((week - 1) / 6));
+      const unit = unitForWeek(week);
       return {
-        question,
-        story: `This week is about "${weekPlan.theme}". Each subject contributes one part of the same learning story rather than sitting separately.`,
-        outcome: `By the end of the week, aim to create ${outcomeByBand[band]}.`,
-        parentCompass: "Teach the subject skill, then always ask: how does this connect to this week's big question?",
+        question: unit.question,
+        story: `${unit.title}: ${weekPlan.theme}. Every subject contributes to the same outcome rather than acting as a separate worksheet.`,
+        outcome: unit.project,
+        parentCompass: "Keep returning to the big question. Ask: what did this subject add to our weekly project?",
         days: [
-          { label: "D1", name: "Discover", purpose: "Launch the big question, introduce vocabulary, and make the first concrete model or routine." },
-          { label: "D2", name: "Build", purpose: "Practise the core skill with a small variation so it is not just repetition." },
-          { label: "D3", name: "Connect", purpose: "Use the skill in a real object, book, map, movement, investigation or home situation." },
-          { label: "D4", name: "Create", purpose: "Make, explain, improve or teach something linked to the weekly outcome." },
-          { label: "D5", name: "Share", purpose: "Review the week, choose evidence, celebrate effort and name the next step." }
+          { label: "D1", name: "Discover", purpose: `Launch "${unit.title}" and collect first ideas for the project.` },
+          { label: "D2", name: "Build", purpose: "Practise the subject skill and add a second piece of evidence." },
+          { label: "D3", name: "Connect", purpose: "Apply the skill in a real situation, object, book, map or investigation." },
+          { label: "D4", name: "Create", purpose: `Create or improve one part of the weekly project: ${unit.project}` },
+          { label: "D5", name: "Share", purpose: "Choose evidence, explain the learning journey and celebrate effort." }
         ]
       };
     }
 
     function subjectConnection(subjectKey, weekPlan) {
-      const subject = weekPlan[subjectKey];
-      const connections = {
-        english: `Words and sentences for: ${subject.topic}.`,
-        maths: `Number, shape or measure thinking for: ${subject.topic}.`,
-        science: `Observation, testing or evidence for: ${subject.topic}.`,
-        humanities: `Place, time, people or map context for: ${subject.topic}.`,
-        creative: `Making, drawing or performance for: ${subject.topic}.`,
-        life: `Real-life habit for: ${subject.topic}.`
-      };
-      return connections[subjectKey];
+      return unitForWeek(weekPlan.week).subjects[subjectKey];
     }
 
     function dailyFlow(dayPlan, subjectKey, weekPlan) {
@@ -2398,6 +2384,8 @@
     function concreteMission(subjectKey, weekPlan) {
       const subject = weekPlan[subjectKey];
       const vocab = subject.vocabulary.join(", ");
+      const unit = unitForWeek(weekPlan.week);
+      const unitRole = unit.subjects[subjectKey];
       const lifeDetails = {
         "four-step routine card": {
           setup: "Get one sheet of paper. Fold it into four boxes. Ask a grown-up to write: 1 Ready, 2 Learn, 3 Tidy, 4 Reflect.",
@@ -2478,37 +2466,37 @@
 
       const subjectPlans = {
         english: {
-          setup: `Get your words or text ready: ${subject.content}. You also need paper and a pencil.`,
-          doTask: `Say the words out loud. Point to the sounds, words or sentence parts for: ${subject.topic}.`,
-          record: `Write words, labels or sentences using ${subject.content}. Read your writing back out loud.`,
+          setup: `Get your words or text ready: ${subject.content}. This will help the weekly project: ${unit.project}`,
+          doTask: `Say the words out loud. Use them for this job: ${unitRole}`,
+          record: `Write words, labels or sentences that can go into the "${unit.title}" project.`,
           outcome: `A readable English output showing ${subject.skill.toLowerCase()}.`,
           grownup: "Listen first, then help with one sound, word or sentence at a time. Keep the screen part short; the real work is saying, reading and writing."
         },
         maths: {
-          setup: `Get objects you can move: counters, toys, coins, cubes, shapes or a number line. Your task is: ${subject.content}.`,
-          doTask: `Move the objects first. Show the maths for: ${subject.topic}.`,
-          record: `Draw what you made. Then write the numbers or answer.`,
+          setup: `Get objects you can move: counters, toys, coins, cubes, shapes or a number line. Use them for: ${subject.content}.`,
+          doTask: `Move the objects first. Use the maths to help with this project job: ${unitRole}`,
+          record: `Draw the model and write the numbers so they can support the "${unit.title}" project.`,
           outcome: `A maths page that shows the concrete model, the drawing and the recorded answer.`,
           grownup: "Start with objects in his hands. Only move to drawing or numbers once he can explain what the objects show."
         },
         science: {
-          setup: `Get the things you need to investigate: ${subject.content}. You may use real objects, photos, outside space or a simple test.`,
-          doTask: `Look closely. Sort, test, compare or measure to learn about: ${subject.topic}.`,
-          record: `Draw what you saw. Add labels. Finish: 'I found out...'`,
+          setup: `Get the things you need to investigate: ${subject.content}. This evidence will help the weekly project.`,
+          doTask: `Look closely. Sort, test, compare or measure so you can do this job: ${unitRole}`,
+          record: `Draw evidence for the "${unit.title}" project. Add labels and finish: 'I found out...'`,
           outcome: `A science record with evidence, labels and a conclusion.`,
           grownup: "Let him observe before explaining. Ask: What do you notice? What changed? What makes you think that?"
         },
         humanities: {
-          setup: `Look at the clue for today: ${subject.content}. It might be a map, photo, object, route, timeline or interview.`,
-          doTask: `Use the clue to find, order, compare or explain something about: ${subject.topic}.`,
-          record: `Make a map, timeline, labelled drawing, fact card or comparison grid.`,
+          setup: `Look at the clue for today: ${subject.content}. It should help answer the big question: ${unit.question}`,
+          doTask: `Use the clue to do this project job: ${unitRole}`,
+          record: `Make a map, timeline, labelled drawing, fact card or comparison grid for the weekly project.`,
           outcome: `A humanities record that explains place, time, people or change.`,
           grownup: "Begin with a real clue: a map, object, photo, place or story. Help him explain what the clue tells us."
         },
         creative: {
-          setup: `Get the materials for: ${subject.content}. Look at them before you start.`,
-          doTask: `Make, draw, build, perform or design something for: ${subject.topic}. Stop once and make it better.`,
-          record: `Draw your plan or take a photo. Say what you changed to improve it.`,
+          setup: `Get the materials for: ${subject.content}. Decide how this will become part of: ${unit.project}`,
+          doTask: `Make, draw, build, perform or design this contribution: ${unitRole}`,
+          record: `Add a title, photo, label or short explanation for the "${unit.title}" project.`,
           outcome: `A creative piece plus one sentence explaining choices.`,
           grownup: "Avoid taking over the making. Offer one technique, then let him choose, try, change and explain."
         },
@@ -2529,32 +2517,32 @@
           { label: "D1", title: "Meet the words", intro: "Start the week. Say, read and touch today's words or sentence parts.", tasks: [
             { title: "Get ready", body: detail.setup },
             { title: "Do it", body: detail.doTask },
-            { title: "Show it", body: "Write or build three focus words. Read them back to a grown-up." },
-            { title: "Tell me", body: `Point to one word and say which sound, word or idea you used. Try one of these words: ${vocab}.` }
+            { title: "Show it", body: `Write or build three focus words that could help with: ${unit.project}` },
+            { title: "Tell me", body: `Point to one word and say how it helps answer: ${unit.question}` }
           ] },
           { label: "D2", title: "Read and build", intro: "Use the same weekly focus, but with fresh examples.", tasks: [
             { title: "Get ready", body: `Choose 3 new words, labels or sentence ideas linked to ${subject.topic}.` },
             { title: "Do it", body: "Say each one, clap the words or sounds, then read/build them." },
-            { title: "Show it", body: "Write one caption or short sentence using one of your examples." },
-            { title: "Tell me", body: "Read your sentence aloud. What did you do well?" }
+            { title: "Show it", body: `Write one caption or short sentence for the "${unit.title}" project.` },
+            { title: "Tell me", body: "Read your sentence aloud. Where could it go in the project?" }
           ] },
           { label: "D3", title: "Use it in a book", intro: "Find the weekly focus inside a real story, poem or information book.", tasks: [
             { title: "Get ready", body: "Choose a book or page with a grown-up." },
             { title: "Do it", body: `Look for examples connected to ${subject.topic}.` },
             { title: "Show it", body: "Draw or write one thing you found in the book." },
-            { title: "Tell me", body: "Tell a grown-up where you found it and why it matches this week's focus." }
+            { title: "Tell me", body: `Tell a grown-up how it connects to: ${unit.question}` }
           ] },
           { label: "D4", title: "Write with help", intro: "Use the weekly focus in your own writing.", tasks: [
             { title: "Get ready", body: "Say your idea out loud before writing." },
             { title: "Do it", body: `Write 1-3 sentences or labels about ${subject.topic}.` },
             { title: "Show it", body: "Check one thing: capital letter, spaces, spelling or full stop." },
-            { title: "Tell me", body: "Read your best sentence to a grown-up." }
+            { title: "Tell me", body: "Read your best sentence and say how it helps the weekly outcome." }
           ] },
           { label: "D5", title: "Share your best", intro: "End the week by showing what improved.", tasks: [
             { title: "Get ready", body: "Choose your best word, label, caption or sentence from this week." },
             { title: "Do it", body: "Read it clearly and improve one small thing." },
             { title: "Show it", body: "Copy or type your improved version." },
-            { title: "Tell me", body: "Tell a grown-up: This is better because..." }
+            { title: "Tell me", body: `Tell a grown-up: This belongs in ${unit.title} because...` }
           ] }
         ],
         maths: [
@@ -2562,63 +2550,63 @@
             { title: "Get ready", body: detail.setup },
             { title: "Do it", body: detail.doTask },
             { title: "Show it", body: detail.record },
-            { title: "Tell me", body: `Use one maths word to explain it: ${vocab}.` }
+            { title: "Tell me", body: `Use one maths word to explain how this helps: ${unit.project}` }
           ] },
           { label: "D2", title: "Draw it", intro: "Use the same maths idea, but draw the model.", tasks: [
             { title: "Get ready", body: `Make one example of ${subject.topic} with objects.` },
             { title: "Do it", body: "Draw what you made. Add numbers or labels." },
             { title: "Show it", body: "Complete 3 more examples with drawings." },
-            { title: "Tell me", body: "How does your drawing show the answer?" }
+            { title: "Tell me", body: "How could one example go into the weekly project?" }
           ] },
           { label: "D3", title: "Play it", intro: "Practise the maths through a short game.", tasks: [
             { title: "Get ready", body: "Get dice, cards, counters, coins, shapes or a number line." },
             { title: "Do it", body: `Play a 5-10 minute game using ${subject.topic}.` },
             { title: "Show it", body: "Write or draw two examples from the game." },
-            { title: "Tell me", body: "What strategy helped you?" }
+            { title: "Tell me", body: `Which example best connects to ${unit.title}?` }
           ] },
           { label: "D4", title: "Solve it", intro: "Try a small problem using the weekly skill.", tasks: [
             { title: "Get ready", body: `Ask a grown-up for a tiny story problem about ${subject.content}.` },
             { title: "Do it", body: "Solve it with objects first, then draw or write the answer." },
             { title: "Show it", body: "Make your own similar problem." },
-            { title: "Tell me", body: "Explain how you know your answer is right." }
+            { title: "Tell me", body: "Explain how your problem fits this week's big question." }
           ] },
           { label: "D5", title: "Teach it", intro: "Show someone else how this maths works.", tasks: [
             { title: "Get ready", body: "Choose your favourite example from this week." },
             { title: "Do it", body: "Teach it to a grown-up, toy or sibling." },
             { title: "Show it", body: "Draw the example one final time." },
-            { title: "Tell me", body: "Finish: I know this because..." }
+            { title: "Tell me", body: "Finish: This maths helps my project because..." }
           ] }
         ],
         science: [
           { label: "D1", title: "Wonder", intro: "Start with noticing and questions.", tasks: [
             { title: "Get ready", body: detail.setup },
             { title: "Do it", body: "Look closely. Say what you notice and what you wonder." },
-            { title: "Show it", body: "Draw one thing you noticed." },
-            { title: "Tell me", body: `Use one science word: ${vocab}.` }
+            { title: "Show it", body: `Draw one thing you noticed for the "${unit.title}" project.` },
+            { title: "Tell me", body: `Use one science word and say how it helps answer: ${unit.question}` }
           ] },
           { label: "D2", title: "Test or sort", intro: "Use your hands to investigate.", tasks: [
             { title: "Get ready", body: `Get the objects or photos for ${subject.content}.` },
             { title: "Do it", body: detail.doTask },
             { title: "Show it", body: "Sort, label, tally or draw your evidence." },
-            { title: "Tell me", body: "What did you find out?" }
+            { title: "Tell me", body: `What evidence could go into: ${unit.project}` }
           ] },
           { label: "D3", title: "Look again", intro: "Scientists check more than once.", tasks: [
             { title: "Get ready", body: "Look again at your object, plant, material, weather or result." },
             { title: "Do it", body: "Find one thing that is the same and one thing that is different." },
             { title: "Show it", body: "Draw before/after or same/different." },
-            { title: "Tell me", body: "Say: I noticed..." }
+            { title: "Tell me", body: `Say: I noticed... This helps our project because...` }
           ] },
           { label: "D4", title: "Use science words", intro: "Practise explaining like a scientist.", tasks: [
             { title: "Get ready", body: `Choose two words: ${vocab}.` },
             { title: "Do it", body: "Point to evidence for each word." },
             { title: "Show it", body: "Add labels or speech bubbles to your drawing." },
-            { title: "Tell me", body: "Finish: I know because..." }
+            { title: "Tell me", body: "Finish: I know because... This connects to the big question because..." }
           ] },
           { label: "D5", title: "Conclusion", intro: "End the week with what you found out.", tasks: [
             { title: "Get ready", body: "Look at your drawings, labels or results from the week." },
             { title: "Do it", body: "Choose the most important thing you learned." },
             { title: "Show it", body: "Write or dictate: I found out..." },
-            { title: "Tell me", body: "Tell a grown-up one new science fact." }
+            { title: "Tell me", body: `Tell a grown-up which science fact belongs in ${unit.title}.` }
           ] }
         ],
         humanities: [
@@ -2626,63 +2614,63 @@
             { title: "Get ready", body: detail.setup },
             { title: "Do it", body: "Look for three clues." },
             { title: "Show it", body: "Circle, draw or list the clues." },
-            { title: "Tell me", body: "What do the clues tell us?" }
+            { title: "Tell me", body: `What do the clues tell us about: ${unit.question}` }
           ] },
           { label: "D2", title: "Map or order", intro: "Put information in the right place or order.", tasks: [
             { title: "Get ready", body: `Use the clue for ${subject.content}.` },
             { title: "Do it", body: "Map it, sequence it, sort it or compare it." },
             { title: "Show it", body: "Make a simple map, timeline or sort." },
-            { title: "Tell me", body: `Use one word: ${vocab}.` }
+            { title: "Tell me", body: `Use one word and explain how this helps: ${unit.project}` }
           ] },
           { label: "D3", title: "Compare", intro: "Look for what is the same and different.", tasks: [
             { title: "Get ready", body: `Think about ${subject.topic}.` },
             { title: "Do it", body: "Find one same thing and one different thing." },
             { title: "Show it", body: "Draw or write same/different." },
-            { title: "Tell me", body: "Tell a grown-up which difference matters most." }
+            { title: "Tell me", body: "Tell a grown-up which difference matters most for the weekly outcome." }
           ] },
           { label: "D4", title: "Make a fact card", intro: "Turn your learning into a small fact card.", tasks: [
             { title: "Get ready", body: "Choose one important fact." },
             { title: "Do it", body: "Draw it and add labels." },
             { title: "Show it", body: "Write or dictate one sentence." },
-            { title: "Tell me", body: "Why is this fact useful?" }
+            { title: "Tell me", body: `Why is this fact useful for ${unit.title}?` }
           ] },
           { label: "D5", title: "Be the guide", intro: "Explain the learning to someone else.", tasks: [
             { title: "Get ready", body: "Choose your best map, drawing, object or fact card." },
             { title: "Do it", body: "Use it to teach a grown-up." },
             { title: "Show it", body: "Add one final label or detail." },
-            { title: "Tell me", body: "Finish: Now I know..." }
+            { title: "Tell me", body: "Finish: Now I know... This answers the big question because..." }
           ] }
         ],
         creative: [
           { label: "D1", title: "Plan it", intro: "Look, imagine and plan before making.", tasks: [
             { title: "Get ready", body: detail.setup },
             { title: "Do it", body: "Make a quick plan or try the technique once." },
-            { title: "Show it", body: "Draw your idea." },
-            { title: "Tell me", body: "What will you make first?" }
+            { title: "Show it", body: `Draw your idea for the "${unit.title}" project.` },
+            { title: "Tell me", body: "What will you make first, and how will it help the weekly outcome?" }
           ] },
           { label: "D2", title: "Make it", intro: "Start the creative work.", tasks: [
             { title: "Get ready", body: `Get the materials for ${subject.content}.` },
             { title: "Do it", body: detail.doTask },
             { title: "Show it", body: "Take a photo or draw what you made." },
-            { title: "Tell me", body: "Which part do you like best?" }
+            { title: "Tell me", body: `Which part should be included in: ${unit.project}` }
           ] },
           { label: "D3", title: "Improve it", intro: "Artists and makers change things to make them better.", tasks: [
             { title: "Get ready", body: "Look carefully at your work." },
             { title: "Do it", body: "Add detail, strengthen, change colour, rehearse or tidy one part." },
             { title: "Show it", body: "Mark or describe what changed." },
-            { title: "Tell me", body: "I improved..." }
+            { title: "Tell me", body: "I improved... so the weekly project is stronger because..." }
           ] },
           { label: "D4", title: "Explain it", intro: "Use art words to explain your choices.", tasks: [
             { title: "Get ready", body: `Choose two words: ${vocab}.` },
             { title: "Do it", body: "Point to where those words show in your work." },
             { title: "Show it", body: "Add labels or a title." },
-            { title: "Tell me", body: "Why did you choose that?" }
+            { title: "Tell me", body: "Why did you choose that for this week's project?" }
           ] },
           { label: "D5", title: "Share it", intro: "Show your finished work.", tasks: [
             { title: "Get ready", body: "Put your work somewhere easy to see." },
             { title: "Do it", body: "Show it to a grown-up." },
             { title: "Show it", body: "Give it a title." },
-            { title: "Tell me", body: "Finish: I am proud of..." }
+            { title: "Tell me", body: `Finish: This belongs in ${unit.title} because...` }
           ] }
         ],
         life: [
@@ -2690,41 +2678,41 @@
             { title: "Get ready", body: detail.setup },
             { title: "Do it", body: detail.doTask },
             { title: "Show it", body: detail.record },
-            { title: "Tell me", body: `Use one word: ${vocab}.` }
+            { title: "Tell me", body: `Use one word and say how this habit helps the ${unit.title} week.` }
           ] },
           { label: "D2", title: "Try it again", intro: "Use the same habit in a new real moment.", tasks: [
             { title: "Get ready", body: `Find a real moment today for: ${subject.topic}.` },
             { title: "Do it", body: "Try the habit again with less help." },
             { title: "Show it", body: "Tick or draw what you did." },
-            { title: "Tell me", body: "Was it easier, harder or the same?" }
+            { title: "Tell me", body: "Was it easier, harder or the same? Why does this habit matter this week?" }
           ] },
           { label: "D3", title: "Use it for real", intro: "This is the most important practice day.", tasks: [
             { title: "Get ready", body: "Wait for a real-life chance to use the habit." },
             { title: "Do it", body: `Use the habit during the day: ${subject.content}.` },
             { title: "Show it", body: "Draw what happened." },
-            { title: "Tell me", body: "What helped you remember?" }
+            { title: "Tell me", body: "What helped you remember, and how did it help your learning?" }
           ] },
           { label: "D4", title: "Teach it", intro: "Teaching helps you remember.", tasks: [
             { title: "Get ready", body: "Choose a toy, sibling or grown-up to teach." },
             { title: "Do it", body: "Show them the habit step by step." },
             { title: "Show it", body: "Draw the steps or type them." },
-            { title: "Tell me", body: "Which step is most important?" }
+            { title: "Tell me", body: "Which step is most important for becoming more independent?" }
           ] },
           { label: "D5", title: "Celebrate it", intro: "Look back at the habit and choose your next step.", tasks: [
             { title: "Get ready", body: "Think about the times you used this habit this week." },
             { title: "Do it", body: "Choose your best try." },
             { title: "Show it", body: "Finish: I can now..." },
-            { title: "Tell me", body: "Next week I want to practise..." }
+            { title: "Tell me", body: `Next week I want to practise... because it will help my ${unit.project}` }
           ] }
         ]
       };
       return {
         focusLine: `Today you will ${detail.doTask.charAt(0).toLowerCase()}${detail.doTask.slice(1)}`,
-        parentScript: `Today is Week ${weekPlan.week}: ${weekPlan.theme}. The focus is "${subject.topic}". Set up: ${detail.setup} Then help your child do the real activity before using the worksheet.`,
+        parentScript: `Today is Week ${weekPlan.week}: ${unit.title}. Big question: ${unit.question}. The ${lessonSubjectMeta[subjectKey].name} contribution is: ${unitRole}`,
         grownupTip: detail.grownup,
         weeklyUse: weeklyUse[subjectKey],
         success: [
-          `I can do the real activity: ${subject.content}.`,
+          `I can add my ${lessonSubjectMeta[subjectKey].name} part to the weekly project.`,
           `I can use key words such as ${subject.vocabulary.slice(0, 2).join(" and ")}.`,
           detail.outcome
         ],
