@@ -3478,10 +3478,6 @@
                 <span>${journey.parentCompass}</span>
               </div>
               <div class="journey-card">
-                <strong>Today in the journey</strong>
-                <span>${selectedDay.label}: ${selectedDay.name} — ${selectedDay.purpose}</span>
-              </div>
-              <div class="journey-card">
                 <strong>Evidence to keep</strong>
                 <span>${evidence}</span>
               </div>
@@ -3501,10 +3497,6 @@
               ${Object.keys(lessonSubjectMeta).map(key => `
                 <div class="connection-pill"><strong>${lessonSubjectMeta[key].name}</strong><br>${subjectConnection(key, weekPlan)}</div>
               `).join("")}
-            </div>
-            <div class="journey-card">
-              <strong>Curriculum guardrails for ${plan.subjectName}</strong>
-              <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
             </div>
             <div class="activity-meta">
               <span class="badge accent">${subjectPowerName(state.learnerSubject)}</span>
@@ -3547,6 +3539,10 @@
               ${flow.map(([label, text]) => `
                 <div class="flow-step"><strong>${label}</strong><span>${text}</span></div>
               `).join("")}
+            </div>
+            <div class="journey-card">
+              <strong>Curriculum guardrails for ${plan.subjectName}</strong>
+              <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
             </div>
             <div class="resource-links">
               ${bbcPracticeLinks[state.learnerSubject].map(link => `
