@@ -76,9 +76,22 @@
       min-height: 100vh;
       background:
         radial-gradient(circle at top left, var(--cp-accent-soft), transparent 30rem),
+        radial-gradient(circle at bottom right, var(--cp-highlight), transparent 26rem),
         linear-gradient(180deg, var(--cp-bg-elevated), var(--cp-bg));
       color: var(--cp-text);
       font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 8% 18%, var(--cp-sheen), transparent 4rem),
+        radial-gradient(circle at 92% 12%, var(--cp-accent-soft), transparent 5rem),
+        radial-gradient(circle at 70% 84%, var(--cp-highlight), transparent 6rem);
+      z-index: -1;
     }
 
     button,
@@ -122,6 +135,20 @@
       color: var(--cp-accent);
       font-weight: 800;
       letter-spacing: -0.04em;
+    }
+
+    .mode-card {
+      display: grid;
+      gap: 0.55rem;
+      padding: 0.9rem;
+      margin-bottom: 0.9rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-accent-soft);
+    }
+
+    .mode-card strong {
+      color: var(--cp-accent);
     }
 
     .brand h1 {
@@ -254,6 +281,20 @@
       background:
         linear-gradient(135deg, var(--cp-surface), var(--cp-accent-soft)),
         var(--cp-surface);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -4rem;
+      top: -4rem;
+      width: 12rem;
+      height: 12rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 50%;
+      background: var(--cp-sheen);
     }
 
     .section-kicker {
@@ -600,6 +641,176 @@
       border-bottom: 1px solid var(--cp-border-strong);
     }
 
+    .learner-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+      gap: 1rem;
+      align-items: stretch;
+      margin-bottom: 1rem;
+    }
+
+    .learner-card {
+      padding: 1.2rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+      box-shadow: 0 0 2px var(--cp-border), 0 1px 2px var(--cp-border);
+    }
+
+    .learner-title {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .mascot {
+      display: grid;
+      place-items: center;
+      min-height: 13rem;
+      border: 1px dashed var(--cp-border-strong);
+      border-radius: 16px;
+      background: var(--cp-accent-soft);
+      text-align: center;
+    }
+
+    .mascot-face {
+      display: grid;
+      place-items: center;
+      width: 7rem;
+      height: 7rem;
+      margin: 0 auto 0.8rem;
+      border-radius: 50%;
+      border: 1px solid var(--cp-border);
+      background: var(--cp-surface);
+      color: var(--cp-accent);
+      font-size: 2.4rem;
+      font-weight: 900;
+    }
+
+    .learner-subjects {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin: 1rem 0;
+    }
+
+    .learner-subject {
+      display: grid;
+      gap: 0.35rem;
+      min-height: 7.5rem;
+      padding: 0.9rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .learner-subject.active {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-weight: 800;
+    }
+
+    .learner-icon {
+      display: grid;
+      width: 2.7rem;
+      height: 2.7rem;
+      place-items: center;
+      border-radius: 0.625rem;
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-weight: 900;
+    }
+
+    .quest-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .quest-step {
+      display: grid;
+      gap: 0.6rem;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-bg-elevated);
+    }
+
+    .quest-step textarea {
+      width: 100%;
+      min-height: 5rem;
+      resize: vertical;
+      background: var(--cp-surface);
+    }
+
+    .quest-check {
+      display: flex;
+      gap: 0.55rem;
+      align-items: center;
+      font-weight: 800;
+      color: var(--cp-accent);
+    }
+
+    .star-trail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.7rem;
+    }
+
+    .star {
+      display: grid;
+      width: 2.1rem;
+      height: 2.1rem;
+      place-items: center;
+      border: 1px solid var(--cp-border);
+      border-radius: 50%;
+      background: var(--cp-surface-soft);
+      color: var(--cp-text-muted);
+      font-weight: 900;
+    }
+
+    .star.earned {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+    }
+
+    .gate {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      background: var(--cp-overlay);
+      z-index: 20;
+    }
+
+    .gate-card {
+      width: min(30rem, 100%);
+      padding: 1.2rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-panel-strong);
+      box-shadow: var(--cp-shadow);
+    }
+
+    .gate-card input {
+      width: 100%;
+      margin: 0.7rem 0;
+    }
+
+    body.child-mode .sidebar {
+      background: var(--cp-accent-soft);
+    }
+
     .print-only {
       display: none;
     }
@@ -659,10 +870,16 @@
       }
 
       .hero,
+      .learner-hero,
+      .quest-layout,
       .lesson-layout,
       .grid.cols-2,
       .grid.cols-3 {
         grid-template-columns: 1fr;
+      }
+
+      .learner-subjects {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
@@ -681,6 +898,10 @@
       .timeline-item {
         grid-template-columns: 1fr;
       }
+
+      .learner-subjects {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   </style>
 </head>
@@ -696,6 +917,7 @@
       </div>
 
       <nav class="nav" aria-label="Primary">
+        <button data-view="learner">Learner Mode</button>
         <button class="active" data-view="today">Today</button>
         <button data-view="curriculum">Curriculum Map</button>
         <button data-view="activities">Activity Builder</button>
@@ -703,6 +925,12 @@
         <button data-view="progress">Progress</button>
         <button data-view="principles">Design Principles</button>
       </nav>
+
+      <section class="mode-card">
+        <strong id="modeLabel">Adult planner mode</strong>
+        <p class="small" id="modeHelp">Use planner tabs to choose lessons, then switch to Learner Mode for child-facing work.</p>
+        <button class="primary-button" id="modeToggle">Start Learner Mode</button>
+      </section>
 
       <section class="sidebar-card">
         <h2>Learning balance</h2>
@@ -744,6 +972,29 @@
             <span class="small">Year 1 in England</span>
           </div>
         </div>
+      </section>
+
+      <section id="learner" class="view">
+        <div class="learner-hero">
+          <div class="learner-card">
+            <p class="section-kicker">Learner Mode</p>
+            <h2 class="learner-title">Pick today's quest.</h2>
+            <p class="muted">One activity at a time. Read the card, try the task, type or draw on paper, then tick the steps you finished.</p>
+            <div class="controls">
+              <select id="learnerWeek" aria-label="Choose learner week"></select>
+              <button class="ghost-button" id="syncLearnerLesson">Use planner lesson</button>
+            </div>
+          </div>
+          <div class="mascot">
+            <div>
+              <div class="mascot-face">Y1</div>
+              <strong>Learning Buddy</strong>
+              <p class="small">Try, think, explain, celebrate.</p>
+            </div>
+          </div>
+        </div>
+        <div class="learner-subjects" id="learnerSubjects"></div>
+        <div id="learnerActivity"></div>
       </section>
 
       <section id="today" class="view active">
@@ -891,6 +1142,20 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <div class="gate hidden" id="parentGate" role="dialog" aria-modal="true" aria-labelledby="parentGateTitle">
+    <div class="gate-card">
+      <p class="section-kicker">Adult area</p>
+      <h2 id="parentGateTitle">Parent unlock</h2>
+      <p class="muted">Learner Mode is on. Type <strong>grownup</strong> to open planner tabs.</p>
+      <input type="text" id="parentGateInput" autocomplete="off" placeholder="Type grownup" />
+      <p class="small hidden" id="parentGateError">That did not match. Ask a grown-up to unlock.</p>
+      <div class="controls">
+        <button class="primary-button" id="parentGateUnlock">Unlock adult mode</button>
+        <button class="ghost-button" id="parentGateCancel">Stay in Learner Mode</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -1542,7 +1807,12 @@
       term: "autumn",
       progress: JSON.parse(localStorage.getItem("year1-progress") || "{}"),
       reflection: localStorage.getItem("year1-reflection") || "",
-      journal: JSON.parse(localStorage.getItem("year1-journal") || "{}")
+      journal: JSON.parse(localStorage.getItem("year1-journal") || "{}"),
+      childMode: localStorage.getItem("year1-child-mode") === "true",
+      learnerWeek: Number(localStorage.getItem("year1-learner-week") || "1"),
+      learnerSubject: localStorage.getItem("year1-learner-subject") || "english",
+      learnerWork: JSON.parse(localStorage.getItem("year1-learner-work") || "{}"),
+      pendingAdultView: "today"
     };
 
     const navButtons = document.querySelectorAll(".nav button");
@@ -1564,6 +1834,15 @@
     const progressReflection = document.getElementById("progressReflection");
     const journalEntries = document.getElementById("journalEntries");
     const journalSaved = document.getElementById("journalSaved");
+    const learnerWeek = document.getElementById("learnerWeek");
+    const learnerSubjects = document.getElementById("learnerSubjects");
+    const learnerActivity = document.getElementById("learnerActivity");
+    const modeToggle = document.getElementById("modeToggle");
+    const modeLabel = document.getElementById("modeLabel");
+    const modeHelp = document.getElementById("modeHelp");
+    const parentGate = document.getElementById("parentGate");
+    const parentGateInput = document.getElementById("parentGateInput");
+    const parentGateError = document.getElementById("parentGateError");
 
     function saveProgress() {
       localStorage.setItem("year1-progress", JSON.stringify(state.progress));
@@ -1581,6 +1860,31 @@
 
     function journalKey(week, subject) {
       return `week-${week}-${subject}`;
+    }
+
+    function learnerKey(week = state.learnerWeek, subject = state.learnerSubject) {
+      return `week-${week}-${subject}`;
+    }
+
+    function saveLearnerWork() {
+      localStorage.setItem("year1-learner-work", JSON.stringify(state.learnerWork));
+    }
+
+    function setChildMode(enabled) {
+      state.childMode = enabled;
+      localStorage.setItem("year1-child-mode", String(enabled));
+      document.body.classList.toggle("child-mode", enabled);
+      modeLabel.textContent = enabled ? "Learner Mode is on" : "Adult planner mode";
+      modeHelp.textContent = enabled
+        ? "Planner tabs are locked. A grown-up can unlock them."
+        : "Use planner tabs to choose lessons, then switch to Learner Mode for child-facing work.";
+      modeToggle.textContent = enabled ? "Parent unlock" : "Start Learner Mode";
+      if (enabled) switchView("learner");
+    }
+
+    function switchView(viewName) {
+      navButtons.forEach(item => item.classList.toggle("active", item.dataset.view === viewName));
+      views.forEach(view => view.classList.toggle("active", view.id === viewName));
     }
 
     function escapeHtml(value) {
@@ -1823,6 +2127,114 @@
       `).join("");
     }
 
+    function renderLearnerControls() {
+      learnerWeek.innerHTML = detailedScheme.map(week => `
+        <option value="${week.week}">Week ${week.week}: ${week.theme}</option>
+      `).join("");
+      learnerWeek.value = String(state.learnerWeek);
+    }
+
+    function renderLearnerSubjects() {
+      learnerSubjects.innerHTML = Object.entries(lessonSubjectMeta).map(([key, meta]) => {
+        const sourceSubject = subjects.find(subject => subject.id === key);
+        const icon = sourceSubject?.icon || meta.name.slice(0, 2);
+        return `
+          <button class="learner-subject ${state.learnerSubject === key ? "active" : ""}" data-learner-subject="${key}">
+            <span class="learner-icon">${icon}</span>
+            <strong>${meta.name}</strong>
+            <span class="small">${lessonMode(key)}</span>
+          </button>
+        `;
+      }).join("");
+
+      document.querySelectorAll("[data-learner-subject]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.learnerSubject = button.dataset.learnerSubject;
+          localStorage.setItem("year1-learner-subject", state.learnerSubject);
+          renderLearnerSubjects();
+          renderLearnerActivity();
+        });
+      });
+    }
+
+    function learnerEntry(create = true) {
+      const key = learnerKey();
+      if (create && !state.learnerWork[key]) {
+        state.learnerWork[key] = { answers: {}, done: {} };
+      }
+      return state.learnerWork[key] || { answers: {}, done: {} };
+    }
+
+    function renderLearnerActivity() {
+      const weekPlan = detailedScheme.find(item => item.week === Number(state.learnerWeek)) || detailedScheme[0];
+      const plan = subjectLessonPlan(state.learnerSubject, weekPlan);
+      const entry = learnerEntry(false);
+      const doneCount = Object.values(entry.done || {}).filter(Boolean).length;
+
+      learnerActivity.innerHTML = `
+        <div class="quest-layout">
+          <section class="learner-card">
+            <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} · ${plan.subjectName}</p>
+            <h3>${plan.subject.topic}</h3>
+            <p><strong>Your mission:</strong> ${plan.objective}</p>
+            <p class="muted">${plan.subject.content}</p>
+            <div class="activity-meta">
+              <span class="badge accent">${lessonMode(state.learnerSubject)}</span>
+              <span class="badge">${plan.subject.vocabulary.join(" · ")}</span>
+            </div>
+            <div class="star-trail" aria-label="${doneCount} of 4 learner tasks complete">
+              ${[0, 1, 2, 3].map(index => `<span class="star ${index < doneCount ? "earned" : ""}">${index < doneCount ? "*" : ""}</span>`).join("")}
+            </div>
+            <div class="note">
+              <strong>Grown-up nearby:</strong> start with the real object, book, movement, map or making task first. The screen is for a short recording part, not the whole lesson.
+            </div>
+          </section>
+
+          <section class="learner-card">
+            <p class="section-kicker">My worksheet</p>
+            <h3>Try these steps</h3>
+            ${plan.worksheet.map((task, index) => `
+              <div class="quest-step">
+                <label class="quest-check">
+                  <input type="checkbox" data-learner-done="${index}" ${entry.done?.[index] ? "checked" : ""} />
+                  Step ${index + 1}: ${task.title}
+                </label>
+                <p>${task.body}</p>
+                <textarea data-learner-answer="${index}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
+              </div>
+            `).join("")}
+            <button class="primary-button" id="learnerCelebrate">I finished for now</button>
+            <p class="small" id="learnerSaved">Saved on this device.</p>
+          </section>
+        </div>
+      `;
+
+      document.querySelectorAll("[data-learner-done]").forEach(check => {
+        check.addEventListener("change", () => {
+          const entry = learnerEntry();
+          entry.done[check.dataset.learnerDone] = check.checked;
+          saveLearnerWork();
+          renderLearnerActivity();
+        });
+      });
+
+      document.querySelectorAll("[data-learner-answer]").forEach(answer => {
+        answer.addEventListener("input", () => {
+          const entry = learnerEntry();
+          entry.answers[answer.dataset.learnerAnswer] = answer.value;
+          saveLearnerWork();
+          document.getElementById("learnerSaved").textContent = "Saved";
+        });
+      });
+
+      document.getElementById("learnerCelebrate").addEventListener("click", () => {
+        const progressId = `lesson-${weekPlan.week}-${state.learnerSubject}`;
+        state.progress[progressId] = true;
+        saveProgress();
+        document.getElementById("learnerSaved").textContent = "Great effort saved.";
+      });
+    }
+
     function renderJournalEditor() {
       const key = journalKey(journalWeek.value || 1, journalSubject.value || "english");
       progressReflection.value = state.journal[key]?.text || "";
@@ -2040,10 +2452,16 @@
 
     navButtons.forEach(button => {
       button.addEventListener("click", () => {
-        navButtons.forEach(item => item.classList.remove("active"));
-        views.forEach(view => view.classList.remove("active"));
-        button.classList.add("active");
-        document.getElementById(button.dataset.view).classList.add("active");
+        const targetView = button.dataset.view;
+        if (state.childMode && targetView !== "learner") {
+          state.pendingAdultView = targetView;
+          parentGate.classList.remove("hidden");
+          parentGateInput.value = "";
+          parentGateError.classList.add("hidden");
+          parentGateInput.focus();
+          return;
+        }
+        switchView(targetView);
       });
     });
 
@@ -2061,6 +2479,49 @@
     document.getElementById("activityTerm").addEventListener("change", renderActivity);
     lessonWeek.addEventListener("change", renderLessonDetail);
     lessonSubject.addEventListener("change", renderLessonDetail);
+    learnerWeek.addEventListener("change", () => {
+      state.learnerWeek = Number(learnerWeek.value);
+      localStorage.setItem("year1-learner-week", String(state.learnerWeek));
+      renderLearnerActivity();
+    });
+    document.getElementById("syncLearnerLesson").addEventListener("click", () => {
+      state.learnerWeek = Number(lessonWeek.value || state.learnerWeek);
+      state.learnerSubject = lessonSubject.value || state.learnerSubject;
+      learnerWeek.value = String(state.learnerWeek);
+      localStorage.setItem("year1-learner-week", String(state.learnerWeek));
+      localStorage.setItem("year1-learner-subject", state.learnerSubject);
+      renderLearnerSubjects();
+      renderLearnerActivity();
+    });
+    modeToggle.addEventListener("click", () => {
+      if (state.childMode) {
+        state.pendingAdultView = "today";
+        parentGate.classList.remove("hidden");
+        parentGateInput.value = "";
+        parentGateError.classList.add("hidden");
+        parentGateInput.focus();
+      } else {
+        setChildMode(true);
+      }
+    });
+    document.getElementById("parentGateUnlock").addEventListener("click", () => {
+      if (parentGateInput.value.trim().toLowerCase() === "grownup") {
+        parentGate.classList.add("hidden");
+        setChildMode(false);
+        switchView(state.pendingAdultView || "today");
+      } else {
+        parentGateError.classList.remove("hidden");
+      }
+    });
+    document.getElementById("parentGateCancel").addEventListener("click", () => {
+      parentGate.classList.add("hidden");
+      switchView("learner");
+    });
+    parentGateInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        document.getElementById("parentGateUnlock").click();
+      }
+    });
     journalWeek.addEventListener("change", renderJournalEditor);
     journalSubject.addEventListener("change", renderJournalEditor);
     progressReflection.addEventListener("input", event => {
@@ -2071,14 +2532,17 @@
       state.progress = {};
       state.reflection = "";
       state.journal = {};
+      state.learnerWork = {};
       reflection.value = "";
       progressReflection.value = "";
       localStorage.removeItem("year1-progress");
       localStorage.removeItem("year1-reflection");
       localStorage.removeItem("year1-journal");
+      localStorage.removeItem("year1-learner-work");
       renderDailyPlan();
       renderActivity();
       renderLessonDetail();
+      renderLearnerActivity();
       renderProgress();
     });
 
@@ -2096,10 +2560,14 @@
     renderActivity();
     renderLessonControls();
     renderJournalControls();
+    renderLearnerControls();
+    renderLearnerSubjects();
     renderJournalEditor();
     renderLessonDetail();
+    renderLearnerActivity();
     renderProgress();
     renderPrinciples();
+    setChildMode(state.childMode);
   </script>
 </body>
 </html>
