@@ -671,7 +671,7 @@
 
     .learner-hero {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+      grid-template-columns: 1fr;
       gap: 1rem;
       align-items: stretch;
       margin-bottom: 1.2rem;
@@ -812,133 +812,6 @@
       border-color: var(--cp-warning);
       background: var(--cp-warning);
       color: var(--cp-accent-fg);
-    }
-
-    .play-scene {
-      position: relative;
-      min-height: 13rem;
-      overflow: hidden;
-      border: 1px solid var(--cp-border);
-      border-radius: 16px;
-      background:
-        radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--cp-warning) 30%, var(--cp-surface)), transparent 4rem),
-        radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--cp-link) 22%, var(--cp-surface)), transparent 5rem),
-        linear-gradient(180deg, var(--cp-surface), color-mix(in srgb, var(--cp-success) 13%, var(--cp-surface)));
-    }
-
-    .brick-stack {
-      position: absolute;
-      left: 1rem;
-      bottom: 1rem;
-      display: grid;
-      grid-template-columns: repeat(3, 2.4rem);
-      gap: 0.35rem;
-      align-items: end;
-    }
-
-    .brick {
-      position: relative;
-      height: 1.4rem;
-      border: 1px solid var(--cp-border);
-      border-radius: 0.625rem;
-      background: var(--cp-link);
-    }
-
-    .brick:nth-child(2n) {
-      background: var(--cp-success);
-    }
-
-    .brick:nth-child(3n) {
-      background: var(--cp-warning);
-    }
-
-    .brick::before,
-    .brick::after {
-      content: "";
-      position: absolute;
-      top: 0.22rem;
-      width: 0.34rem;
-      height: 0.34rem;
-      border-radius: 50%;
-      background: var(--cp-sheen);
-    }
-
-    .brick::before {
-      left: 0.55rem;
-    }
-
-    .brick::after {
-      right: 0.55rem;
-    }
-
-    .dino-scene {
-      position: absolute;
-      right: 1rem;
-      bottom: 1rem;
-      width: 8rem;
-      height: 6rem;
-      color: var(--cp-success);
-    }
-
-    .dino-body {
-      position: absolute;
-      right: 0.8rem;
-      bottom: 1.1rem;
-      width: 5.2rem;
-      height: 3rem;
-      border: 1px solid var(--cp-border);
-      border-radius: 50% 45% 45% 50%;
-      background: currentColor;
-    }
-
-    .dino-head {
-      position: absolute;
-      right: 0;
-      bottom: 3.1rem;
-      width: 2.4rem;
-      height: 2rem;
-      border: 1px solid var(--cp-border);
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .dino-tail {
-      position: absolute;
-      right: 5.4rem;
-      bottom: 2.4rem;
-      width: 2.4rem;
-      height: 1rem;
-      border: 1px solid var(--cp-border);
-      border-radius: 999px 0 0 999px;
-      background: currentColor;
-      transform: rotate(-18deg);
-    }
-
-    .dino-leg {
-      position: absolute;
-      bottom: 0.3rem;
-      width: 0.75rem;
-      height: 1.3rem;
-      border: 1px solid var(--cp-border);
-      border-radius: 0 0 0.625rem 0.625rem;
-      background: currentColor;
-    }
-
-    .dino-leg.one {
-      right: 2.1rem;
-    }
-
-    .dino-leg.two {
-      right: 4rem;
-    }
-
-    .scene-label {
-      position: absolute;
-      left: 1rem;
-      top: 1rem;
-      max-width: 10rem;
-      font-weight: 900;
-      color: var(--cp-text);
     }
 
     .celebration-burst {
@@ -1697,27 +1570,9 @@
           <div class="learner-card">
             <p class="section-kicker">Adventure Zone</p>
             <h2 class="learner-title">Become today’s learning hero.</h2>
-            <p class="muted">Choose a week, pick a power, complete today’s mission, and unlock parent-approved rewards as you progress.</p>
+            <p class="muted">Choose your week and subject, complete today’s mission, and watch the Captain Curiosity ribbon show your journey and reward progress.</p>
             <div class="controls">
               <select id="learnerWeek" aria-label="Choose learner week"></select>
-            </div>
-          </div>
-          <div class="play-scene" aria-label="Playful learning scene with building bricks and a dinosaur">
-            <div class="scene-label">Build ideas. Stomp through missions.</div>
-            <div class="brick-stack" aria-hidden="true">
-              <div class="brick"></div>
-              <div class="brick"></div>
-              <div class="brick"></div>
-              <div class="brick"></div>
-              <div class="brick"></div>
-              <div class="brick"></div>
-            </div>
-            <div class="dino-scene" aria-hidden="true">
-              <div class="dino-tail"></div>
-              <div class="dino-body"></div>
-              <div class="dino-head"></div>
-              <div class="dino-leg one"></div>
-              <div class="dino-leg two"></div>
             </div>
           </div>
         </div>
