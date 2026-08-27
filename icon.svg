@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Year 1 Learning">
+  <rect width="512" height="512" rx="112" fill="#b11f4b"/>
+  <circle cx="386" cy="128" r="54" fill="#f59e0b"/>
+  <path d="M96 360c38-88 91-132 160-132s122 44 160 132" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round"/>
+  <rect x="118" y="148" width="276" height="168" rx="34" fill="#fff"/>
+  <text x="256" y="262" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="108" font-weight="800" fill="#b11f4b">Y1</text>
+</svg>

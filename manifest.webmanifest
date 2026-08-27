@@ -1,0 +1,19 @@
+{
+  "name": "Year 1 Home Learning Studio",
+  "short_name": "Y1 Learning",
+  "description": "A full-year Year 1 homeschool planner and learner Adventure Zone.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f4ef",
+  "theme_color": "#b11f4b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -3,8 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#b11f4b" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Y1 Learning" />
   <title>Year 1 Home Learning Studio</title>
   <link rel="icon" href="data:," />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <script>
     (() => {
       const param = new URLSearchParams(window.location.search).get("scoutTheme");
@@ -1228,6 +1234,30 @@
       background: var(--cp-success);
     }
 
+    .setup-form {
+      display: grid;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+    }
+
+    .setup-form label {
+      display: grid;
+      gap: 0.35rem;
+      color: var(--cp-text-muted);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .setup-form input {
+      width: 100%;
+      min-height: 2.6rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      padding: 0.6rem 0.75rem;
+    }
+
     .quest-layout {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1667,6 +1697,7 @@
         <button data-view="curriculum">Curriculum Map</button>
         <button data-view="activities">Activity Builder</button>
         <button data-view="lesson-library">Lesson Library</button>
+        <button data-view="parent-setup">Parent Setup</button>
         <button data-view="progress">Progress</button>
         <button data-view="principles">Design Principles</button>
       </nav>
@@ -1831,13 +1862,53 @@
         <div id="lessonDetail"></div>
       </section>
 
+      <section id="parent-setup" class="view">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Parent setup</p>
+            <h2>Personalise the learning journey</h2>
+          </div>
+          <button class="primary-button" id="saveParentSetup">Save setup</button>
+        </div>
+        <div class="grid cols-2">
+          <section class="card big-card">
+            <h3>Child and routine</h3>
+            <p class="muted">These settings stay on this device and personalise the Adventure Zone and portfolio export.</p>
+            <div class="setup-form">
+              <label>Child name<input type="text" id="setupChildName" placeholder="e.g. Sam" /></label>
+              <label>Learning year start<input type="date" id="setupStartDate" /></label>
+              <label>Normal daily learning time<input type="text" id="setupDailyTime" placeholder="e.g. 2.5-3 hours" /></label>
+              <label>Typical learning days<input type="text" id="setupLearningDays" placeholder="e.g. Monday-Friday" /></label>
+            </div>
+          </section>
+          <section class="card big-card">
+            <h3>Reward model</h3>
+            <p class="muted">Each milestone unlocks a parent-approved treat split between immediate spend and year-end bank.</p>
+            <div class="setup-form">
+              <label>Spend-now amount per milestone<input type="number" id="setupSpendNow" min="0" step="1" /></label>
+              <label>Banked amount per milestone<input type="number" id="setupBanked" min="0" step="1" /></label>
+              <label>Parent unlock word<input type="text" id="setupUnlockWord" placeholder="grownup" /></label>
+            </div>
+            <div class="note"><strong>Current default:</strong> £5 spend now + £5 banked. Banked money becomes available at year end.</div>
+          </section>
+        </div>
+        <section class="card big-card">
+          <h3>Install this app</h3>
+          <p class="muted">On mobile or tablet, open the browser menu and choose <strong>Add to Home Screen</strong> or <strong>Install app</strong>. The app now includes PWA metadata and offline caching for repeat visits.</p>
+          <p class="small" id="setupSavedStatus">Setup autosaves only when you press Save setup.</p>
+        </section>
+      </section>
+
       <section id="progress" class="view">
         <div class="toolbar">
           <div>
             <p class="section-kicker">Progress without pressure</p>
             <h2>Evidence dashboard</h2>
           </div>
-          <button class="ghost-button" id="resetProgress">Reset saved progress</button>
+          <div class="controls">
+            <button class="primary-button" id="exportPortfolio">Export portfolio</button>
+            <button class="ghost-button" id="resetProgress">Reset saved progress</button>
+          </div>
         </div>
         <div class="grid cols-3" id="progressGrid"></div>
         <section class="card big-card">
@@ -1886,8 +1957,8 @@
     <div class="gate-card">
       <p class="section-kicker">Adult area</p>
       <h2 id="parentGateTitle">Parent unlock</h2>
-      <p class="muted">Adventure Zone is on. Type <strong>grownup</strong> to open the adult planner.</p>
-      <input type="text" id="parentGateInput" autocomplete="off" placeholder="Type grownup" />
+      <p class="muted">Adventure Zone is on. Type your parent unlock word to open the adult planner.</p>
+      <input type="text" id="parentGateInput" autocomplete="off" placeholder="Parent unlock word" />
       <p class="small hidden" id="parentGateError">That did not match. Ask a grown-up to unlock.</p>
       <div class="controls">
         <button class="primary-button" id="parentGateUnlock">Unlock adult mode</button>
@@ -2552,6 +2623,15 @@
       learnerWork: JSON.parse(localStorage.getItem("year1-learner-work") || "{}"),
       learnerDay: localStorage.getItem("year1-learner-day") || "1",
       lastRewardPercent: Number(localStorage.getItem("year1-last-reward-percent") || "0"),
+      setup: JSON.parse(localStorage.getItem("year1-parent-setup") || "null") || {
+        childName: "",
+        startDate: "",
+        dailyTime: "2.5-3 hours",
+        learningDays: "Monday-Friday",
+        spendNow: 5,
+        banked: 5,
+        unlockWord: "grownup"
+      },
       pendingAdultView: "today"
     };
 
@@ -2584,6 +2664,14 @@
     const parentGate = document.getElementById("parentGate");
     const parentGateInput = document.getElementById("parentGateInput");
     const parentGateError = document.getElementById("parentGateError");
+    const setupChildName = document.getElementById("setupChildName");
+    const setupStartDate = document.getElementById("setupStartDate");
+    const setupDailyTime = document.getElementById("setupDailyTime");
+    const setupLearningDays = document.getElementById("setupLearningDays");
+    const setupSpendNow = document.getElementById("setupSpendNow");
+    const setupBanked = document.getElementById("setupBanked");
+    const setupUnlockWord = document.getElementById("setupUnlockWord");
+    const setupSavedStatus = document.getElementById("setupSavedStatus");
 
     function saveProgress() {
       localStorage.setItem("year1-progress", JSON.stringify(state.progress));
@@ -2636,6 +2724,107 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+
+    function currency(value) {
+      return `£${Number(value || 0).toFixed(0)}`;
+    }
+
+    function rewardSplitText() {
+      return `${currency(state.setup.spendNow)} spend now + ${currency(state.setup.banked)} banked`;
+    }
+
+    function renderParentSetup() {
+      setupChildName.value = state.setup.childName || "";
+      setupStartDate.value = state.setup.startDate || "";
+      setupDailyTime.value = state.setup.dailyTime || "";
+      setupLearningDays.value = state.setup.learningDays || "";
+      setupSpendNow.value = state.setup.spendNow ?? 5;
+      setupBanked.value = state.setup.banked ?? 5;
+      setupUnlockWord.value = state.setup.unlockWord || "grownup";
+    }
+
+    function saveParentSetup() {
+      state.setup = {
+        childName: setupChildName.value.trim(),
+        startDate: setupStartDate.value,
+        dailyTime: setupDailyTime.value.trim() || "2.5-3 hours",
+        learningDays: setupLearningDays.value.trim() || "Monday-Friday",
+        spendNow: Number(setupSpendNow.value || 5),
+        banked: Number(setupBanked.value || 5),
+        unlockWord: setupUnlockWord.value.trim() || "grownup"
+      };
+      localStorage.setItem("year1-parent-setup", JSON.stringify(state.setup));
+      setupSavedStatus.textContent = "Setup saved on this device.";
+      renderCaptainRibbon();
+      renderProgress();
+    }
+
+    function exportPortfolio() {
+      const overallDone = completedStepsInRange();
+      const overallTotal = totalPossibleSteps();
+      const overallPercent = percentComplete(overallDone, overallTotal);
+      const journalItems = Object.values(state.journal).sort((a, b) => a.week - b.week || a.subjectName.localeCompare(b.subjectName));
+      const learnerItems = Object.entries(state.learnerWork).map(([key, entry]) => {
+        const match = key.match(/^week-(\d+)-([a-z]+)-day-(\d+)$/);
+        return {
+          key,
+          week: match ? Number(match[1]) : 0,
+          subject: match ? match[2] : "",
+          day: match ? match[3] : "",
+          done: Object.values(entry.done || {}).filter(Boolean).length,
+          answers: Object.values(entry.answers || {}).filter(Boolean)
+        };
+      }).filter(item => item.done || item.answers.length);
+      const unlocked = unlockedRewards(overallPercent);
+      const exportedAt = new Date().toLocaleString();
+      const title = `${state.setup.childName || "Year 1 learner"} portfolio export`;
+      const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>${escapeHtml(title)}</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; margin: 2rem; line-height: 1.5; }
+    h1, h2 { margin-bottom: 0.3rem; }
+    section { margin: 1.5rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 12px; }
+    .muted { color: #555; }
+    li { margin-bottom: 0.4rem; }
+  </style>
+</head>
+<body>
+  <h1>${escapeHtml(title)}</h1>
+  <p class="muted">Exported ${escapeHtml(exportedAt)} from Year 1 Home Learning Studio.</p>
+  <section>
+    <h2>Learner setup</h2>
+    <p><strong>Child:</strong> ${escapeHtml(state.setup.childName || "Not set")}</p>
+    <p><strong>Start date:</strong> ${escapeHtml(state.setup.startDate || "Not set")}</p>
+    <p><strong>Routine:</strong> ${escapeHtml(state.setup.learningDays)} · ${escapeHtml(state.setup.dailyTime)}</p>
+  </section>
+  <section>
+    <h2>Progress summary</h2>
+    <p><strong>Completed steps:</strong> ${overallDone}/${overallTotal} (${overallPercent}%)</p>
+    <p><strong>Rewards:</strong> ${unlocked.length} milestones · ${currency(unlocked.length * state.setup.spendNow)} spend now · ${currency(unlocked.length * state.setup.banked)} banked for year-end.</p>
+  </section>
+  <section>
+    <h2>Learning journal</h2>
+    ${journalItems.length ? `<ul>${journalItems.map(item => `<li><strong>Week ${item.week} · ${escapeHtml(item.subjectName)}</strong>: ${escapeHtml(item.text)}</li>`).join("")}</ul>` : "<p>No parent journal reflections yet.</p>"}
+  </section>
+  <section>
+    <h2>Learner work saved in app</h2>
+    ${learnerItems.length ? `<ul>${learnerItems.map(item => `<li><strong>Week ${item.week} · ${escapeHtml(lessonSubjectMeta[item.subject]?.name || item.subject)} · D${item.day}</strong>: ${item.done}/4 steps complete${item.answers.length ? `; answers: ${escapeHtml(item.answers.join(" | "))}` : ""}</li>`).join("")}</ul>` : "<p>No learner answers or completed task steps saved yet.</p>"}
+  </section>
+</body>
+</html>`;
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `year1-portfolio-${new Date().toISOString().slice(0, 10)}.html`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
     }
 
     function completion() {
@@ -5125,9 +5314,9 @@
       const overallPercent = percentComplete(overallDone, totalPossibleSteps());
       const next = nextReward(overallPercent);
       const unlocked = unlockedRewards(overallPercent);
-      const spendNow = unlocked.length * 5;
-      const banked = unlocked.length * 5;
-      const nextRewardText = "£5 spend now + £5 banked";
+      const spendNow = unlocked.length * state.setup.spendNow;
+      const banked = unlocked.length * state.setup.banked;
+      const nextRewardText = rewardSplitText();
 
       captainRibbon.innerHTML = `
         <div class="captain-badge">CC</div>
@@ -5147,15 +5336,15 @@
             <span>${overallPercent}%</span>
           </div>
           <div class="milestone-road" aria-label="Reward milestone road">
-            ${rewardMilestones.map(item => `<span class="reward-badge ${overallPercent >= item.percent ? "unlocked" : ""}" title="${item.percent}% · £5 spend now + £5 banked">${item.short}</span>`).join("")}
+            ${rewardMilestones.map(item => `<span class="reward-badge ${overallPercent >= item.percent ? "unlocked" : ""}" title="${item.percent}% · ${rewardSplitText()}">${item.short}</span>`).join("")}
           </div>
         </div>
         <div class="reward-panel">
           <strong>${unlocked.length ? unlocked[unlocked.length - 1].label + " unlocked" : "First prize ahead"}</strong>
           <span class="small">Next: ${next.label} · ${nextRewardText}</span>
           <div class="reward-badges">
-            <span class="reward-badge unlocked">£${spendNow} spend now</span>
-            <span class="reward-badge unlocked">£${banked} banked</span>
+            <span class="reward-badge unlocked">${currency(spendNow)} spend now</span>
+            <span class="reward-badge unlocked">${currency(banked)} banked</span>
             <span class="reward-badge">${rewardMilestones.length - unlocked.length} prizes left</span>
           </div>
           <span class="small">Banked money unlocks for spending at the end of the year.</span>
@@ -5170,7 +5359,7 @@
         <div class="celebration-card">
           <div class="confetti-line">* * * * *</div>
           <h2>${reward.label} unlocked!</h2>
-          <p>Captain Curiosity says: brilliant effort. Reward unlocked: £5 to spend now and £5 into the year-end bank.</p>
+          <p>Captain Curiosity says: brilliant effort. Reward unlocked: ${currency(state.setup.spendNow)} to spend now and ${currency(state.setup.banked)} into the year-end bank.</p>
           <div class="confetti-line">* * * * *</div>
         </div>
       `;
@@ -5440,7 +5629,7 @@
       }
     });
     document.getElementById("parentGateUnlock").addEventListener("click", () => {
-      if (parentGateInput.value.trim().toLowerCase() === "grownup") {
+      if (parentGateInput.value.trim().toLowerCase() === state.setup.unlockWord.toLowerCase()) {
         parentGate.classList.add("hidden");
         setChildMode(false);
         switchView(state.pendingAdultView || "today");
@@ -5462,6 +5651,8 @@
     progressReflection.addEventListener("input", event => {
       updateJournalEntry(journalWeek.value || 1, journalSubject.value || "english", event.target.value);
     });
+    document.getElementById("saveParentSetup").addEventListener("click", saveParentSetup);
+    document.getElementById("exportPortfolio").addEventListener("click", exportPortfolio);
     document.getElementById("printWorksheet").addEventListener("click", () => window.print());
     document.getElementById("resetProgress").addEventListener("click", () => {
       state.progress = {};
@@ -5497,6 +5688,7 @@
     renderActivity();
     renderLessonControls();
     renderJournalControls();
+    renderParentSetup();
     renderLearnerControls();
     renderLearnerSubjects();
     renderJournalEditor();
@@ -5505,6 +5697,11 @@
     renderProgress();
     renderPrinciples();
     setChildMode(state.childMode);
+    if ("serviceWorker" in navigator && ["https:", "http:"].includes(window.location.protocol)) {
+      navigator.serviceWorker.register("./sw.js").catch(error => {
+        console.warn("Service worker registration failed", error);
+      });
+    }
   </script>
 </body>
 </html>
