@@ -1978,6 +1978,23 @@
           <p class="muted">On mobile or tablet, open the browser menu and choose <strong>Add to Home Screen</strong> or <strong>Install app</strong>. The app now includes PWA metadata and offline caching for repeat visits.</p>
           <p class="small" id="setupSavedStatus">Setup autosaves only when you press Save setup.</p>
         </section>
+        <section class="card big-card">
+          <h3>Backup and restore between devices</h3>
+          <p class="muted">Use this when the app is installed on multiple phones, tablets or laptops. Export a backup from the most up-to-date device, then import it on the others.</p>
+          <div class="summary-panel">
+            <div class="summary-row">
+              <strong>Manual device sync</strong>
+              <span class="badge accent">JSON backup</span>
+            </div>
+            <p class="small">The backup includes parent setup, learner work, progress ticks, reflections, current Adventure Zone position and reward ledger. Importing replaces this device's current saved app data.</p>
+          </div>
+          <div class="controls">
+            <button class="primary-button" id="exportBackup">Export app backup</button>
+            <button class="ghost-button" id="importBackup">Import app backup</button>
+            <input type="file" id="backupFile" accept="application/json,.json" hidden />
+          </div>
+          <p class="small" id="backupStatus">No backup imported in this session.</p>
+        </section>
       </section>
 
       <section id="progress" class="view">
@@ -2757,6 +2774,22 @@
     const calendarSummary = document.getElementById("calendarSummary");
     const rewardLedgerSummary = document.getElementById("rewardLedgerSummary");
     const rewardLedger = document.getElementById("rewardLedger");
+    const backupFile = document.getElementById("backupFile");
+    const backupStatus = document.getElementById("backupStatus");
+
+    const backupStorageKeys = [
+      "year1-progress",
+      "year1-reflection",
+      "year1-journal",
+      "year1-child-mode",
+      "year1-learner-week",
+      "year1-learner-subject",
+      "year1-learner-work",
+      "year1-learner-day",
+      "year1-last-reward-percent",
+      "year1-parent-setup",
+      "year1-reward-ledger"
+    ];
 
     function saveProgress() {
       localStorage.setItem("year1-progress", JSON.stringify(state.progress));
@@ -2823,6 +2856,87 @@
 
     function rewardSplitText() {
       return `${currency(state.setup.spendNow)} spend now + ${currency(state.setup.banked)} banked`;
+    }
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function refreshAllViews() {
+      reflection.value = state.reflection;
+      learnerWeek.value = String(state.learnerWeek);
+      renderDailyPlan();
+      renderActivity();
+      renderLessonDetail();
+      renderJournalEditor();
+      renderJournalEntries();
+      renderParentSetup();
+      renderLearnerControls();
+      renderLearnerSubjects();
+      renderLearnerActivity();
+      renderProgress();
+      renderCaptainRibbon();
+      setChildMode(state.childMode);
+    }
+
+    function exportAppBackup() {
+      const savedData = backupStorageKeys.reduce((data, key) => {
+        data[key] = localStorage.getItem(key);
+        return data;
+      }, {});
+      const backup = {
+        app: "year1-home-learning-studio",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        savedData
+      };
+      const date = new Date().toISOString().slice(0, 10);
+      downloadFile(`year1-app-backup-${date}.json`, JSON.stringify(backup, null, 2), "application/json");
+      backupStatus.textContent = "Backup exported. Import that JSON file on your other device.";
+    }
+
+    function applyAppBackup(backup) {
+      if (!backup || backup.app !== "year1-home-learning-studio" || !backup.savedData) {
+        backupStatus.textContent = "That file is not a valid Year 1 Home Learning Studio backup.";
+        return;
+      }
+      backupStorageKeys.forEach(key => {
+        const value = backup.savedData[key];
+        if (value === null || value === undefined) {
+          localStorage.removeItem(key);
+        } else {
+          localStorage.setItem(key, String(value));
+        }
+      });
+      state.progress = JSON.parse(localStorage.getItem("year1-progress") || "{}");
+      state.reflection = localStorage.getItem("year1-reflection") || "";
+      state.journal = JSON.parse(localStorage.getItem("year1-journal") || "{}");
+      state.childMode = localStorage.getItem("year1-child-mode") === "true";
+      state.learnerWeek = Number(localStorage.getItem("year1-learner-week") || "1");
+      state.learnerSubject = localStorage.getItem("year1-learner-subject") || "english";
+      state.learnerWork = JSON.parse(localStorage.getItem("year1-learner-work") || "{}");
+      state.learnerDay = localStorage.getItem("year1-learner-day") || "1";
+      state.rewardLedger = JSON.parse(localStorage.getItem("year1-reward-ledger") || "{}");
+      state.lastRewardPercent = Number(localStorage.getItem("year1-last-reward-percent") || "0");
+      state.setup = JSON.parse(localStorage.getItem("year1-parent-setup") || "null") || {
+        childName: "",
+        startDate: "",
+        dailyTime: "2.5-3 hours",
+        learningDays: "Monday-Friday",
+        spendNow: 5,
+        banked: 5,
+        unlockWord: "grownup"
+      };
+      refreshAllViews();
+      backupStatus.textContent = `Backup imported from ${backup.exportedAt ? new Date(backup.exportedAt).toLocaleString() : "saved file"}.`;
     }
 
     function normalisedLearningDays() {
@@ -3001,15 +3115,7 @@
   </section>
 </body>
 </html>`;
-      const blob = new Blob([html], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `year1-portfolio-${new Date().toISOString().slice(0, 10)}.html`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
+      downloadFile(`year1-portfolio-${new Date().toISOString().slice(0, 10)}.html`, html, "text/html");
     }
 
     function completion() {
@@ -5955,6 +6061,30 @@
     });
     document.getElementById("saveParentSetup").addEventListener("click", saveParentSetup);
     document.getElementById("exportPortfolio").addEventListener("click", exportPortfolio);
+    document.getElementById("exportBackup").addEventListener("click", exportAppBackup);
+    document.getElementById("importBackup").addEventListener("click", () => backupFile.click());
+    backupFile.addEventListener("change", () => {
+      const file = backupFile.files && backupFile.files[0];
+      if (!file) {
+        backupStatus.textContent = "No backup file selected.";
+        return;
+      }
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        try {
+          applyAppBackup(JSON.parse(String(reader.result || "")));
+        } catch (error) {
+          console.warn("Backup import failed", error);
+          backupStatus.textContent = "Could not import that file. Choose a JSON backup exported from this app.";
+        }
+        backupFile.value = "";
+      });
+      reader.addEventListener("error", () => {
+        backupStatus.textContent = "Could not read that backup file. Please try exporting it again.";
+        backupFile.value = "";
+      });
+      reader.readAsText(file);
+    });
     document.getElementById("jumpToToday").addEventListener("click", jumpToCalendarToday);
     document.getElementById("printWorksheet").addEventListener("click", () => window.print());
     document.getElementById("resetProgress").addEventListener("click", () => {
@@ -5979,6 +6109,7 @@
       renderProgress();
       renderCaptainRibbon();
       renderRewardLedger();
+      backupStatus.textContent = "Progress and learner evidence cleared on this device.";
     });
 
     reflection.value = state.reflection;
