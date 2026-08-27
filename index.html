@@ -1310,6 +1310,25 @@
       font-weight: 800;
     }
 
+    .outcome-card {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0.8rem 0;
+      padding: 0.85rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-accent-soft);
+    }
+
+    .task-micro-list {
+      margin: 0.35rem 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .task-micro-list li {
+      margin-bottom: 0.25rem;
+    }
+
     .quest-layout {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4623,6 +4642,30 @@
       }
     };
 
+    function summerConcreteExample(subjectKey, subject) {
+      const examples = {
+        english: `Choose one real page, sign, label, poem or book sentence that links to "${subject.topic}".`,
+        maths: `Set up one concrete maths example using household objects, coins, shapes, a ruler, cards or a number line for "${subject.content}".`,
+        science: `Choose one real object, plant, material, animal photo, weather clue or test item for "${subject.content}".`,
+        humanities: `Choose one real map, local place, journey, family memory, photo, object or timeline clue for "${subject.content}".`,
+        creative: `Choose the exact materials, sounds, colours, tools or movements you will use for "${subject.content}".`,
+        life: `Choose the real moment today when you will practise "${subject.content}" at home, outside or with another person.`
+      };
+      return examples[subjectKey];
+    }
+
+    function summerConnectionAction(subjectKey, subject, unit) {
+      const actions = {
+        english: `Use the real page/sign/book to make one caption, label, sentence or review line that helps answer: ${unit.question}`,
+        maths: `Use your objects or coins to solve one real total, measure, shape, position or data problem for "${unit.title}".`,
+        science: `Observe, sort, test or compare the real item, then say exactly what evidence you found.`,
+        humanities: `Place the clue on a map/timeline or compare it with another place, person or time.`,
+        creative: `Use your chosen materials to make one visible improvement or design choice for the project.`,
+        life: `Do the real habit once, then check whether you needed no help, a little help or a full model.`
+      };
+      return actions[subjectKey];
+    }
+
     function summerRowsFor(week, subjectKey) {
       const weekPlan = detailedScheme.find(item => item.week === week);
       const unit = unitForWeek(week);
@@ -4643,8 +4686,8 @@
           "D2",
           "Build the evidence",
           "Practise the same skill with a new example so the project gains a second useful piece.",
-          `Choose a fresh example linked to "${subject.topic}" and the project outcome.`,
-          `Practise carefully using the key words: ${subject.vocabulary.join(", ")}.`,
+          summerConcreteExample(subjectKey, subject),
+          `Practise carefully using two key words from this list: ${subject.vocabulary.join(", ")}.`,
           `Create a second ${lessonSubjectMeta[subjectKey].name} evidence piece for "${unit.title}".`,
           "What is clearer today than yesterday?"
         ],
@@ -4652,8 +4695,8 @@
           "D3",
           "Connect it for real",
           "Use the subject skill in a real object, story, map, investigation, design or home situation.",
-          `Find a real-world link for "${subject.content}".`,
-          `Use the link to answer part of the big question: ${unit.question}`,
+          summerConcreteExample(subjectKey, subject),
+          summerConnectionAction(subjectKey, subject, unit),
           `Record the connection with a drawing, model, label, sentence, photo note or chart.`,
           "How does this make the project feel more real?"
         ],
@@ -4715,6 +4758,7 @@
       return [
         authoredCoverageLabel(),
         "Daily tasks use D1-D5: Discover, Build, Connect, Create, Share",
+        "Every learner card includes a concise outcome, materials, finished proof and concrete child actions",
         `${lessonSubjectMeta[subjectKey].name} links to the weekly project outcome`,
         "Parent guidance and curriculum references are available but collapsed",
         "BBC Bitesize is linked only as optional further practice"
@@ -4729,6 +4773,145 @@
       return {
         title: `Save your ${subjectName} proof`,
         body: `For ${dayPlan.label}: ${dayPlan.title}, save this ${subjectName} proof for "${subject.topic}": ${showTask.body} It will help your "${unit.title}" project.`
+      };
+    }
+
+    const dayActionNames = {
+      D1: "discover",
+      D2: "practise",
+      D3: "connect",
+      D4: "create or improve",
+      D5: "share"
+    };
+
+    const precisionRules = {
+      english: {
+        material: subject => `pencil, paper or mini-whiteboard, word cards/book page for "${subject.content}"`,
+        doSteps: (subject, unitRole) => [
+          "Touch each word, picture or sentence part as you say it.",
+          "Say the whole idea aloud before writing; fix it orally first if it does not make sense.",
+          `Write or copy one useful English piece for this project job: ${unitRole}`
+        ],
+        evidence: subject => `one readable word, label, caption or sentence about "${subject.topic}"`,
+        stem: () => "Read it aloud: I wrote ____ because ____."
+      },
+      maths: {
+        material: subject => `counters/toys/cubes/coins as needed, paper, pencil and a number line or ten-frame for "${subject.content}"`,
+        doSteps: (subject, unitRole) => [
+          "Move real objects to make the maths example first.",
+          "Draw exactly what the objects show; add labels or numerals.",
+          `Write the answer, total, measure, shape name or equation for this project job: ${unitRole}`
+        ],
+        evidence: subject => `one built model drawing plus the matching number sentence, total, measure, shape label or answer for "${subject.topic}"`,
+        stem: () => "Explain it: I built ____, drew ____, so the answer is ____."
+      },
+      science: {
+        material: subject => `real object/photo, magnifier if useful, paper and pencil for "${subject.content}"`,
+        doSteps: (subject, unitRole) => [
+          "Look closely for 30 seconds before speaking.",
+          "Point to evidence: what can you see, touch, sort, test or compare?",
+          `Draw or label the evidence for this project job: ${unitRole}`
+        ],
+        evidence: subject => `one labelled observation, sort, test result or conclusion for "${subject.topic}"`,
+        stem: () => "Scientist sentence: I found out ____ because I saw/tested ____."
+      },
+      humanities: {
+        material: subject => `map/photo/object/timeline clue, paper and pencil for "${subject.content}"`,
+        doSteps: (subject, unitRole) => [
+          "Find three clues before making your record.",
+          "Say what each clue tells you about a place, time, person or change.",
+          `Turn the clues into this project job: ${unitRole}`
+        ],
+        evidence: subject => `one map, timeline, comparison, route, labelled drawing or fact card for "${subject.topic}"`,
+        stem: () => "Guide sentence: This clue shows ____ because ____."
+      },
+      creative: {
+        material: subject => `chosen art/design/music/performance materials for "${subject.content}"`,
+        doSteps: (subject, unitRole) => [
+          "Choose one design decision before making: colour, sound, material, shape, line, texture or movement.",
+          "Make or perform slowly enough to stop and improve one detail.",
+          `Use the finished piece for this project job: ${unitRole}`
+        ],
+        evidence: subject => `one finished or improved creative piece with a title/label for "${subject.topic}"`,
+        stem: () => "Artist sentence: I chose ____ because ____."
+      },
+      life: {
+        material: subject => `real-life space or object needed for "${subject.content}", plus a simple checklist`,
+        doSteps: (subject, unitRole) => [
+          "Watch a grown-up model the real task once.",
+          "Try the real task yourself with only short prompts.",
+          `Show the habit in this project job: ${unitRole}`
+        ],
+        evidence: subject => `one checklist, drawing, photo reminder or parent note showing "${subject.topic}" in real life`,
+        stem: () => "Habit sentence: I did ____ by myself. Next time I will ____."
+      }
+    };
+
+    function preciseDailyOutcome(dayPlan, subjectKey, weekPlan) {
+      const subject = weekPlan[subjectKey];
+      const unit = unitForWeek(weekPlan.week);
+      const action = dayActionNames[dayPlan.label] || "complete";
+      return `I can ${action} ${subject.topic.toLowerCase()}. I will practise: ${subject.skill.toLowerCase()}. My proof will help "${unit.title}".`;
+    }
+
+    function precisionMaterials(subjectKey, weekPlan) {
+      return precisionRules[subjectKey].material(weekPlan[subjectKey]);
+    }
+
+    function precisionEvidence(subjectKey, weekPlan) {
+      return precisionRules[subjectKey].evidence(weekPlan[subjectKey]);
+    }
+
+    function precisionStem(subjectKey) {
+      return precisionRules[subjectKey].stem();
+    }
+
+    function precisionTaskSteps(subjectKey, weekPlan, originalBody) {
+      const subject = weekPlan[subjectKey];
+      const unitRole = subjectConnection(subjectKey, weekPlan);
+      const baseSteps = precisionRules[subjectKey].doSteps(subject, unitRole);
+      return [
+        ...baseSteps,
+        `Today's card job: ${originalBody}`
+      ];
+    }
+
+    function enhanceTask(task, subjectKey, weekPlan) {
+      const subject = weekPlan[subjectKey];
+      if (task.title === "Get ready") {
+        return {
+          ...task,
+          body: `You need: ${precisionMaterials(subjectKey, weekPlan)}. Then do this setup: ${task.body}`
+        };
+      }
+      if (task.title === "Do it") {
+        return {
+          ...task,
+          steps: precisionTaskSteps(subjectKey, weekPlan, task.body)
+        };
+      }
+      if (task.title === "Show it") {
+        return {
+          ...task,
+          body: `Make this exact evidence: ${precisionEvidence(subjectKey, weekPlan)}. Then complete: ${task.body}`
+        };
+      }
+      if (task.title === "Tell me") {
+        return {
+          ...task,
+          body: `${task.body} Use this sentence stem if you are stuck: "${precisionStem(subjectKey)}" Use at least one of these words: ${subject.vocabulary.join(", ")}.`
+        };
+      }
+      return task;
+    }
+
+    function enhanceDailyWorksheet(dayPlan, subjectKey, weekPlan) {
+      return {
+        ...dayPlan,
+        outcome: preciseDailyOutcome(dayPlan, subjectKey, weekPlan),
+        materials: precisionMaterials(subjectKey, weekPlan),
+        evidence: precisionEvidence(subjectKey, weekPlan),
+        tasks: dayPlan.tasks.map(task => enhanceTask(task, subjectKey, weekPlan))
       };
     }
 
@@ -5342,7 +5525,8 @@
       const selectedPlan = plans[subjectKey];
       selectedPlan.steps = concrete.steps;
       selectedPlan.worksheet = concrete.worksheet;
-      selectedPlan.dailyWorksheets = authoredTasksFor(weekPlan.week, subjectKey) || concrete.dailyWorksheets;
+      selectedPlan.dailyWorksheets = (authoredTasksFor(weekPlan.week, subjectKey) || concrete.dailyWorksheets)
+        .map(dayPlan => enhanceDailyWorksheet(dayPlan, subjectKey, weekPlan));
       selectedPlan.isHandAuthored = Boolean(authoredTasksFor(weekPlan.week, subjectKey));
       return { subjectName, subject, ...shared, ...selectedPlan };
     }
@@ -5566,13 +5750,19 @@
               <p><strong>Mission:</strong> ${plan.subject.topic} — ${plan.objective}</p>
               <p class="muted">${flow[0][1]}</p>
             </div>
+            <div class="outcome-card">
+              <strong>Today I will learn</strong>
+              <span>${dayPlan.outcome}</span>
+              <span class="small"><strong>You need:</strong> ${dayPlan.materials}</span>
+              <span class="small"><strong>Finished proof:</strong> ${dayPlan.evidence}</span>
+            </div>
             ${dayPlan.tasks.map((task, index) => `
               <div class="quest-step">
                 <label class="quest-check">
                   <input type="checkbox" data-learner-done="${index}" ${entry.done?.[index] ? "checked" : ""} />
                   Step ${index + 1}: ${task.title}
                 </label>
-                <p>${task.body}</p>
+                ${task.steps ? `<ol class="task-micro-list">${task.steps.map(step => `<li>${step}</li>`).join("")}</ol>` : `<p>${task.body}</p>`}
                 <textarea data-learner-answer="${index}" aria-label="${dayPlan.label} ${plan.subjectName} step ${index + 1}: ${task.title}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
               </div>
             `).join("")}
@@ -5629,6 +5819,43 @@
         document.getElementById("learnerSaved").textContent = "Great effort saved.";
       });
     }
+
+    function auditLearnerActivityCards() {
+      const failures = [];
+      let checked = 0;
+      detailedScheme.forEach(weekPlan => {
+        Object.keys(lessonSubjectMeta).forEach(subjectKey => {
+          const plan = subjectLessonPlan(subjectKey, weekPlan);
+          plan.dailyWorksheets.forEach(dayPlan => {
+            checked += 1;
+            const doTask = dayPlan.tasks.find(task => task.title === "Do it");
+            const tellTask = dayPlan.tasks.find(task => task.title === "Tell me");
+            const missing = [];
+            if (!dayPlan.outcome || dayPlan.outcome.length < 40) missing.push("outcome");
+            if (!dayPlan.materials || dayPlan.materials.length < 25) missing.push("materials");
+            if (!dayPlan.evidence || dayPlan.evidence.length < 25) missing.push("evidence");
+            if (!Array.isArray(dayPlan.tasks) || dayPlan.tasks.length !== 4) missing.push("four tasks");
+            if (!doTask?.steps || doTask.steps.length < 4) missing.push("numbered do steps");
+            if (!tellTask?.body.includes("sentence stem")) missing.push("sentence stem");
+            if (!dayPlan.tasks.some(task => /draw|write|label|sort|test|map|timeline|model|sentence|checklist|perform|make/i.test(`${task.body || ""} ${(task.steps || []).join(" ")}`))) {
+              missing.push("concrete output verb");
+            }
+            if (missing.length) {
+              failures.push({
+                week: weekPlan.week,
+                subject: subjectKey,
+                day: dayPlan.label,
+                title: dayPlan.title,
+                missing
+              });
+            }
+          });
+        });
+      });
+      return { checked, failures };
+    }
+
+    window.year1ContentQualityAudit = auditLearnerActivityCards;
 
     function renderJournalEditor() {
       const key = journalKey(journalWeek.value || 1, journalSubject.value || "english");
