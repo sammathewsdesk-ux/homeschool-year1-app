@@ -71,6 +71,12 @@
       box-sizing: border-box;
     }
 
+    html,
+    body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -99,6 +105,30 @@
     select,
     textarea {
       font: inherit;
+      max-width: 100%;
+    }
+
+    button,
+    select,
+    textarea,
+    .card,
+    .learner-card,
+    .captain-ribbon,
+    .journey-card,
+    .quest-step,
+    .compact-details {
+      min-width: 0;
+    }
+
+    p,
+    span,
+    strong,
+    h1,
+    h2,
+    h3,
+    li,
+    button {
+      overflow-wrap: anywhere;
     }
 
     :focus-visible {
@@ -387,6 +417,10 @@
       flex-wrap: wrap;
       gap: 0.5rem;
       align-items: center;
+    }
+
+    .controls > * {
+      min-width: 0;
     }
 
     .pill-button,
@@ -722,6 +756,7 @@
         linear-gradient(135deg, color-mix(in srgb, var(--cp-link) 18%, var(--cp-surface)), color-mix(in srgb, var(--cp-danger) 8%, var(--cp-surface))),
         var(--cp-surface);
       box-shadow: var(--cp-shadow);
+      width: 100%;
     }
 
     .captain-badge {
@@ -781,6 +816,8 @@
       border: 1px solid var(--cp-border);
       border-radius: 999px;
       background: var(--cp-surface);
+      overflow-x: auto;
+      scrollbar-width: thin;
     }
 
     .reward-panel {
@@ -862,6 +899,7 @@
       color: var(--cp-text);
       cursor: pointer;
       text-align: left;
+      min-width: 0;
     }
 
     .learner-subject.active {
@@ -1154,6 +1192,7 @@
       color: var(--cp-text);
       font-weight: 900;
       cursor: pointer;
+      min-width: 0;
     }
 
     .day-tab.active {
@@ -1457,7 +1496,7 @@
       }
 
       .journey-path {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
       }
 
       .connection-list {
@@ -1467,16 +1506,78 @@
       .progression-ladder {
         grid-template-columns: 1fr;
       }
+
+      .captain-ribbon {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .reward-panel {
+        grid-column: 1 / -1;
+      }
     }
 
     @media (max-width: 640px) {
       main,
       .sidebar {
-        padding: 1rem;
+        padding: 0.75rem;
       }
 
       .nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .nav button {
+        padding: 0.65rem;
+        font-size: 0.88rem;
+      }
+
+      .hero,
+      .card,
+      .big-card,
+      .learner-card,
+      .captain-ribbon,
+      .toolbar {
+        padding: 0.85rem;
+      }
+
+      .hero h2,
+      .learner-title {
+        font-size: clamp(1.7rem, 10vw, 2.6rem);
+        letter-spacing: -0.04em;
+      }
+
+      .controls {
+        width: 100%;
+      }
+
+      .controls select,
+      .controls button {
+        flex: 1 1 100%;
+        width: 100%;
+      }
+
+      .captain-ribbon {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .captain-badge {
+        width: 3.5rem;
+        height: 3.5rem;
+      }
+
+      .ribbon-row {
+        grid-template-columns: 5.5rem minmax(0, 1fr) 2.8rem;
+        font-size: 0.78rem;
+      }
+
+      .milestone-road {
+        justify-content: flex-start;
+        border-radius: 0.625rem;
+      }
+
+      .reward-badge {
+        white-space: nowrap;
       }
 
       .planner-row,
@@ -1491,6 +1592,60 @@
 
       .learner-subjects {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.6rem;
+      }
+
+      .learner-subject {
+        min-height: 6.6rem;
+        padding: 0.75rem;
+      }
+
+      .learner-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+      }
+
+      .day-tabs {
+        gap: 0.35rem;
+      }
+
+      .day-tab {
+        padding: 0.6rem 0.25rem;
+        font-size: 0.82rem;
+      }
+
+      .quest-step {
+        padding: 0.75rem;
+      }
+
+      body.child-mode .sidebar {
+        flex-wrap: wrap;
+        align-items: stretch;
+      }
+
+      body.child-mode .nav,
+      body.child-mode .mode-card {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .learner-subjects,
+      .journey-path,
+      .day-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .day-tab {
+        text-align: left;
+      }
+
+      .ribbon-row {
+        grid-template-columns: 1fr;
+      }
+
+      .captain-badge {
+        display: none;
       }
     }
   </style>
