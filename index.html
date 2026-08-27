@@ -4759,6 +4759,7 @@
         authoredCoverageLabel(),
         "Daily tasks use D1-D5: Discover, Build, Connect, Create, Share",
         "Every learner card includes a concise outcome, materials, finished proof and concrete child actions",
+        "Every D1-D5 card states what it uses from earlier work and how it moves toward Friday's project proof",
         `${lessonSubjectMeta[subjectKey].name} links to the weekly project outcome`,
         "Parent guidance and curriculum references are available but collapsed",
         "BBC Bitesize is linked only as optional further practice"
@@ -4876,6 +4877,38 @@
       ];
     }
 
+    function showItText(dayPlan) {
+      return dayPlan.tasks.find(task => task.title === "Show it")?.body || "make today's proof";
+    }
+
+    function connectDailySequence(days, subjectKey, weekPlan) {
+      const unit = unitForWeek(weekPlan.week);
+      const subjectName = lessonSubjectMeta[subjectKey].name;
+      const subjectRole = subjectConnection(subjectKey, weekPlan);
+      const friday = days[4] || days[days.length - 1];
+        const fridayProof = friday ? showItText(friday) : `finish the ${subjectName} project proof`;
+      return days.map((dayPlan, index) => {
+        const previous = days[index - 1];
+        const next = days[index + 1];
+        const fromBefore = index === 0
+          ? `This is the first ${subjectName} piece for "${unit.title}". Keep it safe because later days build on it.`
+          : `Start with your ${previous.label} "${previous.title}" proof, especially: ${showItText(previous)}`;
+        const todayAdds = `One clearer piece for the weekly project job: ${subjectRole}`;
+        const nextStep = next
+          ? `Next, this will feed into ${next.label}: ${next.title}.`
+          : `Today, choose and explain the strongest ${subjectName} evidence from the week.`;
+        return {
+          ...dayPlan,
+          continuity: {
+            fromBefore,
+            todayAdds,
+            nextStep,
+            fridayGoal: `By D5, your ${subjectName} evidence should help with: ${fridayProof}`
+          }
+        };
+      });
+    }
+
     function enhanceTask(task, subjectKey, weekPlan) {
       const subject = weekPlan[subjectKey];
       if (task.title === "Get ready") {
@@ -4906,12 +4939,21 @@
     }
 
     function enhanceDailyWorksheet(dayPlan, subjectKey, weekPlan) {
+      const enhancedTasks = dayPlan.tasks.map(task => enhanceTask(task, subjectKey, weekPlan)).map(task => {
+        if (task.title === "Get ready") {
+          return { ...task, body: `${dayPlan.continuity.fromBefore} ${task.body}` };
+        }
+        if (task.title === "Show it") {
+          return { ...task, body: `${task.body} Check it against the Friday goal: ${dayPlan.continuity.fridayGoal}` };
+        }
+        return task;
+      });
       return {
         ...dayPlan,
         outcome: preciseDailyOutcome(dayPlan, subjectKey, weekPlan),
         materials: precisionMaterials(subjectKey, weekPlan),
         evidence: precisionEvidence(subjectKey, weekPlan),
-        tasks: dayPlan.tasks.map(task => enhanceTask(task, subjectKey, weekPlan))
+        tasks: enhancedTasks
       };
     }
 
@@ -5525,7 +5567,8 @@
       const selectedPlan = plans[subjectKey];
       selectedPlan.steps = concrete.steps;
       selectedPlan.worksheet = concrete.worksheet;
-      selectedPlan.dailyWorksheets = (authoredTasksFor(weekPlan.week, subjectKey) || concrete.dailyWorksheets)
+      const rawDailyWorksheets = authoredTasksFor(weekPlan.week, subjectKey) || concrete.dailyWorksheets;
+      selectedPlan.dailyWorksheets = connectDailySequence(rawDailyWorksheets, subjectKey, weekPlan)
         .map(dayPlan => enhanceDailyWorksheet(dayPlan, subjectKey, weekPlan));
       selectedPlan.isHandAuthored = Boolean(authoredTasksFor(weekPlan.week, subjectKey));
       return { subjectName, subject, ...shared, ...selectedPlan };
@@ -5753,6 +5796,10 @@
             <div class="outcome-card">
               <strong>Today I will learn</strong>
               <span>${dayPlan.outcome}</span>
+              <span class="small"><strong>Use from before:</strong> ${dayPlan.continuity.fromBefore}</span>
+              <span class="small"><strong>Today adds:</strong> ${dayPlan.continuity.todayAdds}</span>
+              <span class="small"><strong>Next step:</strong> ${dayPlan.continuity.nextStep}</span>
+              <span class="small"><strong>Friday goal:</strong> ${dayPlan.continuity.fridayGoal}</span>
               <span class="small"><strong>You need:</strong> ${dayPlan.materials}</span>
               <span class="small"><strong>Finished proof:</strong> ${dayPlan.evidence}</span>
             </div>
@@ -5834,6 +5881,9 @@
             if (!dayPlan.outcome || dayPlan.outcome.length < 40) missing.push("outcome");
             if (!dayPlan.materials || dayPlan.materials.length < 25) missing.push("materials");
             if (!dayPlan.evidence || dayPlan.evidence.length < 25) missing.push("evidence");
+            if (!dayPlan.continuity?.fromBefore || !dayPlan.continuity?.todayAdds || !dayPlan.continuity?.nextStep || !dayPlan.continuity?.fridayGoal) {
+              missing.push("D1-D5 continuity");
+            }
             if (!Array.isArray(dayPlan.tasks) || dayPlan.tasks.length !== 4) missing.push("four tasks");
             if (!doTask?.steps || doTask.steps.length < 4) missing.push("numbered do steps");
             if (!tellTask?.body.includes("sentence stem")) missing.push("sentence stem");
