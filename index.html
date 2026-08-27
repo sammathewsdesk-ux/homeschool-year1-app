@@ -2012,6 +2012,18 @@
         <section class="card big-card">
           <div class="card-header">
             <div>
+              <p class="section-kicker">Learning diagnostics</p>
+              <h3>What needs attention next?</h3>
+            </div>
+            <span class="badge accent">Local only</span>
+          </div>
+          <p class="muted">These are simple progress signals from saved learner work and reflections. They are not formal assessments, but they help parents spot gaps early.</p>
+          <div class="summary-panel" id="diagnosticsSummary"></div>
+          <div class="grid cols-3" id="diagnosticsGrid"></div>
+        </section>
+        <section class="card big-card">
+          <div class="card-header">
+            <div>
               <p class="section-kicker">Incremental reflections</p>
               <h3>Learning journal</h3>
             </div>
@@ -2044,6 +2056,17 @@
           </div>
         </div>
         <div class="grid cols-2" id="principleGrid"></div>
+        <section class="card big-card">
+          <div class="card-header">
+            <div>
+              <p class="section-kicker">Master requirements hopper</p>
+              <h3>Product roadmap and known limitations</h3>
+            </div>
+            <span class="badge accent">Living backlog</span>
+          </div>
+          <p class="muted">This captures the remaining product requirements, including limitations likely to matter during a real school year.</p>
+          <div class="grid cols-2" id="requirementsHopper"></div>
+        </section>
         <div class="note">
           <strong>Parenting guardrail:</strong> the app should help you plan and notice learning, not create pressure. For Year 1, consistency, conversation, sleep, movement, books, and confidence matter as much as formal output.
         </div>
@@ -2743,6 +2766,8 @@
     const subjectGrid = document.getElementById("subjectGrid");
     const activityCard = document.getElementById("activityCard");
     const progressGrid = document.getElementById("progressGrid");
+    const diagnosticsSummary = document.getElementById("diagnosticsSummary");
+    const diagnosticsGrid = document.getElementById("diagnosticsGrid");
     const reflection = document.getElementById("reflection");
     const savedReflection = document.getElementById("savedReflection");
     const lessonWeek = document.getElementById("lessonWeek");
@@ -2774,6 +2799,7 @@
     const calendarSummary = document.getElementById("calendarSummary");
     const rewardLedgerSummary = document.getElementById("rewardLedgerSummary");
     const rewardLedger = document.getElementById("rewardLedger");
+    const requirementsHopper = document.getElementById("requirementsHopper");
     const backupFile = document.getElementById("backupFile");
     const backupStatus = document.getElementById("backupStatus");
 
@@ -2858,6 +2884,19 @@
       return `${currency(state.setup.spendNow)} spend now + ${currency(state.setup.banked)} banked`;
     }
 
+    const requirementHopper = [
+      { priority: "P0", status: "Started", title: "Analytics and diagnostics", detail: "Spot subject gaps, pacing drift, missing reflections and next best parent actions from saved app activity." },
+      { priority: "P0", status: "Design needed", title: "Automatic cross-device sync", detail: "True sync needs a safe backend or account provider. Do not put GitHub tokens directly into the browser app." },
+      { priority: "P1", status: "Next", title: "Photo, audio and worksheet evidence", detail: "Let parents attach photos, spoken reading clips, scanned worksheets and project evidence to the portfolio." },
+      { priority: "P1", status: "Next", title: "Catch-up, holiday and adaptive pacing", detail: "Handle skipped days, holidays, illness, faster progress and extra-practice weeks without breaking the calendar." },
+      { priority: "P1", status: "Backlog", title: "Storage resilience and backup prompts", detail: "Remind parents to export backups, show last-backup age and reduce risk from cleared browser storage." },
+      { priority: "P2", status: "Backlog", title: "Deeper offline resource packs", detail: "Keep core app offline while clearly marking external BBC/curriculum links that require internet." },
+      { priority: "P2", status: "Backlog", title: "Parent and child accounts", detail: "Replace the simple unlock word with real roles only if cloud sync or sharing makes authentication worthwhile." },
+      { priority: "P2", status: "Backlog", title: "Multiple learner profiles", detail: "Support siblings or repeat Year 1 cohorts with separate setup, progress, rewards and portfolios." },
+      { priority: "P2", status: "Backlog", title: "Portfolio polish and sharing pack", detail: "Create better termly exports, printable summaries, evidence checklists and parent review pages." },
+      { priority: "Done", status: "Live", title: "Manual cross-device backup and restore", detail: "JSON export/import gives a safe source-of-truth workflow until proper cloud sync is selected." }
+    ];
+
     function downloadFile(filename, content, type) {
       const blob = new Blob([content], { type });
       const url = URL.createObjectURL(blob);
@@ -2884,6 +2923,8 @@
       renderLearnerActivity();
       renderProgress();
       renderCaptainRibbon();
+      renderDiagnostics();
+      renderPrinciples();
       setChildMode(state.childMode);
     }
 
@@ -2984,6 +3025,94 @@
       };
     }
 
+    function expectedLearningDaysSoFar() {
+      const calendarPosition = calculateCalendarPosition();
+      if (calendarPosition && !calendarPosition.beforeStart) {
+        return Math.min(180, Math.max(1, calendarPosition.learningDaysCompleted));
+      }
+      return Math.min(180, Math.max(1, ((Number(state.learnerWeek) - 1) * 5) + Number(state.learnerDay || 1)));
+    }
+
+    function learnerWorkItems() {
+      return Object.entries(state.learnerWork).map(([key, entry]) => {
+        const match = key.match(/^week-(\d+)-([a-z]+)-day-(\d+)$/);
+        return {
+          key,
+          week: match ? Number(match[1]) : 0,
+          subject: match ? match[2] : "",
+          day: match ? Number(match[3]) : 0,
+          done: Object.values(entry.done || {}).filter(Boolean).length,
+          answers: Object.values(entry.answers || {}).filter(value => String(value || "").trim()).length
+        };
+      }).filter(item => item.week && item.subject && item.day);
+    }
+
+    function subjectStepCount(subjectKey) {
+      return learnerWorkItems()
+        .filter(item => item.subject === subjectKey)
+        .reduce((total, item) => total + item.done, 0);
+    }
+
+    function diagnosticsForSubject(subjectKey) {
+      const expectedSteps = expectedLearningDaysSoFar() * 4;
+      const completedSteps = subjectStepCount(subjectKey);
+      const percent = percentComplete(completedSteps, expectedSteps);
+      const journalCount = Object.values(state.journal).filter(entry => entry.subject === subjectKey).length;
+      let status = "On track";
+      let advice = "Keep the current rhythm and capture one short evidence note this week.";
+      if (percent < 45) {
+        status = "Needs attention";
+        advice = "Prioritise a short, confidence-building revisit before adding harder work.";
+      } else if (percent < 75) {
+        status = "Watch";
+        advice = "Add one catch-up mission or parent note for this subject this week.";
+      } else if (journalCount === 0) {
+        status = "Evidence gap";
+        advice = "Progress is moving, but add a parent reflection so the portfolio explains the learning.";
+      }
+      return { subjectKey, completedSteps, expectedSteps, percent, journalCount, status, advice };
+    }
+
+    function renderDiagnostics() {
+      if (!diagnosticsSummary || !diagnosticsGrid) return;
+      const expectedDays = expectedLearningDaysSoFar();
+      const expectedTotal = expectedDays * Object.keys(lessonSubjectMeta).length * 4;
+      const completedTotal = completedStepsInRange();
+      const overallPercent = percentComplete(completedTotal, expectedTotal);
+      const subjectDiagnostics = Object.keys(lessonSubjectMeta).map(diagnosticsForSubject);
+      const needsAttention = subjectDiagnostics.filter(item => item.status === "Needs attention");
+      const watchItems = subjectDiagnostics.filter(item => item.status === "Watch" || item.status === "Evidence gap");
+      const focus = [...needsAttention, ...watchItems].sort((a, b) => a.percent - b.percent)[0] || subjectDiagnostics[0];
+      const focusName = lessonSubjectMeta[focus.subjectKey].name;
+      const paceStatus = overallPercent >= 85 ? "On pace" : overallPercent >= 60 ? "Slightly behind pace" : "Needs catch-up rhythm";
+      diagnosticsSummary.innerHTML = `
+        <div class="summary-row">
+          <strong>${paceStatus}</strong>
+          <span class="badge accent">${overallPercent}% of expected steps</span>
+        </div>
+        <p class="small">Expected by now: ${expectedTotal} task steps across ${expectedDays} planned learning days. Saved: ${completedTotal} steps.</p>
+        <p class="small"><strong>Next best focus:</strong> ${focusName} — ${focus.advice}</p>
+      `;
+      diagnosticsGrid.innerHTML = subjectDiagnostics.map(item => {
+        const meta = lessonSubjectMeta[item.subjectKey];
+        const badgeClass = item.status === "On track" ? "accent" : "";
+        return `
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="section-kicker">${item.percent}% expected pace</p>
+                <h3>${meta.name}</h3>
+              </div>
+              <span class="badge ${badgeClass}">${item.status}</span>
+            </div>
+            <p class="small">${item.completedSteps}/${item.expectedSteps} expected task steps saved.</p>
+            <p class="small">${item.journalCount} parent reflection${item.journalCount === 1 ? "" : "s"} saved.</p>
+            <p class="small"><strong>Action:</strong> ${item.advice}</p>
+          </article>
+        `;
+      }).join("");
+    }
+
     function renderCalendarMode() {
       if (!calendarSummary) return;
       const position = calculateCalendarPosition();
@@ -3072,6 +3201,7 @@
       const unlocked = unlockedRewards(overallPercent);
       const totals = rewardLedgerTotals();
       const ledgerItems = unlocked.map(reward => ensureRewardLedgerEntry(reward));
+      const diagnosticItems = Object.keys(lessonSubjectMeta).map(diagnosticsForSubject);
       const exportedAt = new Date().toLocaleString();
       const title = `${state.setup.childName || "Year 1 learner"} portfolio export`;
       const html = `<!doctype html>
@@ -3104,6 +3234,10 @@
   <section>
     <h2>Reward ledger</h2>
     ${ledgerItems.length ? `<ul>${ledgerItems.map(item => `<li><strong>${escapeHtml(item.label)}</strong>: ${currency(item.spendNowAmount)} spend-now ${item.spendNowSpent ? "spent" : "available"}; ${currency(item.bankedAmount)} banked ${item.bankRedeemed ? "redeemed" : "saved for year-end"}.</li>`).join("")}</ul>` : "<p>No reward milestones unlocked yet.</p>"}
+  </section>
+  <section>
+    <h2>Learning diagnostics</h2>
+    <ul>${diagnosticItems.map(item => `<li><strong>${escapeHtml(lessonSubjectMeta[item.subjectKey].name)}</strong>: ${item.status}; ${item.completedSteps}/${item.expectedSteps} expected task steps; ${escapeHtml(item.advice)}</li>`).join("")}</ul>
   </section>
   <section>
     <h2>Learning journal</h2>
@@ -5953,6 +6087,23 @@
 
       savedReflection.textContent = state.reflection || "No reflection saved yet.";
       renderJournalEntries();
+      renderDiagnostics();
+    }
+
+    function renderRequirementsHopper() {
+      if (!requirementsHopper) return;
+      requirementsHopper.innerHTML = requirementHopper.map(item => `
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <p class="section-kicker">${item.priority}</p>
+              <h3>${item.title}</h3>
+            </div>
+            <span class="badge ${item.status === "Live" || item.status === "Started" ? "accent" : ""}">${item.status}</span>
+          </div>
+          <p class="small">${item.detail}</p>
+        </article>
+      `).join("");
     }
 
     function renderPrinciples() {
@@ -5980,6 +6131,7 @@
           </div>
         </article>
       `;
+      renderRequirementsHopper();
     }
 
     function bindChecks() {
