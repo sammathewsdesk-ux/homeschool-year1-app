@@ -887,26 +887,38 @@
       letter-spacing: -0.04em;
     }
 
-    .mission-stats {
+    .journey-path {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 0.55rem;
     }
 
-    .mini-stat {
+    .journey-day {
       padding: 0.7rem;
       border: 1px solid var(--cp-border);
       border-radius: 0.625rem;
       background: var(--cp-surface);
+      text-align: center;
     }
 
-    .mini-stat strong {
+    .journey-day strong {
       display: block;
       margin-bottom: 0.2rem;
       color: var(--power, var(--cp-accent));
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.06em;
+    }
+
+    .journey-day.active {
+      border-color: var(--power, var(--cp-accent));
+      background: var(--power, var(--cp-accent));
+      color: var(--cp-accent-fg);
+      font-weight: 900;
+    }
+
+    .journey-day.active strong {
+      color: var(--cp-accent-fg);
     }
 
     .journey-card {
@@ -1335,7 +1347,7 @@
         grid-template-columns: 1fr;
       }
 
-      .mission-stats {
+      .journey-path {
         grid-template-columns: 1fr;
       }
 
@@ -4603,10 +4615,13 @@
               <p class="section-kicker">${termForWeek(weekPlan.week)} · Week ${weekPlan.week} · ${unitForWeek(weekPlan.week).title}</p>
               <h3>${journey.question}</h3>
               <p class="muted">${journey.outcome}</p>
-              <div class="mission-stats">
-                <div class="mini-stat"><strong>Rhythm</strong><span>D1 discover · D2 build · D3 connect · D4 create · D5 share</span></div>
-                <div class="mini-stat"><strong>Selected power</strong><span>${subjectPowerName(state.learnerSubject)}</span></div>
-                <div class="mini-stat"><strong>Status</strong><span>${plan.isHandAuthored ? authoredCoverageLabel() : "Needs authoring"}</span></div>
+              <div class="journey-path" aria-label="Weekly D1 to D5 journey path">
+                ${journey.days.map(day => `
+                  <div class="journey-day ${day.label === dayPlan.label ? "active" : ""}">
+                    <strong>${day.label}</strong>
+                    <span>${day.name}</span>
+                  </div>
+                `).join("")}
               </div>
             </div>
             <div class="superhero-panel">
@@ -4677,10 +4692,6 @@
               <p><strong>Mission:</strong> ${plan.subject.topic} — ${plan.objective}</p>
               <p class="muted">${flow[0][1]}</p>
             </div>
-            <div class="journey-card">
-              <strong>${savePrompt.title}</strong>
-              <span>${savePrompt.body}</span>
-            </div>
             ${dayPlan.tasks.map((task, index) => `
               <div class="quest-step">
                 <label class="quest-check">
@@ -4691,6 +4702,10 @@
                 <textarea data-learner-answer="${index}" aria-label="${dayPlan.label} ${plan.subjectName} step ${index + 1}: ${task.title}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
               </div>
             `).join("")}
+            <div class="journey-card">
+              <strong>${savePrompt.title}</strong>
+              <span>${savePrompt.body}</span>
+            </div>
             <details class="compact-details">
               <summary>Further practice</summary>
               <div class="resource-links">
