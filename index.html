@@ -707,30 +707,117 @@
       letter-spacing: -0.06em;
     }
 
-    .mascot {
+    .captain-ribbon {
       display: grid;
-      place-items: center;
-      min-height: 13rem;
+      grid-template-columns: auto minmax(0, 1fr) minmax(14rem, 0.55fr);
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem;
       border: 1px solid var(--cp-warning);
       border-radius: 16px;
       background:
-        radial-gradient(circle at top, color-mix(in srgb, var(--cp-warning) 28%, var(--cp-surface)), transparent 7rem),
-        linear-gradient(145deg, color-mix(in srgb, var(--cp-success) 15%, var(--cp-surface)), var(--cp-surface));
+        radial-gradient(circle at top left, color-mix(in srgb, var(--cp-warning) 24%, var(--cp-surface)), transparent 10rem),
+        linear-gradient(135deg, color-mix(in srgb, var(--cp-link) 16%, var(--cp-surface)), color-mix(in srgb, var(--cp-success) 12%, var(--cp-surface))),
+        var(--cp-surface);
+    }
+
+    .captain-badge {
+      display: grid;
+      width: 4.5rem;
+      height: 4.5rem;
+      place-items: center;
+      border: 1px solid var(--cp-warning);
+      border-radius: 50%;
+      background: var(--cp-warning);
+      color: var(--cp-accent-fg);
+      font-weight: 900;
+    }
+
+    .ribbon-progress {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .ribbon-row {
+      display: grid;
+      grid-template-columns: 7rem minmax(0, 1fr) 3.5rem;
+      gap: 0.55rem;
+      align-items: center;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .ribbon-track {
+      height: 0.7rem;
+      overflow: hidden;
+      border: 1px solid var(--cp-border);
+      border-radius: 999px;
+      background: var(--cp-surface);
+    }
+
+    .ribbon-fill {
+      width: var(--fill);
+      height: 100%;
+      border-radius: inherit;
+      background: var(--cp-success);
+    }
+
+    .reward-panel {
+      display: grid;
+      gap: 0.4rem;
+      padding: 0.75rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+    }
+
+    .reward-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .reward-badge {
+      padding: 0.25rem 0.45rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 999px;
+      background: var(--cp-surface-soft);
+      color: var(--cp-text-muted);
+      font-size: 0.75rem;
+      font-weight: 900;
+    }
+
+    .reward-badge.unlocked {
+      border-color: var(--cp-warning);
+      background: var(--cp-warning);
+      color: var(--cp-accent-fg);
+    }
+
+    .celebration-burst {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      z-index: 30;
+      background: var(--cp-overlay);
+    }
+
+    .celebration-card {
+      width: min(28rem, calc(100vw - 2rem));
+      padding: 1.2rem;
+      border: 1px solid var(--cp-warning);
+      border-radius: 16px;
+      background: var(--cp-panel-strong);
+      box-shadow: var(--cp-shadow);
       text-align: center;
     }
 
-    .mascot-face {
-      display: grid;
-      place-items: center;
-      width: 7rem;
-      height: 7rem;
-      margin: 0 auto 0.8rem;
-      border-radius: 50%;
-      border: 1px solid var(--cp-warning);
-      background: var(--cp-warning);
-      color: var(--cp-accent-fg);
-      font-size: 2.4rem;
-      font-weight: 900;
+    .confetti-line {
+      margin: 0.6rem 0;
+      color: var(--cp-warning);
+      font-size: 1.8rem;
+      letter-spacing: 0.2rem;
     }
 
     .learner-subjects {
@@ -1333,6 +1420,7 @@
       .hero,
       .learner-hero,
       .quest-layout,
+      .captain-ribbon,
       .lesson-layout,
       .grid.cols-2,
       .grid.cols-3 {
@@ -1460,19 +1548,12 @@
           <div class="learner-card">
             <p class="section-kicker">Adventure Zone</p>
             <h2 class="learner-title">Become today’s learning hero.</h2>
-            <p class="muted">Pick a power, complete a mission, earn stars, and tell Captain Curiosity what you discovered.</p>
+            <p class="muted">Choose a week, pick a power, complete today’s mission, and unlock parent-approved rewards as you progress.</p>
             <div class="controls">
               <select id="learnerWeek" aria-label="Choose learner week"></select>
-              <button class="ghost-button" id="syncLearnerLesson">Use planner lesson</button>
             </div>
           </div>
-          <div class="mascot">
-            <div>
-              <div class="mascot-face">Y1</div>
-              <strong>Captain Curiosity</strong>
-              <p class="small">Mission rule: try first, ask for help, celebrate effort.</p>
-            </div>
-          </div>
+          <div class="captain-ribbon" id="captainRibbon" aria-live="polite"></div>
         </div>
         <div class="learner-subjects" id="learnerSubjects"></div>
         <div id="learnerActivity"></div>
@@ -2294,6 +2375,7 @@
       learnerSubject: localStorage.getItem("year1-learner-subject") || "english",
       learnerWork: JSON.parse(localStorage.getItem("year1-learner-work") || "{}"),
       learnerDay: localStorage.getItem("year1-learner-day") || "1",
+      lastRewardPercent: Number(localStorage.getItem("year1-last-reward-percent") || "0"),
       pendingAdultView: "today"
     };
 
@@ -2319,6 +2401,7 @@
     const learnerWeek = document.getElementById("learnerWeek");
     const learnerSubjects = document.getElementById("learnerSubjects");
     const learnerActivity = document.getElementById("learnerActivity");
+    const captainRibbon = document.getElementById("captainRibbon");
     const modeToggle = document.getElementById("modeToggle");
     const modeLabel = document.getElementById("modeLabel");
     const modeHelp = document.getElementById("modeHelp");
@@ -4607,6 +4690,7 @@
       const ladder = subjectProgression(state.learnerSubject, weekPlan.week);
       const evidence = evidencePrompt(state.learnerSubject, weekPlan);
       const savePrompt = childSavePrompt(dayPlan, state.learnerSubject, weekPlan);
+      renderCaptainRibbon();
 
       learnerActivity.innerHTML = `
         <div class="quest-layout power-${state.learnerSubject}">
@@ -4730,10 +4814,12 @@
 
       document.querySelectorAll("[data-learner-done]").forEach(check => {
         check.addEventListener("change", () => {
+          const previousPercent = percentComplete(completedStepsInRange(), totalPossibleSteps());
           const entry = learnerEntry();
           entry.done[check.dataset.learnerDone] = check.checked;
           saveLearnerWork();
           renderLearnerActivity();
+          if (check.checked) checkRewardUnlock(previousPercent);
         });
       });
 
@@ -4811,6 +4897,109 @@
       return Object.values(state.learnerWork).reduce((total, entry) => {
         return total + Object.values(entry.done || {}).filter(Boolean).length;
       }, 0);
+    }
+
+    const rewardMilestones = [
+      { percent: 1, label: "Ribbon Rookie", value: "£2 treat" },
+      { percent: 5, label: "Mission Starter", value: "£3 pick" },
+      { percent: 20, label: "Power Builder", value: "£5 toy credit" },
+      { percent: 35, label: "Quest Champion", value: "£8 reward" },
+      { percent: 50, label: "Halfway Hero", value: "£10 reward" },
+      { percent: 70, label: "Super Scholar", value: "£15 reward" },
+      { percent: 85, label: "Year 1 Guardian", value: "£20 reward" },
+      { percent: 100, label: "Master of Missions", value: "parent choice grand prize" }
+    ];
+
+    function totalPossibleSteps(startWeek = 1, endWeek = 36) {
+      return (endWeek - startWeek + 1) * Object.keys(lessonSubjectMeta).length * 5 * 4;
+    }
+
+    function completedStepsInRange(startWeek = 1, endWeek = 36) {
+      return Object.entries(state.learnerWork).reduce((total, [key, entry]) => {
+        const match = key.match(/^week-(\d+)-/);
+        const week = match ? Number(match[1]) : 0;
+        if (week < startWeek || week > endWeek) return total;
+        return total + Object.values(entry.done || {}).filter(Boolean).length;
+      }, 0);
+    }
+
+    function percentComplete(done, total) {
+      return total ? Math.min(100, Math.round((done / total) * 1000) / 10) : 0;
+    }
+
+    function termRangeForWeek(week) {
+      if (week <= 12) return { label: "Autumn", start: 1, end: 12 };
+      if (week <= 24) return { label: "Spring", start: 13, end: 24 };
+      return { label: "Summer", start: 25, end: 36 };
+    }
+
+    function nextReward(overallPercent) {
+      return rewardMilestones.find(item => overallPercent < item.percent) || rewardMilestones[rewardMilestones.length - 1];
+    }
+
+    function unlockedRewards(overallPercent) {
+      return rewardMilestones.filter(item => overallPercent >= item.percent);
+    }
+
+    function renderCaptainRibbon() {
+      const term = termRangeForWeek(Number(state.learnerWeek));
+      const termDone = completedStepsInRange(term.start, term.end);
+      const termPercent = percentComplete(termDone, totalPossibleSteps(term.start, term.end));
+      const overallDone = completedStepsInRange();
+      const overallPercent = percentComplete(overallDone, totalPossibleSteps());
+      const next = nextReward(overallPercent);
+      const unlocked = unlockedRewards(overallPercent);
+
+      captainRibbon.innerHTML = `
+        <div class="captain-badge">CC</div>
+        <div class="ribbon-progress">
+          <strong>Captain Curiosity progress ribbon</strong>
+          <div class="ribbon-row">
+            <span>${term.label} term</span>
+            <div class="ribbon-track"><div class="ribbon-fill" style="--fill: ${termPercent}%"></div></div>
+            <span>${termPercent}%</span>
+          </div>
+          <div class="ribbon-row">
+            <span>Full journey</span>
+            <div class="ribbon-track"><div class="ribbon-fill" style="--fill: ${overallPercent}%"></div></div>
+            <span>${overallPercent}%</span>
+          </div>
+        </div>
+        <div class="reward-panel">
+          <strong>Next unlock: ${next.label}</strong>
+          <span class="small">${next.percent}% full journey · parent reward idea: ${next.value}</span>
+          <div class="reward-badges">
+            ${rewardMilestones.map(item => `<span class="reward-badge ${overallPercent >= item.percent ? "unlocked" : ""}">${item.percent}%</span>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function showRewardCelebration(reward) {
+      const burst = document.createElement("div");
+      burst.className = "celebration-burst";
+      burst.innerHTML = `
+        <div class="celebration-card">
+          <div class="confetti-line">* * * * *</div>
+          <h2>${reward.label} unlocked!</h2>
+          <p>Captain Curiosity says: brilliant effort. Parent reward idea: ${reward.value}.</p>
+          <div class="confetti-line">* * * * *</div>
+        </div>
+      `;
+      document.body.appendChild(burst);
+      window.setTimeout(() => burst.remove(), 3200);
+    }
+
+    function checkRewardUnlock(previousPercent) {
+      const overallPercent = percentComplete(completedStepsInRange(), totalPossibleSteps());
+      const newlyUnlocked = rewardMilestones
+        .filter(item => item.percent > previousPercent && item.percent <= overallPercent)
+        .pop();
+      if (newlyUnlocked && newlyUnlocked.percent > state.lastRewardPercent) {
+        state.lastRewardPercent = newlyUnlocked.percent;
+        localStorage.setItem("year1-last-reward-percent", String(state.lastRewardPercent));
+        showRewardCelebration(newlyUnlocked);
+      }
     }
 
     function learnerLevel(points = learnerPowerPoints()) {
@@ -5051,15 +5240,6 @@
       localStorage.setItem("year1-learner-week", String(state.learnerWeek));
       renderLearnerActivity();
     });
-    document.getElementById("syncLearnerLesson").addEventListener("click", () => {
-      state.learnerWeek = Number(lessonWeek.value || state.learnerWeek);
-      state.learnerSubject = lessonSubject.value || state.learnerSubject;
-      learnerWeek.value = String(state.learnerWeek);
-      localStorage.setItem("year1-learner-week", String(state.learnerWeek));
-      localStorage.setItem("year1-learner-subject", state.learnerSubject);
-      renderLearnerSubjects();
-      renderLearnerActivity();
-    });
     modeToggle.addEventListener("click", () => {
       if (state.childMode) {
         state.pendingAdultView = "today";
@@ -5100,12 +5280,14 @@
       state.reflection = "";
       state.journal = {};
       state.learnerWork = {};
+      state.lastRewardPercent = 0;
       reflection.value = "";
       progressReflection.value = "";
       localStorage.removeItem("year1-progress");
       localStorage.removeItem("year1-reflection");
       localStorage.removeItem("year1-journal");
       localStorage.removeItem("year1-learner-work");
+      localStorage.removeItem("year1-last-reward-percent");
       renderDailyPlan();
       renderActivity();
       renderLessonDetail();
