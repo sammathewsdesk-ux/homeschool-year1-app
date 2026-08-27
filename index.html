@@ -3649,6 +3649,119 @@
       }
     });
 
+    const summerSubjectCraft = {
+      english: {
+        power: "Word Power",
+        start: subject => `Choose a book, word bank or writing idea linked to "${subject.topic}".`,
+        do: (subject, role) => `Say the idea aloud first, then use reading, vocabulary or sentence writing to: ${role}`,
+        show: unit => `Create a sentence, caption, label, review, report or mini-page for "${unit.title}".`,
+        explain: unit => `Read it aloud and say how it helps the project: ${unit.project}`
+      },
+      maths: {
+        power: "Number Power",
+        start: subject => `Collect objects, cards, coins, shapes, a number line or a 100 square for "${subject.topic}".`,
+        do: (subject, role) => `Build the maths first, draw it second, then record numbers or symbols to: ${role}`,
+        show: unit => `Add a model, equation, chart, map-grid or problem card to "${unit.title}".`,
+        explain: () => "Explain your strategy: what did you build, draw and record?"
+      },
+      science: {
+        power: "Discovery Power",
+        start: subject => `Prepare the real investigation or observation for "${subject.topic}".`,
+        do: (subject, role) => `Observe, sort, test, compare or record evidence to: ${role}`,
+        show: unit => `Add a labelled observation, test result or conclusion to "${unit.title}".`,
+        explain: () => "Finish: I found out... because my evidence shows..."
+      },
+      humanities: {
+        power: "World Power",
+        start: subject => `Start with a map, photo, route, timeline, place clue or object for "${subject.topic}".`,
+        do: (subject, role) => `Use place, time, people or map evidence to: ${role}`,
+        show: unit => `Add a map, timeline, comparison, fact card or route to "${unit.title}".`,
+        explain: unit => `Say how this evidence helps answer: ${unit.question}`
+      },
+      creative: {
+        power: "Create Power",
+        start: subject => `Set out the making, drawing, music, design or performance materials for "${subject.topic}".`,
+        do: (subject, role) => `Design, make, perform or improve a creative contribution to: ${role}`,
+        show: unit => `Add a title, label, photo, sketch or finished piece to "${unit.title}".`,
+        explain: () => "Say what you chose, what you improved, and why it works."
+      },
+      life: {
+        power: "Brave Habits",
+        start: subject => `Choose a real moment today to practise "${subject.topic}".`,
+        do: (subject, role) => `Use the habit in real life so you can: ${role}`,
+        show: unit => `Add a checklist, reflection, card, photo or parent note to "${unit.title}".`,
+        explain: () => "Tell a grown-up what you did independently and what you will practise next."
+      }
+    };
+
+    function summerRowsFor(week, subjectKey) {
+      const weekPlan = detailedScheme.find(item => item.week === week);
+      const unit = unitForWeek(week);
+      const subject = weekPlan[subjectKey];
+      const craft = summerSubjectCraft[subjectKey];
+      const role = unit.subjects[subjectKey];
+      return authoredSequence([
+        [
+          "D1",
+          `Launch ${craft.power}`,
+          `Discover how ${lessonSubjectMeta[subjectKey].name} contributes to ${unit.title}.`,
+          craft.start(subject),
+          craft.do(subject, role),
+          craft.show(unit),
+          craft.explain(unit)
+        ],
+        [
+          "D2",
+          "Build the evidence",
+          "Practise the same skill with a new example so the project gains a second useful piece.",
+          `Choose a fresh example linked to "${subject.topic}" and the project outcome.`,
+          `Practise carefully using the key words: ${subject.vocabulary.join(", ")}.`,
+          `Create a second ${lessonSubjectMeta[subjectKey].name} evidence piece for "${unit.title}".`,
+          "What is clearer today than yesterday?"
+        ],
+        [
+          "D3",
+          "Connect it for real",
+          "Use the subject skill in a real object, story, map, investigation, design or home situation.",
+          `Find a real-world link for "${subject.content}".`,
+          `Use the link to answer part of the big question: ${unit.question}`,
+          `Record the connection with a drawing, model, label, sentence, photo note or chart.`,
+          "How does this make the project feel more real?"
+        ],
+        [
+          "D4",
+          "Create or improve",
+          "Turn the week's evidence into something clearer, stronger or more shareable.",
+          `Look at the ${lessonSubjectMeta[subjectKey].name} work from D1-D3.`,
+          "Choose one part to improve: accuracy, label, sentence, model, design, explanation or independence.",
+          `Add the improved piece to the project: ${unit.project}`,
+          "What did you improve, and why is it better?"
+        ],
+        [
+          "D5",
+          "Share the power",
+          "Choose the best subject evidence and explain it as part of the weekly project.",
+          `Choose your strongest ${lessonSubjectMeta[subjectKey].name} evidence from the week.`,
+          "Practise explaining it in one or two clear sentences.",
+          `Place it in the "${unit.title}" portfolio/showcase page.`,
+          `Finish: ${craft.power} helped my project because...`
+        ]
+      ]);
+    }
+
+    function buildSummerAuthoredTasks() {
+      const tasks = {};
+      for (let week = 25; week <= 36; week += 1) {
+        tasks[week] = {};
+        Object.keys(lessonSubjectMeta).forEach(subjectKey => {
+          tasks[week][subjectKey] = summerRowsFor(week, subjectKey);
+        });
+      }
+      return tasks;
+    }
+
+    Object.assign(authoredDailyTasks, buildSummerAuthoredTasks());
+
     function authoredTasksFor(week, subjectKey) {
       return authoredDailyTasks[week]?.[subjectKey];
     }
