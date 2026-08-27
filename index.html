@@ -3836,6 +3836,17 @@
       ];
     }
 
+    function childSavePrompt(dayPlan, subjectKey, weekPlan) {
+      const showTask = dayPlan.tasks.find(task => task.title === "Show it") || dayPlan.tasks[2];
+      const subjectName = lessonSubjectMeta[subjectKey].name;
+      const unit = unitForWeek(weekPlan.week);
+      const subject = weekPlan[subjectKey];
+      return {
+        title: `Save your ${subjectName} proof`,
+        body: `For ${dayPlan.label}: ${dayPlan.title}, save this ${subjectName} proof for "${subject.topic}": ${showTask.body} It will help your "${unit.title}" project.`
+      };
+    }
+
     const curriculumGuardrails = {
       english: [
         "Phonics and decoding remain explicit and frequent.",
@@ -4583,6 +4594,7 @@
       const flow = dailyFlow(dayPlan, state.learnerSubject, weekPlan);
       const ladder = subjectProgression(state.learnerSubject, weekPlan.week);
       const evidence = evidencePrompt(state.learnerSubject, weekPlan);
+      const savePrompt = childSavePrompt(dayPlan, state.learnerSubject, weekPlan);
 
       learnerActivity.innerHTML = `
         <div class="quest-layout power-${state.learnerSubject}">
@@ -4666,8 +4678,8 @@
               <p class="muted">${flow[0][1]}</p>
             </div>
             <div class="journey-card">
-              <strong>Pick one thing to save</strong>
-              <span>Choose one answer, drawing, photo or piece of work from today that could go into your project.</span>
+              <strong>${savePrompt.title}</strong>
+              <span>${savePrompt.body}</span>
             </div>
             ${dayPlan.tasks.map((task, index) => `
               <div class="quest-step">
