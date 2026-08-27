@@ -101,6 +101,11 @@
       font: inherit;
     }
 
+    :focus-visible {
+      outline: 0.2rem solid var(--cp-link);
+      outline-offset: 0.15rem;
+    }
+
     .app {
       display: grid;
       grid-template-columns: 17.5rem 1fr;
@@ -1036,6 +1041,34 @@
       color: var(--cp-accent-fg);
     }
 
+    .quality-list {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0.7rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .quality-list li {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+      padding: 0.6rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+    }
+
+    .quality-list li::before {
+      content: "";
+      flex: 0 0 0.55rem;
+      width: 0.55rem;
+      height: 0.55rem;
+      margin-top: 0.35rem;
+      border-radius: 50%;
+      background: var(--cp-success);
+    }
+
     .quest-layout {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1255,6 +1288,17 @@
 
       .print-only {
         display: block;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
       }
     }
 
@@ -3766,6 +3810,32 @@
       return authoredDailyTasks[week]?.[subjectKey];
     }
 
+    function authoredWeekCount() {
+      return detailedScheme.filter(week => {
+        return Object.keys(lessonSubjectMeta).every(subjectKey => {
+          const tasks = authoredTasksFor(week.week, subjectKey);
+          return Array.isArray(tasks) && tasks.length === 5 && tasks.every(day => day.tasks?.length === 4);
+        });
+      }).length;
+    }
+
+    function authoredCoverageLabel() {
+      const count = authoredWeekCount();
+      return count === detailedScheme.length
+        ? "Full-year authored"
+        : `${count}/${detailedScheme.length} weeks authored`;
+    }
+
+    function qualityChecksFor(subjectKey) {
+      return [
+        authoredCoverageLabel(),
+        "Daily tasks use D1-D5: Discover, Build, Connect, Create, Share",
+        `${lessonSubjectMeta[subjectKey].name} links to the weekly project outcome`,
+        "Parent guidance and curriculum references are available but collapsed",
+        "BBC Bitesize is linked only as optional further practice"
+      ];
+    }
+
     const curriculumGuardrails = {
       english: [
         "Phonics and decoding remain explicit and frequent.",
@@ -4524,7 +4594,7 @@
               <div class="mission-stats">
                 <div class="mini-stat"><strong>Rhythm</strong><span>D1 discover · D2 build · D3 connect · D4 create · D5 share</span></div>
                 <div class="mini-stat"><strong>Selected power</strong><span>${subjectPowerName(state.learnerSubject)}</span></div>
-                <div class="mini-stat"><strong>Status</strong><span>${plan.isHandAuthored ? "Hand-authored" : "Framework scaffold"}</span></div>
+                <div class="mini-stat"><strong>Status</strong><span>${plan.isHandAuthored ? authoredCoverageLabel() : "Needs authoring"}</span></div>
               </div>
             </div>
             <div class="superhero-panel">
@@ -4572,6 +4642,9 @@
                 `).join("")}
               </div>
               <ul class="list">${curriculumGuardrails[state.learnerSubject].map(item => `<li>${item}</li>`).join("")}</ul>
+              <ul class="quality-list">
+                ${qualityChecksFor(state.learnerSubject).map(item => `<li>${item}</li>`).join("")}
+              </ul>
             </details>
           </section>
 
@@ -4580,7 +4653,7 @@
             <h3>${dayPlan.label}: ${dayPlan.title}</h3>
             <div class="day-tabs" aria-label="Choose daily worksheet">
               ${plan.dailyWorksheets.map(day => `
-                <button class="day-tab ${day.label === dayPlan.label ? "active" : ""}" data-learner-day="${day.label.slice(1)}">${day.label}</button>
+                <button class="day-tab ${day.label === dayPlan.label ? "active" : ""}" data-learner-day="${day.label.slice(1)}" aria-pressed="${day.label === dayPlan.label}">${day.label}</button>
               `).join("")}
             </div>
             <div class="today-pulse">
@@ -4599,7 +4672,7 @@
                   Step ${index + 1}: ${task.title}
                 </label>
                 <p>${task.body}</p>
-                <textarea data-learner-answer="${index}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
+                <textarea data-learner-answer="${index}" aria-label="${dayPlan.label} ${plan.subjectName} step ${index + 1}: ${task.title}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
               </div>
             `).join("")}
             <details class="compact-details">
@@ -4884,6 +4957,16 @@
           <p class="muted">${principle.body}</p>
         </article>
       `).join("") + `
+        <article class="card big-card">
+          <h3>Quality assurance status</h3>
+          <p class="muted">Current coverage: ${authoredCoverageLabel()} across Autumn, Spring and Summer. Each authored learner worksheet has five daily variations and four child-facing task steps.</p>
+          <ul class="quality-list">
+            <li>Weekly units are organised around a big question and project outcome.</li>
+            <li>Every subject contributes to the same weekly project rather than operating as an isolated worksheet.</li>
+            <li>Adventure Zone separates weekly mission control from daily worksheet execution.</li>
+            <li>Curriculum references and BBC links are visible as supporting material, not mixed into the child task flow.</li>
+          </ul>
+        </article>
         <article class="card big-card">
           <h3>Curriculum and practice sources</h3>
           <p class="muted">The app uses these as alignment references and practice links. It does not copy paid lesson content or BBC activities.</p>
