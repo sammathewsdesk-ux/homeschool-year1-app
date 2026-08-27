@@ -1258,6 +1258,58 @@
       padding: 0.6rem 0.75rem;
     }
 
+    .summary-panel {
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 0.8rem;
+      padding: 0.85rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface-soft);
+    }
+
+    .summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ledger-list {
+      display: grid;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+
+    .ledger-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.75rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+    }
+
+    .ledger-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      justify-content: flex-end;
+    }
+
+    .ledger-actions button {
+      padding: 0.45rem 0.6rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface-soft);
+      color: var(--cp-text);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
     .quest-layout {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1612,8 +1664,17 @@
 
       .planner-row,
       .lesson-step,
+      .ledger-item,
       .timeline-item {
         grid-template-columns: 1fr;
+      }
+
+      .ledger-actions {
+        justify-content: stretch;
+      }
+
+      .ledger-actions button {
+        flex: 1 1 100%;
       }
 
       .flow-step {
@@ -1892,6 +1953,26 @@
             <div class="note"><strong>Current default:</strong> £5 spend now + £5 banked. Banked money becomes available at year end.</div>
           </section>
         </div>
+        <div class="grid cols-2">
+          <section class="card big-card">
+            <h3>Calendar mode</h3>
+            <p class="muted">Use the learning year start date to calculate the current week and D1-D5 day automatically.</p>
+            <div class="summary-panel" id="calendarSummary"></div>
+            <div class="controls">
+              <button class="primary-button" id="jumpToToday">Jump Adventure Zone to today</button>
+            </div>
+          </section>
+          <section class="card big-card">
+            <h3>Reward ledger</h3>
+            <p class="muted">Track what has been unlocked, what is available to spend now, and what is banked for year-end.</p>
+            <div class="summary-panel" id="rewardLedgerSummary"></div>
+          </section>
+        </div>
+        <section class="card big-card">
+          <h3>Milestone ledger</h3>
+          <p class="muted">Parents can mark immediate rewards as spent. Banked rewards should normally be redeemed at year end.</p>
+          <div class="ledger-list" id="rewardLedger"></div>
+        </section>
         <section class="card big-card">
           <h3>Install this app</h3>
           <p class="muted">On mobile or tablet, open the browser menu and choose <strong>Add to Home Screen</strong> or <strong>Install app</strong>. The app now includes PWA metadata and offline caching for repeat visits.</p>
@@ -2622,6 +2703,7 @@
       learnerSubject: localStorage.getItem("year1-learner-subject") || "english",
       learnerWork: JSON.parse(localStorage.getItem("year1-learner-work") || "{}"),
       learnerDay: localStorage.getItem("year1-learner-day") || "1",
+      rewardLedger: JSON.parse(localStorage.getItem("year1-reward-ledger") || "{}"),
       lastRewardPercent: Number(localStorage.getItem("year1-last-reward-percent") || "0"),
       setup: JSON.parse(localStorage.getItem("year1-parent-setup") || "null") || {
         childName: "",
@@ -2672,6 +2754,9 @@
     const setupBanked = document.getElementById("setupBanked");
     const setupUnlockWord = document.getElementById("setupUnlockWord");
     const setupSavedStatus = document.getElementById("setupSavedStatus");
+    const calendarSummary = document.getElementById("calendarSummary");
+    const rewardLedgerSummary = document.getElementById("rewardLedgerSummary");
+    const rewardLedger = document.getElementById("rewardLedger");
 
     function saveProgress() {
       localStorage.setItem("year1-progress", JSON.stringify(state.progress));
@@ -2697,6 +2782,12 @@
 
     function saveLearnerWork() {
       localStorage.setItem("year1-learner-work", JSON.stringify(state.learnerWork));
+    }
+
+    function saveRewardLedger() {
+      localStorage.setItem("year1-reward-ledger", JSON.stringify(state.rewardLedger));
+      renderCaptainRibbon();
+      renderRewardLedger();
     }
 
     function setChildMode(enabled) {
@@ -2734,6 +2825,90 @@
       return `${currency(state.setup.spendNow)} spend now + ${currency(state.setup.banked)} banked`;
     }
 
+    function normalisedLearningDays() {
+      const text = (state.setup.learningDays || "").toLowerCase();
+      if (!text || text.includes("monday-friday") || text.includes("mon-fri") || text.includes("weekday")) {
+        return [1, 2, 3, 4, 5];
+      }
+      const dayNames = [
+        ["sun", 0],
+        ["mon", 1],
+        ["tue", 2],
+        ["wed", 3],
+        ["thu", 4],
+        ["fri", 5],
+        ["sat", 6]
+      ];
+      const parsed = dayNames.filter(([label]) => text.includes(label)).map(([, day]) => day);
+      return parsed.length ? parsed : [1, 2, 3, 4, 5];
+    }
+
+    function calculateCalendarPosition(date = new Date()) {
+      if (!state.setup.startDate) return null;
+      const start = new Date(`${state.setup.startDate}T00:00:00`);
+      if (Number.isNaN(start.getTime())) return null;
+      const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const first = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      const dayMs = 24 * 60 * 60 * 1000;
+      const calendarDays = Math.floor((today - first) / dayMs);
+      if (calendarDays < 0) {
+        return { beforeStart: true, week: 1, day: "1", learningDaysCompleted: 0 };
+      }
+      const learningDays = normalisedLearningDays();
+      let completed = 0;
+      for (let offset = 0; offset <= calendarDays; offset += 1) {
+        const current = new Date(first);
+        current.setDate(first.getDate() + offset);
+        if (learningDays.includes(current.getDay())) completed += 1;
+      }
+      const position = Math.max(1, completed);
+      return {
+        beforeStart: false,
+        week: Math.min(36, Math.ceil(position / 5)),
+        day: String(((position - 1) % 5) + 1),
+        learningDaysCompleted: completed
+      };
+    }
+
+    function renderCalendarMode() {
+      if (!calendarSummary) return;
+      const position = calculateCalendarPosition();
+      if (!position) {
+        calendarSummary.innerHTML = `
+          <div><strong>Calendar not active yet</strong></div>
+          <p class="small">Add a learning year start date, save setup, then use the jump button to open the correct Adventure Zone mission.</p>
+        `;
+        return;
+      }
+      const activeText = position.beforeStart
+        ? "Your start date is in the future, so the app will begin at Week 1 · D1."
+        : `Today maps to Week ${position.week} · D${position.day} after ${position.learningDaysCompleted} planned learning days.`;
+      calendarSummary.innerHTML = `
+        <div class="summary-row">
+          <strong>${position.beforeStart ? "Ready for Week 1" : `Week ${position.week} · D${position.day}`}</strong>
+          <span class="badge accent">${escapeHtml(state.setup.learningDays || "Monday-Friday")}</span>
+        </div>
+        <p class="small">${activeText}</p>
+        <p class="small"><strong>Current Adventure Zone:</strong> Week ${state.learnerWeek} · D${state.learnerDay}</p>
+      `;
+    }
+
+    function jumpToCalendarToday() {
+      const position = calculateCalendarPosition();
+      if (!position) {
+        setupSavedStatus.textContent = "Add and save a start date before using calendar mode.";
+        return;
+      }
+      state.learnerWeek = position.week;
+      state.learnerDay = position.day;
+      localStorage.setItem("year1-learner-week", String(state.learnerWeek));
+      localStorage.setItem("year1-learner-day", state.learnerDay);
+      learnerWeek.value = String(state.learnerWeek);
+      renderLearnerActivity();
+      renderCalendarMode();
+      switchView("learner");
+    }
+
     function renderParentSetup() {
       setupChildName.value = state.setup.childName || "";
       setupStartDate.value = state.setup.startDate || "";
@@ -2742,6 +2917,8 @@
       setupSpendNow.value = state.setup.spendNow ?? 5;
       setupBanked.value = state.setup.banked ?? 5;
       setupUnlockWord.value = state.setup.unlockWord || "grownup";
+      renderCalendarMode();
+      renderRewardLedger();
     }
 
     function saveParentSetup() {
@@ -2758,6 +2935,8 @@
       setupSavedStatus.textContent = "Setup saved on this device.";
       renderCaptainRibbon();
       renderProgress();
+      renderCalendarMode();
+      renderRewardLedger();
     }
 
     function exportPortfolio() {
@@ -2777,6 +2956,8 @@
         };
       }).filter(item => item.done || item.answers.length);
       const unlocked = unlockedRewards(overallPercent);
+      const totals = rewardLedgerTotals();
+      const ledgerItems = unlocked.map(reward => ensureRewardLedgerEntry(reward));
       const exportedAt = new Date().toLocaleString();
       const title = `${state.setup.childName || "Year 1 learner"} portfolio export`;
       const html = `<!doctype html>
@@ -2804,7 +2985,11 @@
   <section>
     <h2>Progress summary</h2>
     <p><strong>Completed steps:</strong> ${overallDone}/${overallTotal} (${overallPercent}%)</p>
-    <p><strong>Rewards:</strong> ${unlocked.length} milestones · ${currency(unlocked.length * state.setup.spendNow)} spend now · ${currency(unlocked.length * state.setup.banked)} banked for year-end.</p>
+    <p><strong>Rewards:</strong> ${unlocked.length} milestones · ${currency(totals.spendNowUnlocked - totals.spendNowSpent)} spend-now available · ${currency(totals.spendNowSpent)} already spent · ${currency(totals.bankedUnlocked - totals.bankRedeemed)} banked for year-end.</p>
+  </section>
+  <section>
+    <h2>Reward ledger</h2>
+    ${ledgerItems.length ? `<ul>${ledgerItems.map(item => `<li><strong>${escapeHtml(item.label)}</strong>: ${currency(item.spendNowAmount)} spend-now ${item.spendNowSpent ? "spent" : "available"}; ${currency(item.bankedAmount)} banked ${item.bankRedeemed ? "redeemed" : "saved for year-end"}.</li>`).join("")}</ul>` : "<p>No reward milestones unlocked yet.</p>"}
   </section>
   <section>
     <h2>Learning journal</h2>
@@ -5306,6 +5491,119 @@
       return rewardMilestones.filter(item => overallPercent >= item.percent);
     }
 
+    function ledgerKey(reward) {
+      return `milestone-${reward.percent}`;
+    }
+
+    function ensureRewardLedgerEntry(reward) {
+      const key = ledgerKey(reward);
+      if (!state.rewardLedger[key]) {
+        state.rewardLedger[key] = {
+          percent: reward.percent,
+          label: reward.label,
+          unlockedAt: new Date().toISOString(),
+          spendNowAmount: state.setup.spendNow,
+          bankedAmount: state.setup.banked,
+          spendNowSpent: false,
+          bankRedeemed: false
+        };
+      } else {
+        state.rewardLedger[key].label = reward.label;
+        state.rewardLedger[key].spendNowAmount = Number(state.rewardLedger[key].spendNowAmount ?? state.setup.spendNow);
+        state.rewardLedger[key].bankedAmount = Number(state.rewardLedger[key].bankedAmount ?? state.setup.banked);
+        state.rewardLedger[key].spendNowSpent = Boolean(state.rewardLedger[key].spendNowSpent);
+        state.rewardLedger[key].bankRedeemed = Boolean(state.rewardLedger[key].bankRedeemed);
+      }
+      return state.rewardLedger[key];
+    }
+
+    function syncUnlockedRewardLedger() {
+      const overallPercent = percentComplete(completedStepsInRange(), totalPossibleSteps());
+      const unlocked = unlockedRewards(overallPercent);
+      let changed = false;
+      unlocked.forEach(reward => {
+        const key = ledgerKey(reward);
+        if (!state.rewardLedger[key]) changed = true;
+        ensureRewardLedgerEntry(reward);
+      });
+      if (changed) localStorage.setItem("year1-reward-ledger", JSON.stringify(state.rewardLedger));
+      return unlocked;
+    }
+
+    function rewardLedgerTotals() {
+      const unlocked = syncUnlockedRewardLedger();
+      const entries = unlocked.map(reward => ensureRewardLedgerEntry(reward));
+      return entries.reduce((totals, entry) => {
+        const spend = Number(entry.spendNowAmount || 0);
+        const bank = Number(entry.bankedAmount || 0);
+        totals.unlocked += 1;
+        totals.spendNowUnlocked += spend;
+        totals.bankedUnlocked += bank;
+        if (entry.spendNowSpent) totals.spendNowSpent += spend;
+        if (entry.bankRedeemed) totals.bankRedeemed += bank;
+        return totals;
+      }, {
+        unlocked: 0,
+        spendNowUnlocked: 0,
+        spendNowSpent: 0,
+        bankedUnlocked: 0,
+        bankRedeemed: 0
+      });
+    }
+
+    function renderRewardLedger() {
+      if (!rewardLedger || !rewardLedgerSummary) return;
+      const overallPercent = percentComplete(completedStepsInRange(), totalPossibleSteps());
+      const unlocked = syncUnlockedRewardLedger();
+      const totals = rewardLedgerTotals();
+      const spendAvailable = totals.spendNowUnlocked - totals.spendNowSpent;
+      const bankAvailable = totals.bankedUnlocked - totals.bankRedeemed;
+      rewardLedgerSummary.innerHTML = `
+        <div class="summary-row"><strong>${currency(spendAvailable)} spend-now available</strong><span class="badge accent">${totals.unlocked}/${rewardMilestones.length} unlocked</span></div>
+        <p class="small">${currency(totals.spendNowSpent)} immediate rewards spent · ${currency(bankAvailable)} banked for year-end${totals.bankRedeemed ? ` · ${currency(totals.bankRedeemed)} bank redeemed` : ""}.</p>
+      `;
+      rewardLedger.innerHTML = rewardMilestones.map(reward => {
+        const unlockedNow = overallPercent >= reward.percent;
+        const entry = unlockedNow ? ensureRewardLedgerEntry(reward) : null;
+        const spendLabel = entry?.spendNowSpent ? "Mark spend unspent" : "Mark spend spent";
+        const bankLabel = entry?.bankRedeemed ? "Mark bank unredeemed" : "Redeem bank";
+        return `
+          <article class="ledger-item">
+            <div>
+              <strong>${reward.label}</strong>
+              <p class="small">${reward.percent}% milestone · ${unlockedNow ? `${currency(entry.spendNowAmount)} spend now + ${currency(entry.bankedAmount)} banked` : rewardSplitText()}</p>
+              <p class="small">${unlockedNow ? `Unlocked ${new Date(entry.unlockedAt).toLocaleDateString()} · Spend: ${entry.spendNowSpent ? "spent" : "available"} · Bank: ${entry.bankRedeemed ? "redeemed" : "saved"}` : "Locked until this progress milestone is reached."}</p>
+            </div>
+            <div class="ledger-actions">
+              ${unlockedNow ? `<button data-ledger-spend="${ledgerKey(reward)}">${spendLabel}</button><button data-ledger-bank="${ledgerKey(reward)}">${bankLabel}</button>` : `<span class="badge">${Math.max(0, reward.percent - overallPercent).toFixed(1)}% to go</span>`}
+            </div>
+          </article>
+        `;
+      }).join("");
+      rewardLedger.querySelectorAll("[data-ledger-spend]").forEach(button => {
+        button.addEventListener("click", () => {
+          const entry = state.rewardLedger[button.dataset.ledgerSpend];
+          if (!entry) {
+            console.warn("Reward ledger entry missing", button.dataset.ledgerSpend);
+            return;
+          }
+          entry.spendNowSpent = !entry.spendNowSpent;
+          saveRewardLedger();
+        });
+      });
+      rewardLedger.querySelectorAll("[data-ledger-bank]").forEach(button => {
+        button.addEventListener("click", () => {
+          const entry = state.rewardLedger[button.dataset.ledgerBank];
+          if (!entry) {
+            console.warn("Reward ledger entry missing", button.dataset.ledgerBank);
+            return;
+          }
+          entry.bankRedeemed = !entry.bankRedeemed;
+          saveRewardLedger();
+        });
+      });
+    }
+
     function renderCaptainRibbon() {
       const term = termRangeForWeek(Number(state.learnerWeek));
       const termDone = completedStepsInRange(term.start, term.end);
@@ -5313,9 +5611,10 @@
       const overallDone = completedStepsInRange();
       const overallPercent = percentComplete(overallDone, totalPossibleSteps());
       const next = nextReward(overallPercent);
-      const unlocked = unlockedRewards(overallPercent);
-      const spendNow = unlocked.length * state.setup.spendNow;
-      const banked = unlocked.length * state.setup.banked;
+      const unlocked = syncUnlockedRewardLedger();
+      const ledgerTotals = rewardLedgerTotals();
+      const spendNow = ledgerTotals.spendNowUnlocked - ledgerTotals.spendNowSpent;
+      const banked = ledgerTotals.bankedUnlocked - ledgerTotals.bankRedeemed;
       const nextRewardText = rewardSplitText();
 
       captainRibbon.innerHTML = `
@@ -5373,9 +5672,12 @@
         .filter(item => item.percent > previousPercent && item.percent <= overallPercent)
         .pop();
       if (newlyUnlocked && newlyUnlocked.percent > state.lastRewardPercent) {
+        ensureRewardLedgerEntry(newlyUnlocked);
+        localStorage.setItem("year1-reward-ledger", JSON.stringify(state.rewardLedger));
         state.lastRewardPercent = newlyUnlocked.percent;
         localStorage.setItem("year1-last-reward-percent", String(state.lastRewardPercent));
         showRewardCelebration(newlyUnlocked);
+        renderRewardLedger();
       }
     }
 
@@ -5653,12 +5955,14 @@
     });
     document.getElementById("saveParentSetup").addEventListener("click", saveParentSetup);
     document.getElementById("exportPortfolio").addEventListener("click", exportPortfolio);
+    document.getElementById("jumpToToday").addEventListener("click", jumpToCalendarToday);
     document.getElementById("printWorksheet").addEventListener("click", () => window.print());
     document.getElementById("resetProgress").addEventListener("click", () => {
       state.progress = {};
       state.reflection = "";
       state.journal = {};
       state.learnerWork = {};
+      state.rewardLedger = {};
       state.lastRewardPercent = 0;
       reflection.value = "";
       progressReflection.value = "";
@@ -5666,12 +5970,15 @@
       localStorage.removeItem("year1-reflection");
       localStorage.removeItem("year1-journal");
       localStorage.removeItem("year1-learner-work");
+      localStorage.removeItem("year1-reward-ledger");
       localStorage.removeItem("year1-last-reward-percent");
       renderDailyPlan();
       renderActivity();
       renderLessonDetail();
       renderLearnerActivity();
       renderProgress();
+      renderCaptainRibbon();
+      renderRewardLedger();
     });
 
     reflection.value = state.reflection;
