@@ -5066,14 +5066,14 @@
     }
 
     const rewardMilestones = [
-      { percent: 1, label: "Ribbon Rookie", short: "Rookie", value: "£2 treat" },
-      { percent: 5, label: "Mission Starter", short: "Starter", value: "£3 pick" },
-      { percent: 20, label: "Power Builder", short: "Builder", value: "£5 toy credit" },
-      { percent: 35, label: "Quest Champion", short: "Champion", value: "£8 reward" },
-      { percent: 50, label: "Halfway Hero", short: "Halfway", value: "£10 reward" },
-      { percent: 70, label: "Super Scholar", short: "Scholar", value: "£15 reward" },
-      { percent: 85, label: "Year 1 Guardian", short: "Guardian", value: "£20 reward" },
-      { percent: 100, label: "Master of Missions", short: "Master", value: "parent choice grand prize" }
+      { percent: 1, label: "Ribbon Rookie", short: "Rookie" },
+      { percent: 5, label: "Mission Starter", short: "Starter" },
+      { percent: 20, label: "Power Builder", short: "Builder" },
+      { percent: 35, label: "Quest Champion", short: "Champion" },
+      { percent: 50, label: "Halfway Hero", short: "Halfway" },
+      { percent: 70, label: "Super Scholar", short: "Scholar" },
+      { percent: 85, label: "Year 1 Guardian", short: "Guardian" },
+      { percent: 100, label: "Master of Missions", short: "Master" }
     ];
 
     function totalPossibleSteps(startWeek = 1, endWeek = 36) {
@@ -5115,6 +5115,9 @@
       const overallPercent = percentComplete(overallDone, totalPossibleSteps());
       const next = nextReward(overallPercent);
       const unlocked = unlockedRewards(overallPercent);
+      const spendNow = unlocked.length * 5;
+      const banked = unlocked.length * 5;
+      const nextRewardText = "£5 spend now + £5 banked";
 
       captainRibbon.innerHTML = `
         <div class="captain-badge">CC</div>
@@ -5134,16 +5137,18 @@
             <span>${overallPercent}%</span>
           </div>
           <div class="milestone-road" aria-label="Reward milestone road">
-            ${rewardMilestones.map(item => `<span class="reward-badge ${overallPercent >= item.percent ? "unlocked" : ""}" title="${item.percent}% · ${item.value}">${item.short}</span>`).join("")}
+            ${rewardMilestones.map(item => `<span class="reward-badge ${overallPercent >= item.percent ? "unlocked" : ""}" title="${item.percent}% · £5 spend now + £5 banked">${item.short}</span>`).join("")}
           </div>
         </div>
         <div class="reward-panel">
           <strong>${unlocked.length ? unlocked[unlocked.length - 1].label + " unlocked" : "First prize ahead"}</strong>
-          <span class="small">Next: ${next.label} · parent reward idea: ${next.value}</span>
+          <span class="small">Next: ${next.label} · ${nextRewardText}</span>
           <div class="reward-badges">
-            <span class="reward-badge unlocked">${unlocked.length} prizes unlocked</span>
-            <span class="reward-badge">${rewardMilestones.length - unlocked.length} still to discover</span>
+            <span class="reward-badge unlocked">£${spendNow} spend now</span>
+            <span class="reward-badge unlocked">£${banked} banked</span>
+            <span class="reward-badge">${rewardMilestones.length - unlocked.length} prizes left</span>
           </div>
+          <span class="small">Banked money unlocks for spending at the end of the year.</span>
         </div>
       `;
     }
@@ -5155,7 +5160,7 @@
         <div class="celebration-card">
           <div class="confetti-line">* * * * *</div>
           <h2>${reward.label} unlocked!</h2>
-          <p>Captain Curiosity says: brilliant effort. Parent reward idea: ${reward.value}.</p>
+          <p>Captain Curiosity says: brilliant effort. Reward unlocked: £5 to spend now and £5 into the year-end bank.</p>
           <div class="confetti-line">* * * * *</div>
         </div>
       `;
