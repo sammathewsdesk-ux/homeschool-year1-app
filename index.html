@@ -4855,6 +4855,53 @@
       return precisionRules[subjectKey].stem();
     }
 
+    function exampleOutputFor(task, subjectKey, weekPlan, dayPlan) {
+      const subject = weekPlan[subjectKey];
+      const unit = unitForWeek(weekPlan.week);
+      const vocabulary = subject.vocabulary.slice(0, 2).join(" / ");
+      const content = subject.content;
+      const topic = subject.topic;
+      const examples = {
+        english: {
+          "Get ready": `Three word cards on the table, such as "${content}", plus one blank label ready to write.`,
+          "Do it": `The child says the sentence aloud first, then writes or copies one clear label/caption, e.g. "My ${topic.toLowerCase()} label."`,
+          "Show it": `A small page with one drawing and one readable word, label or sentence connected to "${content}".`,
+          "Tell me": `"I wrote ____ because ____. I used the word ${subject.vocabulary[0]}."`
+        },
+        maths: {
+          "Get ready": `Objects are laid out in a line, ten-frame, shop, number track or shape group for "${content}".`,
+          "Do it": `A built model, then a matching drawing, then one number/label/equation that matches the model.`,
+          "Show it": `A page showing "I built it", "I drew it", and "I recorded it" for "${topic}".`,
+          "Tell me": `"I built ____. I drew ____. My answer is ____ because ____."`
+        },
+        science: {
+          "Get ready": `The real object/photo/test is ready, with space to draw what is seen for "${content}".`,
+          "Do it": `One observation, sort, test or comparison using evidence words such as ${vocabulary}.`,
+          "Show it": `A labelled drawing/table/sort with arrows or labels pointing to the evidence.`,
+          "Tell me": `"I found out ____ because I saw/tested ____."`
+        },
+        humanities: {
+          "Get ready": `One map/photo/object/timeline clue is in front of the child for "${content}".`,
+          "Do it": `Three clues marked, placed, ordered or compared before writing anything.`,
+          "Show it": `A map, timeline, comparison box, route or fact card with at least two labels.`,
+          "Tell me": `"This clue shows ____ because ____. I know this from the map/photo/object/timeline."`
+        },
+        creative: {
+          "Get ready": `Chosen materials are ready, with one planned choice such as colour, line, texture, sound or movement.`,
+          "Do it": `A made, drawn, built, performed or improved piece that clearly uses today's chosen technique.`,
+          "Show it": `The finished piece or a photo/sketch with a title and one label about the creative choice.`,
+          "Tell me": `"I chose ____ because ____. I improved ____."`
+        },
+        life: {
+          "Get ready": `The real-life task space is ready, plus a simple tick list for "${content}".`,
+          "Do it": `The child completes the real habit once with only small prompts where needed.`,
+          "Show it": `A checked list, drawing, photo reminder or parent note showing what was done independently.`,
+          "Tell me": `"I did ____ by myself. Next time I will practise ____."`
+        }
+      };
+      return examples[subjectKey][task.title] || `Example output: one clear proof piece for "${dayPlan.title}" that can be added to "${unit.title}".`;
+    }
+
     function precisionTaskSteps(subjectKey, weekPlan, dayPlan, originalBody) {
       const subject = weekPlan[subjectKey];
       return [
@@ -4902,25 +4949,29 @@
       if (task.title === "Get ready") {
         return {
           ...task,
-          body: `Start here: ${dayPlan.continuity.fromBefore} You need: ${precisionMaterials(subjectKey, weekPlan)}. Set up exactly like this: ${task.body}`
+          body: `Start here: ${dayPlan.continuity.fromBefore} You need: ${precisionMaterials(subjectKey, weekPlan)}. Set up exactly like this: ${task.body}`,
+          example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
       if (task.title === "Do it") {
         return {
           ...task,
-          steps: precisionTaskSteps(subjectKey, weekPlan, dayPlan, task.body)
+          steps: precisionTaskSteps(subjectKey, weekPlan, dayPlan, task.body),
+          example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
       if (task.title === "Show it") {
         return {
           ...task,
-          body: `Make the exact proof for today: ${task.body} It must show "${subject.skill.toLowerCase()}". Check it against the Friday goal: ${dayPlan.continuity.fridayGoal}`
+          body: `Make the exact proof for today: ${task.body} It must show "${subject.skill.toLowerCase()}". Check it against the Friday goal: ${dayPlan.continuity.fridayGoal}`,
+          example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
       if (task.title === "Tell me") {
         return {
           ...task,
-          body: `Answer today's reflection: ${task.body} If you are stuck, use: "${precisionStem(subjectKey)}" Use at least one of these words: ${subject.vocabulary.join(", ")}.`
+          body: `Answer today's reflection: ${task.body} If you are stuck, use: "${precisionStem(subjectKey)}" Use at least one of these words: ${subject.vocabulary.join(", ")}.`,
+          example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
       return task;
@@ -5789,6 +5840,7 @@
                   Step ${index + 1}: ${task.title}
                 </label>
                 ${task.steps ? `<ol class="task-micro-list">${task.steps.map(step => `<li>${step}</li>`).join("")}</ol>` : `<p>${task.body}</p>`}
+                <p class="small"><strong>Example output:</strong> ${task.example}</p>
                 <textarea data-learner-answer="${index}" aria-label="${dayPlan.label} ${plan.subjectName} step ${index + 1}: ${task.title}" placeholder="Type a short answer, or write 'done on paper'.">${escapeHtml(entry.answers?.[index] || "")}</textarea>
               </div>
             `).join("")}
@@ -5866,6 +5918,7 @@
             if (!Array.isArray(dayPlan.tasks) || dayPlan.tasks.length !== 4) missing.push("four tasks");
             if (!doTask?.steps || doTask.steps.length < 4) missing.push("numbered do steps");
             if (!tellTask?.body.includes("If you are stuck")) missing.push("reflection support");
+            if (!dayPlan.tasks.every(task => task.example && task.example.length >= 40)) missing.push("example output for every step");
             if (/^(Connect it for real|Create or improve|Share the power|Build the evidence|Launch (Word|Number|Discovery|World|Create|Brave))$/i.test(dayPlan.title)) {
               missing.push("generic generated title");
             }
