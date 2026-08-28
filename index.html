@@ -4789,6 +4789,7 @@
         authoredCoverageLabel(),
         "Daily tasks use D1-D5: Discover, Build, Connect, Create, Share",
         "Every learner card includes a concise outcome, materials, finished proof and concrete child actions",
+        "Visible step titles are activity-specific, not repeated Get ready / Do it / Show it / Tell me labels",
         "Every D1-D5 card states what it uses from earlier work and how it moves toward Friday's project proof",
         `${lessonSubjectMeta[subjectKey].name} links to the weekly project outcome`,
         "Parent guidance and curriculum references are available but collapsed",
@@ -4861,6 +4862,7 @@
       const vocabulary = subject.vocabulary.slice(0, 2).join(" / ");
       const content = subject.content;
       const topic = subject.topic;
+      const kind = task.kind || task.title;
       const examples = {
         english: {
           "Get ready": `Three word cards on the table, such as "${content}", plus one blank label ready to write.`,
@@ -4899,7 +4901,24 @@
           "Tell me": `"I did ____ by myself. Next time I will practise ____."`
         }
       };
-      return examples[subjectKey][task.title] || `Example output: one clear proof piece for "${dayPlan.title}" that can be added to "${unit.title}".`;
+      return examples[subjectKey][kind] || `One clear proof piece for "${dayPlan.title}" that can be added to "${unit.title}".`;
+    }
+
+    function shortActionLabel(text, fallback) {
+      const cleaned = String(text || fallback)
+        .replace(/^["']|["']$/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      const words = cleaned.split(" ").slice(0, 7).join(" ");
+      return words.replace(/[.:;,!?]+$/g, "") || fallback;
+    }
+
+    function specificStepTitle(kind, task, dayPlan) {
+      if (kind === "Get ready") return `Prepare: ${shortActionLabel(task.body, dayPlan.title)}`;
+      if (kind === "Do it") return `Practise: ${dayPlan.title}`;
+      if (kind === "Show it") return `Make proof: ${shortActionLabel(task.body, dayPlan.title)}`;
+      if (kind === "Tell me") return `Explain: ${shortActionLabel(task.body, dayPlan.title)}`;
+      return shortActionLabel(task.body, task.title || dayPlan.title);
     }
 
     function precisionTaskSteps(subjectKey, weekPlan, dayPlan, originalBody) {
@@ -4913,7 +4932,7 @@
     }
 
     function showItText(dayPlan) {
-      return dayPlan.tasks.find(task => task.title === "Show it")?.body || "make today's proof";
+      return dayPlan.tasks.find(task => (task.kind || task.title) === "Show it")?.body || "make today's proof";
     }
 
     function connectDailySequence(days, subjectKey, weekPlan) {
@@ -4946,30 +4965,39 @@
 
     function enhanceTask(task, subjectKey, weekPlan, dayPlan) {
       const subject = weekPlan[subjectKey];
-      if (task.title === "Get ready") {
+      const kind = task.kind || task.title;
+      if (kind === "Get ready") {
         return {
           ...task,
+          kind,
+          title: specificStepTitle(kind, task, dayPlan),
           body: `Start here: ${dayPlan.continuity.fromBefore} You need: ${precisionMaterials(subjectKey, weekPlan)}. Set up exactly like this: ${task.body}`,
           example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
-      if (task.title === "Do it") {
+      if (kind === "Do it") {
         return {
           ...task,
+          kind,
+          title: specificStepTitle(kind, task, dayPlan),
           steps: precisionTaskSteps(subjectKey, weekPlan, dayPlan, task.body),
           example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
-      if (task.title === "Show it") {
+      if (kind === "Show it") {
         return {
           ...task,
+          kind,
+          title: specificStepTitle(kind, task, dayPlan),
           body: `Make the exact proof for today: ${task.body} It must show "${subject.skill.toLowerCase()}". Check it against the Friday goal: ${dayPlan.continuity.fridayGoal}`,
           example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
-      if (task.title === "Tell me") {
+      if (kind === "Tell me") {
         return {
           ...task,
+          kind,
+          title: specificStepTitle(kind, task, dayPlan),
           body: `Answer today's reflection: ${task.body} If you are stuck, use: "${precisionStem(subjectKey)}" Use at least one of these words: ${subject.vocabulary.join(", ")}.`,
           example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
@@ -5904,10 +5932,13 @@
       detailedScheme.forEach(weekPlan => {
         Object.keys(lessonSubjectMeta).forEach(subjectKey => {
           const plan = subjectLessonPlan(subjectKey, weekPlan);
+          const stepTitleSequences = [];
           plan.dailyWorksheets.forEach(dayPlan => {
             checked += 1;
-            const doTask = dayPlan.tasks.find(task => task.title === "Do it");
-            const tellTask = dayPlan.tasks.find(task => task.title === "Tell me");
+            const doTask = dayPlan.tasks.find(task => (task.kind || task.title) === "Do it");
+            const tellTask = dayPlan.tasks.find(task => (task.kind || task.title) === "Tell me");
+            const stepTitles = dayPlan.tasks.map(task => task.title).join(" | ");
+            stepTitleSequences.push(stepTitles);
             const missing = [];
             if (!dayPlan.outcome || dayPlan.outcome.length < 40) missing.push("outcome");
             if (!dayPlan.materials || dayPlan.materials.length < 25) missing.push("materials");
@@ -5919,6 +5950,9 @@
             if (!doTask?.steps || doTask.steps.length < 4) missing.push("numbered do steps");
             if (!tellTask?.body.includes("If you are stuck")) missing.push("reflection support");
             if (!dayPlan.tasks.every(task => task.example && task.example.length >= 40)) missing.push("example output for every step");
+            if (dayPlan.tasks.some(task => ["Get ready", "Do it", "Show it", "Tell me"].includes(task.title))) {
+              missing.push("generic visible step title");
+            }
             if (/^(Connect it for real|Create or improve|Share the power|Build the evidence|Launch (Word|Number|Discovery|World|Create|Brave))$/i.test(dayPlan.title)) {
               missing.push("generic generated title");
             }
@@ -5935,6 +5969,15 @@
               });
             }
           });
+          if (new Set(stepTitleSequences).size !== stepTitleSequences.length) {
+            failures.push({
+              week: weekPlan.week,
+              subject: subjectKey,
+              day: "D1-D5",
+              title: "Repeated step-title sequence",
+              missing: ["unique step titles across the week"]
+            });
+          }
         });
       });
       return { checked, failures };
