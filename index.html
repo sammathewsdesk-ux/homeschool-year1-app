@@ -1807,7 +1807,7 @@
         <div>
           <p class="section-kicker">Full-year planner v2</p>
           <h2>A practical Year 1 homeschool companion.</h2>
-          <p>Built around England's Year 1 expectations, enriched with Singapore-style maths, Finnish play and outdoor learning, IB inquiry, Montessori independence, and knowledge-rich projects. Now includes a 36-week lesson library with printable worksheet prompts.</p>
+          <p>Built around England's Year 1 expectations, enriched with Singapore-style maths, Finnish play and outdoor learning, IB inquiry, Montessori independence, and knowledge-rich projects. Now includes a 39-week lesson library with printable worksheet prompts.</p>
           <div class="chips" aria-label="Curriculum blend">
             <span class="badge accent">England core</span>
             <span class="badge">Singapore maths</span>
@@ -2303,12 +2303,12 @@
           points: ["Independent reading stamina", "Place value to 100 and measures", "Material testing", "Significant people and change"]
         },
         {
-          phase: "Weeks 5-8",
+          phase: "Weeks 5-9",
           title: "Project-led mastery",
           points: ["Plan, write and edit mini books", "Fractions as halves and quarters", "Outdoor science and data", "Design, make, improve cycles"]
         },
         {
-          phase: "Weeks 9-10",
+          phase: "Weeks 10-13",
           title: "Celebrate readiness for Year 2",
           points: ["Portfolio conference", "Maths games tournament", "Science explanation video or poster", "Reflection on strengths, interests and next steps"]
         }
@@ -2748,6 +2748,36 @@
         humanities: { topic: "My year in places and people", skill: "Connect personal experience to wider knowledge", vocabulary: ["place", "people", "journey", "world"], content: "places and people reflection" },
         creative: { topic: "Celebration gallery", skill: "Curate final pieces and explain choices", vocabulary: ["gallery", "curate", "choice", "celebrate"], content: "final gallery labels" },
         life: { topic: "Celebration and transition", skill: "Name strengths and prepare emotionally for next step", vocabulary: ["strength", "transition", "ready", "proud"], content: "Year 2 confidence certificate" }
+      },
+      {
+        week: 37,
+        theme: "Mastery and evidence-led explanation",
+        english: { topic: "Structured explanation writing", skill: "Use because and so to build linked reasoning", vocabulary: ["because", "so", "evidence", "explain"], content: "two-part explanation paragraph" },
+        maths: { topic: "Two-step reasoning problems", skill: "Choose operations and justify method choice", vocabulary: ["strategy", "step", "justify", "check"], content: "reasoning challenge cards" },
+        science: { topic: "Claim and evidence", skill: "Make a claim supported by observed evidence", vocabulary: ["claim", "evidence", "observe", "conclude"], content: "evidence-conclusion chart" },
+        humanities: { topic: "Place comparison using evidence", skill: "Compare two places with mapped and written evidence", vocabulary: ["compare", "evidence", "location", "feature"], content: "double-map comparison page" },
+        creative: { topic: "Refine and improve a prior piece", skill: "Use feedback to strengthen communication", vocabulary: ["refine", "feedback", "impact", "improve"], content: "before-and-after creative panel" },
+        life: { topic: "Independent leadership routine", skill: "Plan and lead a routine with self-review", vocabulary: ["lead", "independent", "review", "improve"], content: "routine leadership log" }
+      },
+      {
+        week: 38,
+        theme: "Inquiry, checking and iteration",
+        english: { topic: "Editing for precision", skill: "Revise for punctuation, vocabulary and clarity", vocabulary: ["edit", "clarity", "punctuation", "revise"], content: "draft-to-final writing strip" },
+        maths: { topic: "Method comparison", skill: "Solve with one method then verify with a second", vocabulary: ["method", "verify", "efficient", "accurate"], content: "solve-and-check board" },
+        science: { topic: "Fair comparison mini enquiry", skill: "Control one variable and explain findings", vocabulary: ["variable", "fair", "result", "explain"], content: "mini enquiry record sheet" },
+        humanities: { topic: "Evidence question investigation", skill: "Answer a question with map and timeline clues", vocabulary: ["question", "source", "timeline", "interpret"], content: "question-evidence response card" },
+        creative: { topic: "Iterative design cycle", skill: "Plan, make, evaluate and remake", vocabulary: ["plan", "evaluate", "iterate", "improve"], content: "two-iteration design journal" },
+        life: { topic: "Self-management tracking", skill: "Track focus and choose improvements", vocabulary: ["focus", "monitor", "target", "adjust"], content: "self-management tracker" }
+      },
+      {
+        week: 39,
+        theme: "Year 2 launch and independent application",
+        english: { topic: "Final independent write", skill: "Plan, draft, edit and present a coherent text", vocabulary: ["plan", "draft", "edit", "present"], content: "final writing showcase page" },
+        maths: { topic: "Mixed mastery challenge", skill: "Apply number, measure and reasoning across contexts", vocabulary: ["apply", "reason", "measure", "mastery"], content: "mixed challenge circuit" },
+        science: { topic: "Scientific poster presentation", skill: "Present claim, evidence and conclusion clearly", vocabulary: ["present", "claim", "evidence", "conclusion"], content: "science launch poster" },
+        humanities: { topic: "Evidence-led world explanation", skill: "Explain change, place and people with confidence", vocabulary: ["change", "place", "people", "evidence"], content: "humanities explanation board" },
+        creative: { topic: "Curated best-work exhibition", skill: "Select, sequence and justify creative choices", vocabulary: ["curate", "sequence", "justify", "audience"], content: "best-work exhibition labels" },
+        life: { topic: "Year 2 learning contract", skill: "Set realistic goals and routines for transition", vocabulary: ["goal", "routine", "commitment", "transition"], content: "Year 2 contract card" }
       }
     );
 
@@ -3038,7 +3068,7 @@
       const position = Math.max(1, completed);
       return {
         beforeStart: false,
-        week: Math.min(36, Math.ceil(position / 5)),
+        week: Math.min(TERM_BOUNDARIES.totalWeeks, Math.ceil(position / 5)),
         day: String(((position - 1) % 5) + 1),
         learningDaysCompleted: completed
       };
@@ -3047,9 +3077,9 @@
     function expectedLearningDaysSoFar() {
       const calendarPosition = calculateCalendarPosition();
       if (calendarPosition && !calendarPosition.beforeStart) {
-        return Math.min(180, Math.max(1, calendarPosition.learningDaysCompleted));
+        return Math.min(TERM_BOUNDARIES.totalWeeks * 5, Math.max(1, calendarPosition.learningDaysCompleted));
       }
-      return Math.min(180, Math.max(1, ((Number(state.learnerWeek) - 1) * 5) + Number(state.learnerDay || 1)));
+      return Math.min(TERM_BOUNDARIES.totalWeeks * 5, Math.max(1, ((Number(state.learnerWeek) - 1) * 5) + Number(state.learnerDay || 1)));
     }
 
     function learnerWorkItems() {
@@ -3300,7 +3330,7 @@
     const TERM_BOUNDARIES = {
       autumnEnd: 15,
       springEnd: 26,
-      totalWeeks: 36
+      totalWeeks: 39
     };
 
     function termForWeek(week) {
@@ -3345,7 +3375,10 @@
       { week: 33, title: "Independent Author Lab", question: "How can I bring together my best Year 1 skills independently?", project: "Create an independent portfolio page: writing project, mixed maths, living-things map and Year 1 timeline.", subjects: { english: "Write several connected sentences.", maths: "Choose strategies for mixed problems.", science: "Connect animal and plant learning.", humanities: "Sequence the Year 1 timeline.", creative: "Design a portfolio cover.", life: "Use an independence checklist." } },
       { week: 34, title: "Year 2 Ready Lab", question: "How can I get ready for Year 2 by improving and explaining?", project: "Prepare a Year 2 readiness page with edited writing, fluency games, child-choice enquiry and improved artwork.", subjects: { english: "Use an editing checklist.", maths: "Practise fluent facts to 100.", science: "Plan a child-choice science question.", humanities: "Review local, UK and world knowledge.", creative: "Improve earlier artwork.", life: "Set Year 2 learning habits." } },
       { week: 35, title: "Show What You Know", question: "How can I show what I know to an audience?", project: "Host a showcase where each subject contributes one display, explanation or performance.", subjects: { english: "Read own writing and answer questions.", maths: "Teach a favourite maths strategy.", science: "Present a science display.", humanities: "Explain maps, timelines and significant people.", creative: "Rehearse and perform.", life: "Host and thank the audience." } },
-      { week: 36, title: "Year 1 Graduation Quest", question: "How can I celebrate my Year 1 journey and step into Year 2?", project: "Create a Year 1 graduation portfolio with memory book, maths treasure hunt, seasons wheel and confidence certificate.", subjects: { english: "Write Year 1 memory reflections.", maths: "Complete a maths treasure hunt.", science: "Compare the four seasons.", humanities: "Reflect on places and people learned.", creative: "Curate a final gallery.", life: "Celebrate strengths and transition." } }
+      { week: 36, title: "Year 1 Graduation Quest", question: "How can I celebrate my Year 1 journey and step into Year 2?", project: "Create a Year 1 graduation portfolio with memory book, maths treasure hunt, seasons wheel and confidence certificate.", subjects: { english: "Write Year 1 memory reflections.", maths: "Complete a maths treasure hunt.", science: "Compare the four seasons.", humanities: "Reflect on places and people learned.", creative: "Curate a final gallery.", life: "Celebrate strengths and transition." } },
+      { week: 37, title: "Mastery Workshop", question: "How can I prove my ideas clearly using evidence, methods and explanation?", project: "Create a mastery board with a polished explanation text, multi-step maths solution set, evidence-based science claim, and a mapped humanities comparison.", subjects: { english: "Plan and write a structured explanation with because and so.", maths: "Solve and explain two-step problems with checking.", science: "Use observation evidence to justify a conclusion.", humanities: "Compare two places using mapped evidence.", creative: "Redesign a previous piece for stronger impact.", life: "Lead one routine independently and evaluate it." } },
+      { week: 38, title: "Inquiry and Improvement Lab", question: "How can I improve quality by testing, editing and iterating?", project: "Build an improve-it portfolio showing first draft, feedback, revision and final proof in every subject.", subjects: { english: "Edit for clarity, punctuation and stronger vocabulary.", maths: "Choose efficient strategies and verify with a second method.", science: "Run a fair comparison and present a justified result.", humanities: "Use timeline and map evidence to answer a focused question.", creative: "Develop one piece through two improvement rounds.", life: "Track focus, self-management and next-step targets." } },
+      { week: 39, title: "Year 2 Launch Studio", question: "How do I show I am ready for Year 2 with independence and precision?", project: "Deliver a Year 2 launch portfolio: final writing sample, reasoning challenges, science conclusion poster, evidence-led humanities presentation, curated creative piece and personal learning contract.", subjects: { english: "Write and present a coherent final multi-sentence piece.", maths: "Apply number, measure and reasoning in mixed challenge tasks.", science: "Present findings with clear claim-evidence reasoning.", humanities: "Explain change and place using accurate evidence.", creative: "Curate and justify a best-work exhibition piece.", life: "Set and present an independent Year 2 learning contract." } }
     ];
 
     function unitForWeek(week) {
@@ -4759,7 +4792,7 @@
 
     function buildSummerAuthoredTasks() {
       const tasks = {};
-      for (let week = 25; week <= 36; week += 1) {
+      for (let week = 25; week <= TERM_BOUNDARIES.totalWeeks; week += 1) {
         tasks[week] = {};
         Object.keys(lessonSubjectMeta).forEach(subjectKey => {
           tasks[week][subjectKey] = summerRowsFor(week, subjectKey);
@@ -6134,11 +6167,11 @@
       { percent: 100, label: "Master of Missions", short: "Master" }
     ];
 
-    function totalPossibleSteps(startWeek = 1, endWeek = 36) {
+    function totalPossibleSteps(startWeek = 1, endWeek = TERM_BOUNDARIES.totalWeeks) {
       return (endWeek - startWeek + 1) * Object.keys(lessonSubjectMeta).length * 5 * 4;
     }
 
-    function completedStepsInRange(startWeek = 1, endWeek = 36) {
+    function completedStepsInRange(startWeek = 1, endWeek = TERM_BOUNDARIES.totalWeeks) {
       return Object.entries(state.learnerWork).reduce((total, [key, entry]) => {
         const match = key.match(/^week-(\d+)-/);
         const week = match ? Number(match[1]) : 0;
@@ -6511,7 +6544,7 @@
                 <p class="section-kicker">${subject.colour}</p>
                 <h3>${subject.name}</h3>
               </div>
-              <span class="badge ${lessonDone ? "accent" : ""}">${lessonDone}/36 lessons</span>
+              <span class="badge ${lessonDone ? "accent" : ""}">${lessonDone}/${TERM_BOUNDARIES.totalWeeks} lessons</span>
             </div>
             <p class="small">${subject.targets.join(", ")}</p>
             <p class="small"><strong>${journalDone}</strong> reflection notes saved.</p>
