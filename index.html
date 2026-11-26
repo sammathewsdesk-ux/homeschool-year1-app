@@ -2264,19 +2264,19 @@
     const termMap = {
       autumn: [
         {
-          phase: "Weeks 1-4",
+          phase: "Weeks 1-5",
           title: "Settle, assess and build routines",
           points: ["Daily phonics and story time", "Number bonds, counting, comparison and subitising", "Seasonal change walks", "Home routines and independent learning habits"]
         },
         {
-          phase: "Weeks 5-8",
+          phase: "Weeks 6-10",
           title: "Foundations of fluent practice",
           points: ["Read decodable books matched to phonics", "Part-whole models and addition within 20", "Materials sorting and vocabulary", "Local area maps and family stories"]
         },
         {
-          phase: "Weeks 9-12",
-          title: "First project outcome",
-          points: ["Write short recounts and labels", "Apply maths through shops, measures and games", "Create a seasonal portfolio", "Perform a story, song or model explanation"]
+          phase: "Weeks 11-15",
+          title: "Autumn extension and readiness",
+          points: ["Use precise vocabulary and fuller sentence explanations", "Solve and explain two-step maths with checks", "Use growing evidence in science and humanities", "Prepare stronger project proof before Spring"]
         }
       ],
       spring: [
@@ -2291,9 +2291,9 @@
           points: ["Common exception word fluency", "Equal groups and early multiplication language", "Animal and human body knowledge", "Map symbols and simple geography"]
         },
         {
-          phase: "Weeks 9-12",
+          phase: "Weeks 9-11",
           title: "Make learning visible",
-          points: ["Write instructions and information pages", "Use bar models and number lines", "Compare seed growth results", "Create a mini exhibition"]
+          points: ["Write instructions and information pages", "Use bar models and number lines", "Compare seed growth results", "Create a mini exhibition with explanation"]
         }
       ],
       summer: [
@@ -2308,7 +2308,7 @@
           points: ["Plan, write and edit mini books", "Fractions as halves and quarters", "Outdoor science and data", "Design, make, improve cycles"]
         },
         {
-          phase: "Weeks 9-12",
+          phase: "Weeks 9-10",
           title: "Celebrate readiness for Year 2",
           points: ["Portfolio conference", "Maths games tournament", "Science explanation video or poster", "Reflection on strengths, interests and next steps"]
         }
@@ -3297,9 +3297,15 @@
       document.getElementById("weeklyFocus").innerHTML = weeklyFocus.map(item => `<li>${item}</li>`).join("");
     }
 
+    const TERM_BOUNDARIES = {
+      autumnEnd: 15,
+      springEnd: 26,
+      totalWeeks: 36
+    };
+
     function termForWeek(week) {
-      if (week <= 12) return "Autumn";
-      if (week <= 24) return "Spring";
+      if (week <= TERM_BOUNDARIES.autumnEnd) return "Autumn";
+      if (week <= TERM_BOUNDARIES.springEnd) return "Spring";
       return "Summer";
     }
 
@@ -4856,6 +4862,56 @@
       return precisionRules[subjectKey].stem();
     }
 
+    function complexityRuleFor(subjectKey, week) {
+      if (week <= TERM_BOUNDARIES.autumnEnd) return null;
+      const stage = week <= TERM_BOUNDARIES.springEnd
+        ? {
+            band: "spring-stretch",
+            challenge: "Add one comparison with earlier work and explain the change.",
+            check: "Check accuracy once and correct one part that is unclear.",
+            transfer: "Use at least one sentence with because and a key vocabulary word."
+          }
+        : {
+            band: "summer-mastery",
+            challenge: "Apply today's skill to a fresh example that was not practised first.",
+            check: "Prove your answer or idea using a second representation or a second check.",
+            transfer: "Use two linked explanation sentences with precise subject vocabulary."
+          };
+      const rules = {
+        english: {
+          evidence: "at least two connected, correctly punctuated sentences with one visible edit",
+          do: "Write, reread, then improve one sentence so meaning is clearer.",
+          tell: "Explain one strong word choice and one edit that improved clarity."
+        },
+        maths: {
+          evidence: "a model, a matching written representation, and one checked answer",
+          do: "Solve then show your method in pictures/symbols and check the final answer.",
+          tell: "Explain why your method works and how your check proves accuracy."
+        },
+        science: {
+          evidence: "a labelled observation or result plus a conclusion sentence using evidence",
+          do: "Record clear evidence first, then write what the evidence shows.",
+          tell: "Explain which evidence was strongest and why it supports your conclusion."
+        },
+        humanities: {
+          evidence: "a map/timeline/comparison with at least two accurate labels and one evidence sentence",
+          do: "Use clues from map/photo/object to label, compare and explain.",
+          tell: "Explain which clue was most useful and what it proves."
+        },
+        creative: {
+          evidence: "a finished piece with one intentional improvement and a labelled creative choice",
+          do: "Make, review and improve one part to strengthen effect or communication.",
+          tell: "Explain the improvement and how it changed the final piece."
+        },
+        life: {
+          evidence: "independent habit completion plus a brief reflection on what to improve next",
+          do: "Complete the routine independently, then review one step for improvement.",
+          tell: "Explain what worked, what was hard and the next self-management step."
+        }
+      };
+      return { ...stage, ...rules[subjectKey] };
+    }
+
     function exampleOutputFor(task, subjectKey, weekPlan, dayPlan) {
       const subject = weekPlan[subjectKey];
       const unit = unitForWeek(weekPlan.week);
@@ -4901,7 +4957,9 @@
           "Tell me": `"I did ____ by myself. Next time I will practise ____."`
         }
       };
-      return examples[subjectKey][kind] || `One clear proof piece for "${dayPlan.title}" that can be added to "${unit.title}".`;
+      const baseExample = examples[subjectKey][kind] || `One clear proof piece for "${dayPlan.title}" that can be added to "${unit.title}".`;
+      const complexity = complexityRuleFor(subjectKey, weekPlan.week);
+      return complexity ? `${baseExample} Complexity look-for: ${complexity.evidence}.` : baseExample;
     }
 
     function shortActionLabel(text, fallback) {
@@ -4923,12 +4981,18 @@
 
     function precisionTaskSteps(subjectKey, weekPlan, dayPlan, originalBody) {
       const subject = weekPlan[subjectKey];
-      return [
+      const steps = [
         `Focus only on today's card: "${dayPlan.title}".`,
         `Main action: ${originalBody}`,
         `Make sure this action helps you create the proof: ${showItText(dayPlan)}`,
         `Check the learning: can you show or say how this practises "${subject.skill.toLowerCase()}"?`
       ];
+      const complexity = complexityRuleFor(subjectKey, weekPlan.week);
+      if (complexity) {
+        steps.push(`Complexity target: ${complexity.do}`);
+        steps.push(`Stretch challenge: ${complexity.challenge}`);
+      }
+      return steps;
     }
 
     function showItText(dayPlan) {
@@ -4966,6 +5030,7 @@
     function enhanceTask(task, subjectKey, weekPlan, dayPlan) {
       const subject = weekPlan[subjectKey];
       const kind = task.kind || task.title;
+      const complexity = complexityRuleFor(subjectKey, weekPlan.week);
       if (kind === "Get ready") {
         return {
           ...task,
@@ -4989,7 +5054,7 @@
           ...task,
           kind,
           title: specificStepTitle(kind, task, dayPlan),
-          body: `Make the exact proof for today: ${task.body} It must show "${subject.skill.toLowerCase()}". Check it against the Friday goal: ${dayPlan.continuity.fridayGoal}`,
+          body: `Make the exact proof for today: ${task.body} It must show "${subject.skill.toLowerCase()}". Check it against the Friday goal: ${dayPlan.continuity.fridayGoal}${complexity ? ` Complexity target: ${complexity.evidence}. Stretch challenge: ${complexity.challenge}` : ""}`,
           example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
@@ -4998,7 +5063,7 @@
           ...task,
           kind,
           title: specificStepTitle(kind, task, dayPlan),
-          body: `Answer today's reflection: ${task.body} If you are stuck, use: "${precisionStem(subjectKey)}" Use at least one of these words: ${subject.vocabulary.join(", ")}.`,
+          body: `Answer today's reflection: ${task.body} If you are stuck, use: "${precisionStem(subjectKey)}" Use at least one of these words: ${subject.vocabulary.join(", ")}.${complexity ? ` Complexity target: ${complexity.tell} ${complexity.transfer} Quality check: ${complexity.check}` : ""}`,
           example: exampleOutputFor(task, subjectKey, weekPlan, dayPlan)
         };
       }
@@ -5008,9 +5073,17 @@
     function enhanceDailyWorksheet(dayPlan, subjectKey, weekPlan) {
       return {
         ...dayPlan,
-        outcome: preciseDailyOutcome(dayPlan, subjectKey, weekPlan),
+        outcome: (() => {
+          const baseOutcome = preciseDailyOutcome(dayPlan, subjectKey, weekPlan);
+          const complexity = complexityRuleFor(subjectKey, weekPlan.week);
+          return complexity ? `${baseOutcome} Complexity target: ${complexity.evidence}.` : baseOutcome;
+        })(),
         materials: precisionMaterials(subjectKey, weekPlan),
-        evidence: precisionEvidence(dayPlan, subjectKey, weekPlan),
+        evidence: (() => {
+          const baseEvidence = precisionEvidence(dayPlan, subjectKey, weekPlan);
+          const complexity = complexityRuleFor(subjectKey, weekPlan.week);
+          return complexity ? `${baseEvidence} Complexity target: ${complexity.evidence}.` : baseEvidence;
+        })(),
         tasks: dayPlan.tasks.map(task => enhanceTask(task, subjectKey, weekPlan, dayPlan))
       };
     }
@@ -5133,7 +5206,7 @@
           "Reflect, self-manage and prepare for Year 2."
         ]
       };
-      const stage = week <= 12 ? 0 : week <= 24 ? 1 : 2;
+      const stage = week <= TERM_BOUNDARIES.autumnEnd ? 0 : week <= TERM_BOUNDARIES.springEnd ? 1 : 2;
       return ladders[subjectKey].map((text, index) => ({
         label: index === 0 ? "Earlier" : index === 1 ? "Now" : "Next",
         text,
@@ -5959,6 +6032,12 @@
             if (!dayPlan.tasks.some(task => /draw|write|label|sort|test|map|timeline|model|sentence|checklist|perform|make/i.test(`${task.body || ""} ${(task.steps || []).join(" ")}`))) {
               missing.push("concrete output verb");
             }
+            if (weekPlan.week > TERM_BOUNDARIES.autumnEnd) {
+              if (!dayPlan.outcome.includes("Complexity target:")) missing.push("future-week complexity target");
+              if (!dayPlan.evidence.includes("Complexity target:")) missing.push("future-week complexity evidence");
+              if (!doTask?.steps || doTask.steps.length < 6) missing.push("future-week stretch steps");
+              if (!dayPlan.tasks.some(task => (task.body || "").includes("Stretch challenge:"))) missing.push("future-week stretch challenge");
+            }
             if (missing.length) {
               failures.push({
                 week: weekPlan.week,
@@ -6073,9 +6152,9 @@
     }
 
     function termRangeForWeek(week) {
-      if (week <= 12) return { label: "Autumn", start: 1, end: 12 };
-      if (week <= 24) return { label: "Spring", start: 13, end: 24 };
-      return { label: "Summer", start: 25, end: 36 };
+      if (week <= TERM_BOUNDARIES.autumnEnd) return { label: "Autumn", start: 1, end: TERM_BOUNDARIES.autumnEnd };
+      if (week <= TERM_BOUNDARIES.springEnd) return { label: "Spring", start: TERM_BOUNDARIES.autumnEnd + 1, end: TERM_BOUNDARIES.springEnd };
+      return { label: "Summer", start: TERM_BOUNDARIES.springEnd + 1, end: TERM_BOUNDARIES.totalWeeks };
     }
 
     function nextReward(overallPercent) {
